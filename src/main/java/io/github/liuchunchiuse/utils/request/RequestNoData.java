@@ -1,7 +1,7 @@
-package com.lcc.tool.utils.request;
+package io.github.liuchunchiuse.utils.request;
 
 import cn.hutool.json.JSONUtil;
-import com.lcc.tool.constants.LccConstants;
+import io.github.liuchunchiuse.constants.LccConstants;
 import lombok.extern.slf4j.Slf4j;
 
 /**

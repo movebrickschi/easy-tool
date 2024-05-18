@@ -1,10 +1,10 @@
-package com.lcc.tool.utils;
+package io.github.liuchunchiuse.utils;
 
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
-import com.lcc.tool.constants.LuaScript;
+import io.github.liuchunchiuse.constants.LuaScript;
 import lombok.*;
 import org.redisson.Redisson;
 import org.redisson.api.RBloomFilter;

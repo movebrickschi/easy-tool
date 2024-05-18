@@ -1,7 +1,7 @@
-package com.lcc.tool.utils.request;
+package io.github.liuchunchiuse.utils.request;
 
 import com.google.common.collect.Maps;
-import com.lcc.tool.constants.LccConstants;
+import io.github.liuchunchiuse.constants.LccConstants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

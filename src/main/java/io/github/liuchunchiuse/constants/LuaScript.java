@@ -1,4 +1,4 @@
-package com.lcc.tool.constants;
+package io.github.liuchunchiuse.constants;
 
 /**
  * redis脚本类

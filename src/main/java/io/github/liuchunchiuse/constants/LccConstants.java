@@ -1,4 +1,4 @@
-package com.lcc.tool.constants;
+package io.github.liuchunchiuse.constants;
 
 public final class LccConstants {
 

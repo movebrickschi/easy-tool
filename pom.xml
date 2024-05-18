@@ -8,7 +8,7 @@
         <version>2.7.12</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.lcc.sdk</groupId>
+    <groupId>io.github.liuchunchiuse</groupId>
     <artifactId>lcc-tool</artifactId>
     <packaging>jar</packaging>
     <version>1.0.0</version>
@@ -22,6 +22,19 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
+
+    <developers>
+        <developer>
+            <name>LiuChunChi</name>
+            <email>liuchunchiuse@163.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>https://github.com/liuchunchiuse/lcc-tool.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:liuchunchiuse/lcc-tool.git</developerConnection>
+        <url>https://github.com/liuchunchiuse/lcc-tool</url>
+    </scm>
 
     <properties>
         <java.version>8</java.version>
@@ -64,31 +77,59 @@
         </dependency>
     </dependencies>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
-    <developers>
-        <developer>
-            <name>LiuChunChi</name>
-            <email>liuchunchiuse@163.com</email>
-        </developer>
-    </developers>
 
 
     <build>
         <plugins>
+
+            <!--   central发布插件    -->
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.4.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>liuchunchi</publishingServerId>
+                    <tokenAuth>true</tokenAuth>
+                </configuration>
+            </plugin>
+            <!--   source源码插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--   javadoc插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
+                <version>1.5</version>
+                <configuration>
+                    <executable>D:\Program Files (x86)\GnuPG\bin\gpg.exe</executable>
+                    <keyname>io.github.liuchunchiuse</keyname>
+                </configuration>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -99,7 +140,9 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
+
 
 </project>

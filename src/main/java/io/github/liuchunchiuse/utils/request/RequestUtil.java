@@ -1,4 +1,4 @@
-package com.lcc.tool.utils.request;
+package io.github.liuchunchiuse.utils.request;
 
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.json.JSONObject;

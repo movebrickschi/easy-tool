@@ -1,4 +1,4 @@
-package com.lcc.tool.config;
+package io.github.liuchunchiuse.config;
 
 
 /**

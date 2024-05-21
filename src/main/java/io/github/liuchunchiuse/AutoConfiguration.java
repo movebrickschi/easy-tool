@@ -20,7 +20,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * 自动配置
  *
  * @author Liu Chunchi
- * @date 2024/2/6 14:36
+ * @version 1.0
  */
 @ComponentScan({"com.lcc.tool"})
 @EnableAspectJAutoProxy

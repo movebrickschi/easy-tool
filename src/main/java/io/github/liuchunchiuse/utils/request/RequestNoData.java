@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 请求没有数据
  * @author Liu Chunchi
- * @date 2023/8/30 19:27
+ * @version 1.0
  */
 @Slf4j
 public class RequestNoData implements Operation {

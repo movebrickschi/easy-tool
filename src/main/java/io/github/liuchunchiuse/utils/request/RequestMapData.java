@@ -14,7 +14,7 @@ import java.util.Objects;
  * 请求返回map类型
  *
  * @author Liu Chunchi
- * @date 2023/8/30 19:29
+ * @version 1.0
  */
 @Slf4j
 public class RequestMapData implements Operation {

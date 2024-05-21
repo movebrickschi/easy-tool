@@ -1,5 +1,4 @@
 package io.github.liuchunchiuse.utils;
-
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
@@ -27,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * reidis操作类
  *
  * @author Liu Chunchi
- * @date 2023/12/21 13:30:53
+ * @version 1.0
  */
 @Component
 public class RedisUtil {
@@ -120,6 +119,13 @@ public class RedisUtil {
     /**
      * 适用于查询一定存在的数据,不确定的数据不能用此方法,比如根据智能体NO查询智能体信息
      * 使用布隆过滤器过滤结果为空的key
+     * @param key key
+     * @param beanClass 返回类型
+     * @param timeout 时间
+     * @param unit 时间单位
+     * @param supplier 获取数据的方法
+     * @return 返回值
+     * @param <R> 返回的类型
      */
     @SneakyThrows
     public <R> R executeForValue(String key, Class<R> beanClass, long timeout, TimeUnit unit, SupplierThrow<R> supplier) {
@@ -144,6 +150,15 @@ public class RedisUtil {
     /**
      * function形式
      * 适用场景同上
+     * @param key key
+     * @param beanClass 返回类型class
+     * @param timeout 超时时间
+     * @param unit 时间单位
+     * @param t 参数类型
+     * @param function 函数
+     * @return 返回值
+     * @param <T> 入参
+     * @param <R> 出参
      */
     @SneakyThrows
     public <T, R> R executeForValue(String key, Class<R> beanClass, long timeout, TimeUnit unit, T t, FunctionThrow<T, R> function) {
@@ -164,7 +179,16 @@ public class RedisUtil {
         }
     }
 
-
+    /**
+     * value包含null
+     * @param key key
+     * @param beanClass 返回类型class
+     * @param timeout 超时时间
+     * @param unit 时间单位
+     * @param supplier 获取数据的方法
+     * @return 返回值
+     * @param <R> 返回类型
+     */
     @SneakyThrows
     public <R> R executeForValueContainNull(String key, Class<R> beanClass, long timeout, TimeUnit unit, SupplierThrow<R> supplier) {
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
@@ -183,6 +207,12 @@ public class RedisUtil {
     /**
      * 存放数字类型
      * 需要注意的是R要和redis读取的数据类型一致,如果不一致会抛异常
+     * @param key key
+     * @param timeout 超时时间
+     * @param unit 时间单位
+     * @param supplier 获取数据的方法
+     * @return 返回值
+     * @param <R> 返回类型
      */
     @SneakyThrows
     public <R extends Number> R executeForNumberValue(String key, long timeout, TimeUnit unit, SupplierThrow<R> supplier) {
@@ -204,7 +234,14 @@ public class RedisUtil {
         }
     }
 
-
+    /**
+     * 执行保存数字方法,一个key,多个值
+     * @param key key
+     * @param list 参数
+     * @param supplier 获取数据的方法
+     * @return 返回值
+     * @param <R> 返回类型
+     */
     @SneakyThrows
     public <R extends Number> R executeForNumberValue(String key, List<RedisDo> list, SupplierThrow<R> supplier) {
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
@@ -221,6 +258,14 @@ public class RedisUtil {
     /**
      * 适用于查询一定存在的数据,不确定的数据不能用此方法,比如根据智能体NO查询智能体信息
      * 使用布隆过滤器过滤结果为空的key
+     * @param key key
+     * @param hashKey hashKey
+     * @param beanClass 返回类型
+     * @param timeout 超时时长
+     * @param unit 超时单位
+     * @param supplier 获取数据的方法
+     * @return 返回R类型的值
+     * @param <R> 返回类型
      */
     @SneakyThrows
     public <R> R executeForHash(String key, String hashKey, Class<R> beanClass, long timeout, TimeUnit unit,
@@ -244,6 +289,14 @@ public class RedisUtil {
 
     /**
      * 允许为空的放入缓存
+     * @param key key
+     * @param hashKey hashKey
+     * @param beanClass 返回类型
+     * @param timeout 超时时长
+     * @param unit 超时单位
+     * @param supplier 获取数据的方法
+     * @return 返回R类型的值
+     * @param <R> 返回类型
      */
     @SneakyThrows
     public <R> R executeForHashContainNull(String key, String hashKey, Class<R> beanClass, long timeout, TimeUnit unit,
@@ -263,6 +316,12 @@ public class RedisUtil {
 
     /**
      * 使用返回里面的过期时间
+     * @param key key
+     * @param hashKey hashKey
+     * @param beanClass 返回类型
+     * @param supplier 获取数据的方法
+     * @return 返回R类型的值
+     * @param <R> 返回类型
      */
     @SneakyThrows
     public <R extends RedisResult> R executeForHashContainNull(String key, String hashKey, Class<R> beanClass, SupplierThrow<R> supplier) {
@@ -281,8 +340,15 @@ public class RedisUtil {
     }
 
     /**
-     * 此方式可用于带有泛型的实体比如(Page<T>),一般的情况也可以使用只是多写几个代码
-     *
+     * 此方式可用于带有泛型的实体,一般的情况也可以使用只是多写几个代码
+     * @param key key
+     * @param hashKey hashKey
+     * @param typeR 返回类型
+     * @param timeout 超时时长
+     * @param unit 超时单位
+     * @param supplier 返回数据的方法
+     * @return 返回R类型的值
+     * @param <R> 返回类型
      */
     @SneakyThrows
     public <R> R executeForHashContainNull(String key, String hashKey, TypeReference<R> typeR, long timeout, TimeUnit unit,
@@ -301,6 +367,16 @@ public class RedisUtil {
     }
 
 
+    /**
+     * 执行获取List
+     * @param key key
+     * @param beanClass 返回类型
+     * @param timeout 超时时间
+     * @param unit 超时单位
+     * @param supplier 获取数据的方法
+     * @return 返回R类型的值
+     * @param <R> 返回类型
+     */
     @SneakyThrows
     public <R> List<R> executeForListContainNull(String key, Class<R> beanClass, long timeout, TimeUnit unit,
                                                  SupplierThrow<List<R>> supplier) {
@@ -319,7 +395,13 @@ public class RedisUtil {
     }
 
     /**
-     * hash
+     * 执行hash
+     * @param key key
+     * @param hashKey hashKey
+     * @param timeout 超时时长
+     * @param unit 超时单位
+     * @param value 值
+     * @return True成功, false失败
      */
     private Boolean executeLuaScript(String key, String hashKey, long timeout, TimeUnit unit, String... value) {
         // Lua脚本内容
@@ -332,7 +414,12 @@ public class RedisUtil {
     }
 
     /**
-     * list
+     * 执行list脚本
+     * @param key key
+     * @param timeout 超时时长
+     * @param unit 超时单位
+     * @param value 值
+     * @return True成功, false失败
      */
     private Boolean executeLuaScript(String key, long timeout, TimeUnit unit, Object... value) {
         // Lua脚本内容
@@ -349,10 +436,21 @@ public class RedisUtil {
         return execute(luaScript, Lists.newArrayList(key), timeout, unit, value);
     }
 
+    /**
+     * 执行list脚本
+     * @param list list参数
+     * @param value 值
+     */
     private void executeLuaScript(List<RedisDo> list, Object value) {
         execute(LuaScript.SETEX_MULTIPLE, list, value);
     }
 
+    /**
+     * 执行多个key,同一个值
+     * @param luaScript lua脚本
+     * @param value 值
+     * @param keys 多个key
+     */
     private void execute(String luaScript, Object value, String... keys) {
         // 创建RedisScript对象
         RedisScript<String> script = new DefaultRedisScript<>(luaScript);
@@ -360,6 +458,12 @@ public class RedisUtil {
         redisTemplate.execute(script, Arrays.asList(keys), value);
     }
 
+    /**
+     *一个key,多个值
+     * @param luaScript lua脚本
+     * @param list 值
+     * @param value 值
+     */
     private void execute(String luaScript, List<RedisDo> list, Object value) {
         List<String> keys = Lists.newArrayList();
         List<Integer> valuesAndExpire = Lists.newArrayList();
@@ -379,6 +483,15 @@ public class RedisUtil {
         redisTemplate.execute(script, keys, valuesAndExpire.toArray());
     }
 
+    /**
+     * 多个key,多个值
+     * @param luaScript 脚本
+     * @param keys keys
+     * @param timeout 超时时长
+     * @param unit 超时单位
+     * @param value 多个值
+     * @return True成功, false失败
+     */
     private Boolean execute(String luaScript, List<String> keys, long timeout, TimeUnit unit, Object... value) {
         Integer timeoutInSeconds = Integer.valueOf(String.valueOf(TimeoutUtils.toSeconds(timeout, unit)));
 
@@ -390,6 +503,15 @@ public class RedisUtil {
         return redisTemplate.execute(script, keys, list.toArray());
     }
 
+    /**
+     * 单个key,单个值
+     * @param luaScript lua脚本
+     * @param key key
+     * @param timeout 超时时长
+     * @param unit 超时单位
+     * @param value 值
+     * @return 变更后的值
+     */
     private Long execute(String luaScript, String key, long timeout, TimeUnit unit, Long value) {
         Integer timeoutInSeconds = Integer.valueOf(String.valueOf(TimeoutUtils.toSeconds(timeout, unit)));
 
@@ -404,13 +526,13 @@ public class RedisUtil {
 
     @FunctionalInterface
     public interface FunctionThrow<T, R> {
-        R apply(T t) throws Throwable;
+        R apply(T t);
     }
 
 
     @FunctionalInterface
     public interface SupplierThrow<R> {
-        R get() throws Throwable;
+        R get();
     }
 
     @Data
@@ -433,12 +555,5 @@ public class RedisUtil {
 
         private TimeUnit unit;
     }
-
-    /*public interface RedisResult {
-        LocalDateTime getExpireDateTime();
-
-
-    }*/
-
 
 }

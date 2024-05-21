@@ -12,7 +12,7 @@ import java.util.Objects;
  * 请求返回单例类型
  *
  * @author Liu Chunchi
- * @date 2023/8/30 19:29
+ * @version 1.0
  */
 @Slf4j
 public class RequestSingleData implements Operation {

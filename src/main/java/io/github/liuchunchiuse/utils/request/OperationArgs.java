@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * 请求参数对象
  * @author Liu Chunchi
- * @date 2023/8/29 13:59:49
+ * @version 1.0
  */
 @Data
 @Builder

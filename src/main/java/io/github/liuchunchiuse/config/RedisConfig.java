@@ -4,7 +4,7 @@ package io.github.liuchunchiuse.config;
  * redis配置
  *
  * @author Liu Chunchi
- * @date 2024/2/6 14:00:42
+ * @version 1.0
  */
 public class RedisConfig {
     private RedisPoolConfig pool = new RedisPoolConfig();

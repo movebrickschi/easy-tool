@@ -13,7 +13,7 @@ import java.util.Objects;
  * 返回集合类型
  *
  * @author Liu Chunchi
- * @date 2023/8/30 19:28
+ * @version 1.0
  */
 @Slf4j
 public class RequestArrayListData implements Operation {

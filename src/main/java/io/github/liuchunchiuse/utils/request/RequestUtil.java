@@ -12,7 +12,7 @@ import java.util.Map;
  * 封装公用请求类
  *
  * @author Liu Chunchi
- * @date 2023/8/31 10:46:02
+ * @version 1.0
  */
 @Slf4j
 public final class RequestUtil {

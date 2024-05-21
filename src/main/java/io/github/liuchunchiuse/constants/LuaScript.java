@@ -4,7 +4,7 @@ package io.github.liuchunchiuse.constants;
  * redis脚本类
  *
  * @author Liu Chunchi
- * @date 2024/1/23 18:53:36
+ * @version 1.0
  */
 public final class LuaScript {
 

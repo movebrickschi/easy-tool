@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  * 分布式锁封装方法
  *
  * @author Liu Chunchi
- * @date 2023/11/17 14:22
+ * @version 1.0
  */
 @Component
 @Slf4j
@@ -83,6 +83,6 @@ public class LockService {
          *
          * @return a result
          */
-        T get() throws Throwable;
+        T get();
     }
 }

@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  * 请求方法
  *
  * @author Liu Chunchi
- * @date 2023/8/29 14:30
+ * @version 1.0
  */
 public interface Operation {
 
@@ -104,10 +104,12 @@ public interface Operation {
 
     /**
      * 单例形式
+     * @param result 请求结果
      * @param operationArgs 请求方法参数
      * @param tClass 返回类型
      * @param keys 内嵌子集key
-     * @return T
+     * @return 返回类型
+     * @param <T> 参数类型
      */
     default <T> Result<T> toSingle(Result<Object> result, OperationArgs operationArgs, Class<T> tClass, String... keys) {
         return null;
@@ -115,6 +117,7 @@ public interface Operation {
 
     /**
      * data为空
+     * @param result 请求结果
      * @param operationArgs 请求方法参数
      * @return Result
      */
@@ -124,10 +127,12 @@ public interface Operation {
 
     /**
      * 集合形式
+     * @param result 请求结果
      * @param operationArgs 请求方法参数
      * @param tClass 返回类型
      * @param keys 内嵌子集key
-     * @return List<T> 集合T
+     * @return 返回类型
+     * @param <T> 参数类型
      */
     default <T> Result<List<T>> toList(Result<Object> result, OperationArgs operationArgs, Class<T> tClass, String... keys) {
         return Result.success(Collections.emptyList());
@@ -135,12 +140,13 @@ public interface Operation {
 
     /**
      * map形式
+     * @param result 请求结果
      * @param operationArgs 请求方法参数
      * @param tClass 返回类型
      * @param siblingKes 同级key
      * @param keys 内嵌子集key
-     * @return
-     * @param <T>
+     * @return 返回结果
+     * @param <T> 请求类型
      */
     default <T> Result<Map<String, Object>> toMap(Result<Object> result, OperationArgs operationArgs, Class<T> tClass, List<String> siblingKes,
                                                   String... keys) {
@@ -155,7 +161,7 @@ public interface Operation {
      * @param siblingKes 同级key
      * @param keys 内嵌子集key
      * @return Result
-     * @param <T>
+     * @param <T> 请求类型
      */
     static <T> Result<T> getResult(OperationArgs operationArgs, Class<T> tClass, List<String> siblingKes, String... keys) {
         String resultStr = null;

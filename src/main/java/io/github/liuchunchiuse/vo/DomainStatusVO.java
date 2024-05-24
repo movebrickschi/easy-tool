@@ -1,4 +1,4 @@
-package io.github.liuchunchiuse.VO;
+package io.github.liuchunchiuse.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

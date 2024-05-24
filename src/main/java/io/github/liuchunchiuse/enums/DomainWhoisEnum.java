@@ -1,6 +1,6 @@
 package io.github.liuchunchiuse.enums;
 
-import io.github.liuchunchiuse.VO.DomainStatusVO;
+import io.github.liuchunchiuse.vo.DomainStatusVO;
 
 import java.util.Arrays;
 import java.util.List;

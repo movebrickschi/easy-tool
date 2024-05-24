@@ -3,8 +3,8 @@ package io.github.liuchunchiuse.utils;
 import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import io.github.liuchunchiuse.DTO.WhoisDTO;
-import io.github.liuchunchiuse.VO.DomainWhoisInfoBaseVo;
+import io.github.liuchunchiuse.dto.WhoisDTO;
+import io.github.liuchunchiuse.vo.DomainWhoisInfoBaseVo;
 import io.github.liuchunchiuse.enums.DomainWhoisEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.whois.WhoisClient;
@@ -63,7 +63,7 @@ public class WhoisUtil {
     /**
      * 获取域名详细信息
      * @param domain 域名
-     * @return io.github.liuchunchiuse.VO.DomainWhoisInfoBaseVo
+     * @return io.github.liuchunchiuse.vo.DomainWhoisInfoBaseVo
      */
     public static DomainWhoisInfoBaseVo getDomainInfo(String domain) {
         String domainSubfix = domain.split("\\.")[1];

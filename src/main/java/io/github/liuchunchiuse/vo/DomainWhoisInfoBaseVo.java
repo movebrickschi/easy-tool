@@ -1,4 +1,4 @@
-package io.github.liuchunchiuse.VO;
+package io.github.liuchunchiuse.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

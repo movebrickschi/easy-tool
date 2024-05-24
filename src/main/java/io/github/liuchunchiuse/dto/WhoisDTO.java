@@ -1,6 +1,6 @@
-package io.github.liuchunchiuse.DTO;
+package io.github.liuchunchiuse.dto;
 
-import io.github.liuchunchiuse.VO.DomainWhoisInfoBaseVo;
+import io.github.liuchunchiuse.vo.DomainWhoisInfoBaseVo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

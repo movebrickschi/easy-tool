@@ -24,7 +24,8 @@ public class RequestSingleData implements Operation {
         }
 
         log.info("start----------------single format request:{},url:{},param:{}", operationArgs.getMethod(), operationArgs.getUrl(),
-                JSONUtil.toJsonStr(operationArgs.getParams()));
+                Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
+                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
         //返回为空
         if (Objects.isNull(result.getData())) {
             log.info("end and return empty----------------success request url:{},param:{}", operationArgs.getUrl(),
@@ -39,7 +40,8 @@ public class RequestSingleData implements Operation {
                 resultByLevelKey = JSONUtil.parseObj(resultByLevelKey).getStr(key);
                 if (CharSequenceUtil.isBlank(resultByLevelKey) || resultByLevelKey.startsWith("[]")) {
                     log.info("end and return empty----------------success post url:{},param:{}", operationArgs.getUrl(),
-                            JSONUtil.toJsonStr(operationArgs.getParams()));
+                            Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
+                                    CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
                     return Result.success();
                 }
             }
@@ -48,7 +50,8 @@ public class RequestSingleData implements Operation {
         //基本数据类型或者string
         if (tClass.isPrimitive() || String.class.equals(tClass) || tClass.getGenericSuperclass().equals(Number.class)) {
             log.info("end----------------success,base type single request url:{},param:{},result:{}", operationArgs.getUrl(),
-                    JSONUtil.toJsonStr(operationArgs.getParams()), result.getData());
+                    Boolean.TRUE.equals(operationArgs.getIsPrintResultLog()) ?
+                            CharSequenceUtil.subPre(JSONUtil.toJsonStr(result.getData()), operationArgs.getPrintLength()) : "");
             return Result.success((T) result.getData());
         }
         return Result.success(JSONUtil.toBean(resultByLevelKey, tClass));

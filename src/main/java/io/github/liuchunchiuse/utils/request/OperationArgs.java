@@ -28,22 +28,22 @@ public class OperationArgs {
     private String url;
 
     /**
-     * 请求和响应时间分别是10分钟
+     * 请求和响应时间分别是30秒
      */
     @Builder.Default
-    private int timeout = 60 * 10000;
+    private int timeout = 30 * 1000;
 
     /**
-     * 连接超时时间(毫秒),默认5分钟
+     * 连接超时时间(毫秒),默认30秒
      */
     @Builder.Default
-    private int connectionTimeout = 60 * 10000;
+    private int connectionTimeout = 30 * 1000;
 
     /**
-     * 读取超时时间(毫秒),默认5分钟
+     * 读取超时时间(毫秒),默认30秒
      */
     @Builder.Default
-    private int readTimeout = 60 * 10000;
+    private int readTimeout = 30 * 1000;
 
     /**
      * Map类型请求参数
@@ -104,9 +104,28 @@ public class OperationArgs {
     private Boolean isPrintResultLog = true;
 
     /**
-     * 多个header
+     * 是否打印返回日志
+     * 增加此字段因为如果返回内容过多导致日志文件过大,比如Embedding
+     */
+    @Builder.Default
+    private Boolean isPrintArgsLog = true;
+
+    /**
+     * 是否打印返回日志
+     * 增加此字段因为如果返回内容过多导致日志文件过大,比如Embedding
+     */
+    @Builder.Default
+    private int printLength = 500;
+
+
+    /**
+     * 多个header,同一个name
      */
     private Map<String, List<String>> headers = Maps.newHashMap();
 
+    /**
+     * 多个header,不同的name
+     */
+    private Map<String, String> headersMap = Maps.newHashMap();
 
 }

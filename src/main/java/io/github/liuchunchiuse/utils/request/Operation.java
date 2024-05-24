@@ -5,6 +5,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Maps;
 import io.github.liuchunchiuse.constants.LccConstants;
+import io.micrometer.core.instrument.util.StringUtils;
 import lombok.Getter;
 
 import java.util.Collections;
@@ -26,7 +27,19 @@ public interface Operation {
     String CONTENT_TYPE = "Content-Type";
 
     public enum Method {
-        POST_BODY, POST_FORM, POST_MULTIPLE_HEADERS, GET, PUT, DELETE, DELETE_NO_PARAM;
+        POST_BODY,
+        POST_BODY_HEADERS,
+        POST_FORM,
+        POST_FORM_WITH_HEADERS,
+        POST_MULTIPLE_HEADERS,
+        POST_MULTIPLE_DIFFERENT_HEADERS,
+        GET,
+        GET_HEADERS,
+        PUT_HEADERS,
+        PUT,
+        DELETE,
+        DELETE_HEADERS,
+        DELETE_NO_PARAM;
     }
 
     @Getter
@@ -47,14 +60,28 @@ public interface Operation {
 
     Function<OperationArgs, String> POST = param -> HttpRequest.post(param.getUrl())
             .header(CONTENT_TYPE, param.getApplication().getContent())
-            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .setConnectionTimeout(param.getConnectionTimeout())
+            .setReadTimeout(param.getReadTimeout())
+            .execute().body();
+
+    Function<OperationArgs, String> POST_BODY_HEADERS = param -> HttpRequest.post(param.getUrl())
+            .headerMap(param.getHeadersMap(), true)
+            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
     Function<OperationArgs, String> POST_MULTIPLE_HEADERS = param -> HttpRequest.post(param.getUrl())
             .header(param.getHeaders())
-            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .setConnectionTimeout(param.getConnectionTimeout())
+            .setReadTimeout(param.getReadTimeout())
+            .execute().body();
+
+    Function<OperationArgs, String> POST_MULTIPLE_DIFFERENT_HEADERS = param -> HttpRequest.post(param.getUrl())
+            .headerMap(param.getHeadersMap(), true)
+            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
@@ -65,7 +92,20 @@ public interface Operation {
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
+    Function<OperationArgs, String> POST_FORM_WITH_HEADERS = param -> HttpRequest.post(param.getUrl())
+            .headerMap(param.getHeadersMap(), true)
+            .form(param.getParams())
+            .setConnectionTimeout(param.getConnectionTimeout())
+            .setReadTimeout(param.getReadTimeout())
+            .execute().body();
+
     Function<OperationArgs, String> GET = param -> HttpRequest.get(param.getUrl())
+            .form(param.getParams())
+            .setConnectionTimeout(param.getConnectionTimeout())
+            .setReadTimeout(param.getReadTimeout())
+            .execute().body();
+    Function<OperationArgs, String> GET_HEADERS = param -> HttpRequest.get(param.getUrl())
+            .headerMap(param.getHeadersMap(), true)
             .form(param.getParams())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
@@ -73,14 +113,27 @@ public interface Operation {
 
     Function<OperationArgs, String> PUT = param -> HttpRequest.put(param.getUrl())
             .header(CONTENT_TYPE, param.getApplication().getContent())
-            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .setConnectionTimeout(param.getConnectionTimeout())
+            .setReadTimeout(param.getReadTimeout())
+            .execute().body();
+    Function<OperationArgs, String> PUT_HEADERS = param -> HttpRequest.put(param.getUrl())
+            .headerMap(param.getHeadersMap(), true)
+            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
     Function<OperationArgs, String> DELETE = param -> HttpRequest.delete(param.getUrl())
             .header(CONTENT_TYPE, param.getApplication().getContent())
-            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .setConnectionTimeout(param.getConnectionTimeout())
+            .setReadTimeout(param.getReadTimeout())
+            .execute().body();
+
+    Function<OperationArgs, String> DELETE_HEADERS = param -> HttpRequest.delete(param.getUrl())
+            .headerMap(param.getHeadersMap(), true)
+            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
@@ -93,11 +146,17 @@ public interface Operation {
     Supplier<Map<Method, Function<OperationArgs, String>>> ACTION_SUPPLIER = () -> {
         Map<Method, Function<OperationArgs, String>> map = Maps.newHashMap();
         map.put(Method.POST_BODY, POST);
+        map.put(Method.POST_BODY_HEADERS, POST_BODY_HEADERS);
         map.put(Method.POST_FORM, POST_FORM);
+        map.put(Method.POST_FORM_WITH_HEADERS, POST_FORM_WITH_HEADERS);
         map.put(Method.POST_MULTIPLE_HEADERS, POST_MULTIPLE_HEADERS);
+        map.put(Method.POST_MULTIPLE_DIFFERENT_HEADERS, POST_MULTIPLE_DIFFERENT_HEADERS);
         map.put(Method.GET, GET);
+        map.put(Method.GET_HEADERS, GET_HEADERS);
         map.put(Method.PUT, PUT);
+        map.put(Method.PUT_HEADERS, PUT_HEADERS);
         map.put(Method.DELETE, DELETE);
+        map.put(Method.DELETE_HEADERS, DELETE_HEADERS);
         map.put(Method.DELETE_NO_PARAM, DELETE_NO_PARAM);
         return map;
     };

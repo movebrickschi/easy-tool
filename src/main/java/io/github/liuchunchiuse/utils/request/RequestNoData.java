@@ -1,5 +1,6 @@
 package io.github.liuchunchiuse.utils.request;
 
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.json.JSONUtil;
 import io.github.liuchunchiuse.constants.LccConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,8 @@ public class RequestNoData implements Operation {
             return Result.failed(result.getMessage());
         }
         log.info("end----------------success,request url:{},param:{}", operationArgs.getUrl(),
-                JSONUtil.toJsonStr(operationArgs.getParams()));
+                Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
+                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
         return result;
     }
 

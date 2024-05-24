@@ -51,11 +51,13 @@ public final class RequestUtil {
             return Result.failed(e.getMessage());
         }
         log.info("request:{},url:{},param:{},return resultStr:{}", operationArgs.getMethod(), operationArgs.getUrl(),
-                operationArgs.getParams().isEmpty() ? operationArgs.getBody() : JSONUtil.toJsonStr(operationArgs.getParams()),
-                Boolean.TRUE.equals(operationArgs.getIsPrintResultLog()) ? resultStr : "未设置打印");
+                operationArgs.getParams().isEmpty() ? CharSequenceUtil.subPre(operationArgs.getBody(), operationArgs.getPrintLength()) :
+                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()),
+                Boolean.TRUE.equals(operationArgs.getIsPrintResultLog()) ? CharSequenceUtil.subPre(resultStr, operationArgs.getPrintLength()) : "未设置打印");
         if (CharSequenceUtil.isBlank(resultStr)) {
             log.info("end----------------request url:{},param:{},resultStr return null", operationArgs.getUrl(),
-                    operationArgs.getParams().isEmpty() ? operationArgs.getBody() : JSONUtil.toJsonStr(operationArgs.getParams()));
+                    operationArgs.getParams().isEmpty() ? CharSequenceUtil.subPre(operationArgs.getBody(), operationArgs.getPrintLength()) :
+                            CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()));
             return Result.failed("request resultStr is null");
         }
         JSONObject jsonObject = JSONUtil.parseObj(resultStr);
@@ -67,7 +69,8 @@ public final class RequestUtil {
         result.setMessage(jsonObject.getStr(operationArgs.getReturnMessageField()));
         if (operationArgs.getReturnSuccessCode().intValue() != result.getCode().intValue()) {
             log.error("end----------------request url:{},param:{},error:{}", operationArgs.getUrl(),
-                    operationArgs.getParams().isEmpty() ? operationArgs.getBody() : JSONUtil.toJsonStr(operationArgs.getParams()),
+                    operationArgs.getParams().isEmpty() ? CharSequenceUtil.subPre(operationArgs.getBody(), operationArgs.getPrintLength()) :
+                            CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()),
                     result.getMessage());
             return Result.failed(result.getMessage());
         }

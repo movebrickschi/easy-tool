@@ -26,11 +26,13 @@ public class RequestMapData implements Operation {
             return Result.failed(result.getMessage());
         }
         log.info("start----------------single format request:{},url:{},param:{}", operationArgs.getMethod(), operationArgs.getUrl(),
-                JSONUtil.toJsonStr(operationArgs.getParams()));
+                Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
+                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
         //返回为空
         if (Objects.isNull(result.getData())) {
             log.info("end and return empty----------------success request url:{},param:{}", operationArgs.getUrl(),
-                    JSONUtil.toJsonStr(operationArgs.getParams()));
+                    Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
+                            CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
             return Result.success();
         }
         String resultByLevelKey = JSONUtil.toJsonStr(result.getData());
@@ -48,13 +50,15 @@ public class RequestMapData implements Operation {
                 resultByLevelKey = JSONUtil.parseObj(resultByLevelKey).getStr(key);
                 if (CharSequenceUtil.isBlank(resultByLevelKey) || resultByLevelKey.startsWith("[]")) {
                     log.info("end and return empty----------------success post url:{},param:{}", operationArgs.getUrl(),
-                            JSONUtil.toJsonStr(operationArgs.getParams()));
+                            Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
+                                    CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
                     return Result.success();
                 }
             }
         }
         log.info("end----------------success,post url:{},param:{}", operationArgs.getUrl(),
-                JSONUtil.toJsonStr(operationArgs.getParams()));
+                Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
+                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
         if (resultByLevelKey.startsWith("[")) {
             //集合
             mapResult.put(RETURN_TYPE_LIST, JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey), ThreadLocal.class));

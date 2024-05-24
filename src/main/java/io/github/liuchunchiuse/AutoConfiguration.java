@@ -22,7 +22,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * @author Liu Chunchi
  * @version 1.0
  */
-@ComponentScan({"com.lcc.tool"})
+@ComponentScan({"io.github.liuchunchiuse"})
 @EnableAspectJAutoProxy
 public class AutoConfiguration {
 

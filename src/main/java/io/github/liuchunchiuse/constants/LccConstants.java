@@ -1,5 +1,14 @@
 package io.github.liuchunchiuse.constants;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/**
+ * 常量类
+ *
+ * @author Liu Chunchi
+ * @date 2024/11/28 14:23
+ */
 public final class LccConstants {
 
 
@@ -13,18 +22,18 @@ public final class LccConstants {
      */
     public static final Integer FAIL = 1;
 
+    @Getter
+    @AllArgsConstructor
     public enum SuccessEnum {
+        /**
+         * 0成功码
+         */
         SUCCESS_ZERO(0),
+        /**
+         * 200成功码
+         */
         SUCCESS_2_HUNDRED(200);
         private final int code;
-
-        SuccessEnum(int code) {
-            this.code = code;
-        }
-
-        public int getCode() {
-            return code;
-        }
     }
 
 

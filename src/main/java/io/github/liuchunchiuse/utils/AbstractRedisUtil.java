@@ -14,7 +14,6 @@ import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.TimeoutUtils;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -24,13 +23,12 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * reidis操作类
+ * reidis抽象基础操作类
  *
  * @author Liu Chunchi
  * @version 1.0
  */
-@Component
-public class RedisUtil extends AbstractRedisUtil {
+public abstract class AbstractRedisUtil {
 
     @Resource(name = "redisTemplateByJacksonSerializer")
     private RedisTemplate<String, Object> redisTemplate;
@@ -43,13 +41,11 @@ public class RedisUtil extends AbstractRedisUtil {
 
     private static final String NOT_FIND_RESOURCE = "未查询出资源~~";
 
-
     /**
      * 根据前缀移除
      * @param pre 前缀
      * @param count 每次扫描数量
      */
-    @Override
     public void removeByPre(String pre, Integer... count) {
         Cursor<String> scan = redisTemplate.scan(ScanOptions.scanOptions()
                 .count(ArrayUtil.isEmpty(count) ? 1000 : count[0])
@@ -197,7 +193,8 @@ public class RedisUtil extends AbstractRedisUtil {
      * @param <R> 返回的类型
      */
     @SneakyThrows
-    public <R> R executeForValue(String key, Class<R> beanClass, long timeout, TimeUnit unit, SupplierThrow<R> supplier) {
+    public <R> R executeForValue(String key, Class<R> beanClass, long timeout, TimeUnit unit,
+                                 SupplierThrow<R> supplier) {
         if (agentBloomFilter.contains(key)) {
             throw new RuntimeException(NOT_FIND_RESOURCE);
         }
@@ -230,7 +227,8 @@ public class RedisUtil extends AbstractRedisUtil {
      * @param <R> 出参
      */
     @SneakyThrows
-    public <T, R> R executeForValue(String key, Class<R> beanClass, long timeout, TimeUnit unit, T t, FunctionThrow<T, R> function) {
+    public <T, R> R executeForValue(String key, Class<R> beanClass, long timeout, TimeUnit unit, T t, FunctionThrow<T
+            , R> function) {
         if (agentBloomFilter.contains(key)) {
             throw new RuntimeException(NOT_FIND_RESOURCE);
         }
@@ -259,40 +257,14 @@ public class RedisUtil extends AbstractRedisUtil {
      * @param <R> 返回类型
      */
     @SneakyThrows
-    public <R> R executeForValueContainNull(String key, Class<R> beanClass, long timeout, TimeUnit unit, SupplierThrow<R> supplier) {
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
-            Object result = redisTemplate.opsForValue().get(key);
-            if (Objects.isNull(result)) {
-                return null;
-            }
-            return JSONUtil.toBean(JSONUtil.toJsonStr(redisTemplate.opsForValue().get(key)), beanClass);
-        } else {
-            R r = supplier.get();
-            redisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(r), timeout, unit);
-            return r;
-        }
-    }
-
-    /**
-     * value包含null
-     * @param key key
-     * @param typeR 返回类型
-     * @param timeout 超时时间
-     * @param unit 时间单位
-     * @param supplier 获取数据的方法
-     * @return 返回值
-     * @param <R> 返回类型
-     */
-    @SneakyThrows
-    public <R> R executeForValueContainNull(String key, TypeReference<R> typeR, long timeout,
-                                            TimeUnit unit,
+    public <R> R executeForValueContainNull(String key, Class<R> beanClass, long timeout, TimeUnit unit,
                                             SupplierThrow<R> supplier) {
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
             Object result = redisTemplate.opsForValue().get(key);
             if (Objects.isNull(result)) {
                 return null;
             }
-            return JSONUtil.toBean(JSONUtil.toJsonStr(result), typeR, false);
+            return JSONUtil.toBean(JSONUtil.toJsonStr(redisTemplate.opsForValue().get(key)), beanClass);
         } else {
             R r = supplier.get();
             redisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(r), timeout, unit);
@@ -311,7 +283,8 @@ public class RedisUtil extends AbstractRedisUtil {
      * @param <R> 返回类型
      */
     @SneakyThrows
-    public <R extends Number> R executeForNumberValue(String key, long timeout, TimeUnit unit, SupplierThrow<R> supplier) {
+    public <R extends Number> R executeForNumberValue(String key, long timeout, TimeUnit unit,
+                                                      SupplierThrow<R> supplier) {
         if (agentBloomFilter.contains(key)) {
             throw new RuntimeException(NOT_FIND_RESOURCE);
         }
@@ -420,7 +393,8 @@ public class RedisUtil extends AbstractRedisUtil {
      * @param <R> 返回类型
      */
     @SneakyThrows
-    public <R extends RedisResult> R executeForHashContainNull(String key, String hashKey, Class<R> beanClass, SupplierThrow<R> supplier) {
+    public <R extends RedisResult> R executeForHashContainNull(String key, String hashKey, Class<R> beanClass,
+                                                               SupplierThrow<R> supplier) {
         if (Boolean.TRUE.equals(redisTemplate.opsForHash().hasKey(key, hashKey))) {
             Object result = redisTemplate.opsForHash().get(key, hashKey);
             if (Objects.isNull(result)) {
@@ -447,7 +421,8 @@ public class RedisUtil extends AbstractRedisUtil {
      * @param <R> 返回类型
      */
     @SneakyThrows
-    public <R> R executeForHashContainNull(String key, String hashKey, TypeReference<R> typeR, long timeout, TimeUnit unit,
+    public <R> R executeForHashContainNull(String key, String hashKey, TypeReference<R> typeR, long timeout,
+                                           TimeUnit unit,
                                            SupplierThrow<R> supplier) {
         if (Boolean.TRUE.equals(redisTemplate.opsForHash().hasKey(key, hashKey))) {
             Object result = redisTemplate.opsForHash().get(key, hashKey);

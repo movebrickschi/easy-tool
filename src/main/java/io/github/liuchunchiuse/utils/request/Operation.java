@@ -5,7 +5,6 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Maps;
 import io.github.liuchunchiuse.constants.LccConstants;
-import io.micrometer.core.instrument.util.StringUtils;
 import lombok.Getter;
 
 import java.util.Collections;
@@ -60,28 +59,28 @@ public interface Operation {
 
     Function<OperationArgs, String> POST = param -> HttpRequest.post(param.getUrl())
             .header(CONTENT_TYPE, param.getApplication().getContent())
-            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
     Function<OperationArgs, String> POST_BODY_HEADERS = param -> HttpRequest.post(param.getUrl())
             .headerMap(param.getHeadersMap(), true)
-            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
     Function<OperationArgs, String> POST_MULTIPLE_HEADERS = param -> HttpRequest.post(param.getUrl())
             .header(param.getHeaders())
-            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
     Function<OperationArgs, String> POST_MULTIPLE_DIFFERENT_HEADERS = param -> HttpRequest.post(param.getUrl())
             .headerMap(param.getHeadersMap(), true)
-            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
@@ -113,27 +112,27 @@ public interface Operation {
 
     Function<OperationArgs, String> PUT = param -> HttpRequest.put(param.getUrl())
             .header(CONTENT_TYPE, param.getApplication().getContent())
-            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
     Function<OperationArgs, String> PUT_HEADERS = param -> HttpRequest.put(param.getUrl())
             .headerMap(param.getHeadersMap(), true)
-            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
     Function<OperationArgs, String> DELETE = param -> HttpRequest.delete(param.getUrl())
             .header(CONTENT_TYPE, param.getApplication().getContent())
-            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
     Function<OperationArgs, String> DELETE_HEADERS = param -> HttpRequest.delete(param.getUrl())
             .headerMap(param.getHeadersMap(), true)
-            .body(StringUtils.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();

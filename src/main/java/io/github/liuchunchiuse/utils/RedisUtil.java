@@ -5,6 +5,7 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
 import io.github.liuchunchiuse.constants.LuaScript;
+import jakarta.annotation.Resource;
 import lombok.*;
 import org.redisson.Redisson;
 import org.redisson.api.RBloomFilter;
@@ -16,7 +17,6 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.12</version>
+        <version>3.3.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github.liuchunchiuse</groupId>
@@ -37,11 +37,11 @@
     </scm>
 
     <properties>
-        <java.version>8</java.version>
+        <java.version>17</java.version>
         <hutool.version>5.8.25</hutool.version>
-        <guava.version>32.0.0-android</guava.version>
-        <redisson.version>3.17.3</redisson.version>
-        <transmittable.version>2.12.6</transmittable.version>
+        <guava.version>32.0.0-jre</guava.version>
+        <redisson.version>3.41.0</redisson.version>
+        <transmittable.version>2.14.5</transmittable.version>
         <commons-net.version>3.10.0</commons-net.version>
     </properties>
     <dependencies>
@@ -134,7 +134,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.3</version>
+                <version>3.10.1</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>

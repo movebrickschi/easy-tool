@@ -6,11 +6,10 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import io.github.liuchunchiuse.config.RedisConfig;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -22,23 +21,21 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * @author Liu Chunchi
  * @version 1.0
  */
-@ComponentScan({"io.github.liuchunchiuse"})
-@EnableAspectJAutoProxy
+@Configuration
 public class AutoConfiguration {
 
     @Bean
-    @ConfigurationProperties(prefix = "spring.redis")
-    @ConditionalOnProperty(name = "spring.redis.host")
+    @ConditionalOnProperty(prefix = "spring.data.redis", name = {"host"})
     public RedisConfig constructBootRedisConfig() {
-        RedisConfig redisConfig = new RedisConfig();
-        return redisConfig;
+        return new RedisConfig();
     }
 
     @Bean("redisTemplateByJacksonSerializer")
-    @ConditionalOnProperty(name = "spring.redis.host")
+    @ConditionalOnClass(RedisConfig.class)
+    @ConditionalOnProperty(prefix = "spring.data.redis", name = {"host"})
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
 
-        RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
         // 配置连接工厂
         template.setConnectionFactory(factory);
 

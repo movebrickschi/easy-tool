@@ -1,4 +1,4 @@
-package io.github.move.bricks.chi.utils;
+package io.github.move.bricks.chi.utils.transaction;
 
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;

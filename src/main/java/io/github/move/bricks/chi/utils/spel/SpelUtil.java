@@ -1,4 +1,4 @@
-package io.github.move.bricks.chi.utils;
+package io.github.move.bricks.chi.utils.spel;
 
 import cn.hutool.core.text.CharSequenceUtil;
 import lombok.extern.slf4j.Slf4j;

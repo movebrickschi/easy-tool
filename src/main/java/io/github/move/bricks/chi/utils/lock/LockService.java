@@ -1,4 +1,4 @@
-package io.github.move.bricks.chi.utils;
+package io.github.move.bricks.chi.utils.lock;
 
 import jakarta.annotation.Resource;
 import lombok.SneakyThrows;

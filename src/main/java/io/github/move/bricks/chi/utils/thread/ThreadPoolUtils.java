@@ -1,4 +1,4 @@
-package io.github.move.bricks.chi.utils;
+package io.github.move.bricks.chi.utils.thread;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;

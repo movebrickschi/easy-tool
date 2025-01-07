@@ -1,4 +1,4 @@
-package io.github.move.bricks.chi.utils;
+package io.github.move.bricks.chi.utils.mybatis;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 

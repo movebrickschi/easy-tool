@@ -1,4 +1,4 @@
-package io.github.move.bricks.chi.utils;
+package io.github.move.bricks.chi.utils.mybatis;
 
 import java.lang.reflect.Field;
 import java.util.regex.Matcher;

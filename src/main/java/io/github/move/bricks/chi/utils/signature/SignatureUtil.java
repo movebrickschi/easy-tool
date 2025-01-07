@@ -1,4 +1,4 @@
-package io.github.move.bricks.chi.utils;
+package io.github.move.bricks.chi.utils.signature;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

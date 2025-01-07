@@ -1,4 +1,4 @@
-package io.github.move.bricks.chi.utils;
+package io.github.move.bricks.chi.utils.domain;
 
 import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Lists;

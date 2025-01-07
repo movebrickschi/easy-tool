@@ -1,4 +1,4 @@
-package io.github.move.bricks.chi.utils;
+package io.github.move.bricks.chi.utils.redis;
 
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.ArrayUtil;

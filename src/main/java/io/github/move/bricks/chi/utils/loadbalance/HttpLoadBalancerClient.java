@@ -16,13 +16,13 @@ public class HttpLoadBalancerClient implements HttpLoadBalancer {
     public static final String PREFIX = "http://";
 
     private static synchronized String loadBalance(String... domains) {
-        WeightRandomLoadBalancer.addressMap.clear();
+        WeightRandomLoadBalancer.ADDRESS_MAP.clear();
         if (domains.length == 1) {
             return PREFIX + (domains[0].contains("/") ? domains[0].split("/")[0] : domains[0]);
         }
         for (String domain : domains) {
             String[] split = domain.split("/");
-            WeightRandomLoadBalancer.addressMap.put(split[0], Integer.valueOf(split[1]));
+            WeightRandomLoadBalancer.ADDRESS_MAP.put(split[0], Integer.valueOf(split[1]));
         }
         return PREFIX + WeightRandomLoadBalancer.weightRandom();
     }

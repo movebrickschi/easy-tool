@@ -20,22 +20,22 @@ import java.util.Objects;
 public class RequestMapData implements Operation {
 
     @Override
-    public <T> Result<Map<String, Object>> toMap(Result<Object> result, OperationArgs operationArgs, Class<T> tClass, List<String> siblingKes,
-                                                 String... keys) {
-        if (result.getCode().intValue() == LccConstants.FAIL.intValue()) {
-            return Result.failed(result.getMessage());
+    public <T> CResult<Map<String, Object>> toMap(CResult<Object> CResult, OperationArgs operationArgs, Class<T> tClass, List<String> siblingKes,
+                                                  String... keys) {
+        if (CResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
+            return CResult.failed(CResult.getMessage());
         }
         log.info("start----------------single format request:{},url:{},param:{}", operationArgs.getMethod(), operationArgs.getUrl(),
                 Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
                         CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
         //返回为空
-        if (Objects.isNull(result.getData())) {
+        if (Objects.isNull(CResult.getData())) {
             log.info("end and return empty----------------success request url:{},param:{}", operationArgs.getUrl(),
                     Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
                             CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
-            return Result.success();
+            return CResult.success();
         }
-        String resultByLevelKey = JSONUtil.toJsonStr(result.getData());
+        String resultByLevelKey = JSONUtil.toJsonStr(CResult.getData());
         Map<String, Object> mapResult = Maps.newHashMap();
 
         if (!siblingKes.isEmpty()) {
@@ -52,7 +52,7 @@ public class RequestMapData implements Operation {
                     log.info("end and return empty----------------success post url:{},param:{}", operationArgs.getUrl(),
                             Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
                                     CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
-                    return Result.success();
+                    return CResult.success();
                 }
             }
         }
@@ -62,11 +62,11 @@ public class RequestMapData implements Operation {
         if (resultByLevelKey.startsWith("[")) {
             //集合
             mapResult.put(RETURN_TYPE_LIST, JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey), ThreadLocal.class));
-            return Result.success(mapResult);
+            return CResult.success(mapResult);
         }
         //单对象
         mapResult.put(RETURN_TYPE_SINGLE, JSONUtil.toBean(resultByLevelKey, tClass));
-        return Result.success(mapResult);
+        return CResult.success(mapResult);
 
     }
 }

@@ -2,6 +2,8 @@ package io.github.move.bricks.chi.utils.loadbalance;
 
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+
 /**
  * 描述:
  *
@@ -13,7 +15,7 @@ public class HttpLoadBalancerClient implements HttpLoadBalancer {
 
     public static final String PREFIX = "http://";
 
-    private static synchronized String loadBalance(String[] domains) {
+    private static synchronized String loadBalance(String... domains) {
         WeightRandomLoadBalancer.addressMap.clear();
         if (domains.length == 1) {
             return PREFIX + (domains[0].contains("/") ? domains[0].split("/")[0] : domains[0]);
@@ -23,6 +25,11 @@ public class HttpLoadBalancerClient implements HttpLoadBalancer {
             WeightRandomLoadBalancer.addressMap.put(split[0], Integer.valueOf(split[1]));
         }
         return PREFIX + WeightRandomLoadBalancer.weightRandom();
+    }
+
+    @Override
+    public String chooseDynamic(List<String> urls) {
+        return loadBalance(urls.toArray(String[]::new));
     }
 
     @Override

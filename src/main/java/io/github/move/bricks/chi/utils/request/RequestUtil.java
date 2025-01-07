@@ -20,20 +20,20 @@ public final class RequestUtil {
         throw new IllegalStateException("Utility class");
     }
 
-    public static <T> Result<List<T>> parseArray(OperationArgs operationArgs, Class<T> tClass, String... keys) {
+    public static <T> CResult<List<T>> parseArray(OperationArgs operationArgs, Class<T> tClass, String... keys) {
         return new RequestArrayListData().toList(getResult(operationArgs), operationArgs, tClass, keys);
     }
 
-    public static <T> Result<T> parseObj(OperationArgs operationArgs, Class<T> tClass, String... keys) {
+    public static <T> CResult<T> parseObj(OperationArgs operationArgs, Class<T> tClass, String... keys) {
         return new RequestSingleData().toSingle(getResult(operationArgs), operationArgs, tClass, keys);
     }
 
-    public static Result parse(OperationArgs operationArgs) {
+    public static CResult parse(OperationArgs operationArgs) {
         return new RequestNoData().noData(getResult(operationArgs), operationArgs);
     }
 
-    public static <T> Result<Map<String, Object>> parseMap(OperationArgs operationArgs, Class<T> tClass, List<String> siblingKes,
-                                                           String... keys) {
+    public static <T> CResult<Map<String, Object>> parseMap(OperationArgs operationArgs, Class<T> tClass, List<String> siblingKes,
+                                                            String... keys) {
         return new RequestMapData().toMap(getResult(operationArgs), operationArgs, tClass, siblingKes, keys);
     }
 
@@ -42,13 +42,13 @@ public final class RequestUtil {
     }
 
 
-    private static Result<Object> getResult(OperationArgs operationArgs) {
+    private static CResult<Object> getResult(OperationArgs operationArgs) {
         String resultStr = null;
         try {
             resultStr = Operation.ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(operationArgs);
         } catch (Exception e) {
             log.error("request url:{}---------------------error:{}", operationArgs.getUrl(), e.getMessage());
-            return Result.failed(e.getMessage());
+            return CResult.failed(e.getMessage());
         }
         log.info("request:{},url:{},param:{},return resultStr:{}", operationArgs.getMethod(), operationArgs.getUrl(),
                 operationArgs.getParams().isEmpty() ? CharSequenceUtil.subPre(operationArgs.getBody(), operationArgs.getPrintLength()) :
@@ -58,24 +58,24 @@ public final class RequestUtil {
             log.info("end----------------request url:{},param:{},resultStr return null", operationArgs.getUrl(),
                     operationArgs.getParams().isEmpty() ? CharSequenceUtil.subPre(operationArgs.getBody(), operationArgs.getPrintLength()) :
                             CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()));
-            return Result.failed("request resultStr is null");
+            return CResult.failed("request resultStr is null");
         }
         JSONObject jsonObject = JSONUtil.parseObj(resultStr);
-        Result<Object> result = new Result<>();
+        CResult<Object> CResult = new CResult<>();
         //防止出现字符串"null"
-        result.setData(jsonObject.isNull(operationArgs.getReturnDataField()) ? null :
+        CResult.setData(jsonObject.isNull(operationArgs.getReturnDataField()) ? null :
                 jsonObject.get(operationArgs.getReturnDataField()));
-        result.setCode(jsonObject.getInt(operationArgs.getReturnCodeField()));
-        result.setMessage(jsonObject.getStr(operationArgs.getReturnMessageField()));
-        if (operationArgs.getReturnSuccessCode().intValue() != result.getCode().intValue()) {
+        CResult.setCode(jsonObject.getInt(operationArgs.getReturnCodeField()));
+        CResult.setMessage(jsonObject.getStr(operationArgs.getReturnMessageField()));
+        if (operationArgs.getReturnSuccessCode().intValue() != CResult.getCode().intValue()) {
             log.error("end----------------request url:{},param:{},error:{}", operationArgs.getUrl(),
                     operationArgs.getParams().isEmpty() ? CharSequenceUtil.subPre(operationArgs.getBody(), operationArgs.getPrintLength()) :
                             CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()),
-                    result.getMessage());
-            return Result.failed(result.getMessage());
+                    CResult.getMessage());
+            return CResult.failed(CResult.getMessage());
         }
-        result.setCode(operationArgs.getBizReturnSuccessCode());
-        return result;
+        CResult.setCode(operationArgs.getBizReturnSuccessCode());
+        return CResult;
     }
 
 

@@ -17,23 +17,23 @@ import java.util.Objects;
 @Slf4j
 public class RequestSingleData implements Operation {
     @Override
-    public <T> Result<T> toSingle(Result<Object> result, OperationArgs operationArgs, Class<T> tClass, String... keys) {
-//        Result result = Operation.getResult(operationArgs, tClass, null, keys);
-        if (result.getCode().intValue() == LccConstants.FAIL.intValue()) {
-            return Result.failed(result.getMessage());
+    public <T> CResult<T> toSingle(CResult<Object> CResult, OperationArgs operationArgs, Class<T> tClass, String... keys) {
+//        CResult CResult = Operation.getResult(operationArgs, tClass, null, keys);
+        if (CResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
+            return CResult.failed(CResult.getMessage());
         }
 
         log.info("start----------------single format request:{},url:{},param:{}", operationArgs.getMethod(), operationArgs.getUrl(),
                 Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
                         CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
         //返回为空
-        if (Objects.isNull(result.getData())) {
+        if (Objects.isNull(CResult.getData())) {
             log.info("end and return empty----------------success request url:{},param:{}", operationArgs.getUrl(),
                     JSONUtil.toJsonStr(operationArgs.getParams()));
-            return Result.success();
+            return CResult.success();
         }
 
-        String resultByLevelKey = JSONUtil.toJsonStr(result.getData());
+        String resultByLevelKey = JSONUtil.toJsonStr(CResult.getData());
         //keys为子集的key
         if (!Objects.isNull(keys)) {
             for (String key : keys) {
@@ -42,18 +42,18 @@ public class RequestSingleData implements Operation {
                     log.info("end and return empty----------------success post url:{},param:{}", operationArgs.getUrl(),
                             Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
                                     CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
-                    return Result.success();
+                    return CResult.success();
                 }
             }
         }
 
         //基本数据类型或者string
         if (tClass.isPrimitive() || String.class.equals(tClass) || tClass.getGenericSuperclass().equals(Number.class)) {
-            log.info("end----------------success,base type single request url:{},param:{},result:{}", operationArgs.getUrl(),
+            log.info("end----------------success,base type single request url:{},param:{},CResult:{}", operationArgs.getUrl(),
                     Boolean.TRUE.equals(operationArgs.getIsPrintResultLog()) ?
-                            CharSequenceUtil.subPre(JSONUtil.toJsonStr(result.getData()), operationArgs.getPrintLength()) : "");
-            return Result.success((T) result.getData());
+                            CharSequenceUtil.subPre(JSONUtil.toJsonStr(CResult.getData()), operationArgs.getPrintLength()) : "");
+            return CResult.success((T) CResult.getData());
         }
-        return Result.success(JSONUtil.toBean(resultByLevelKey, tClass));
+        return CResult.success(JSONUtil.toBean(resultByLevelKey, tClass));
     }
 }

@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.io.Serializable;
 
 @Builder
-public class Result<T> implements Serializable {
+public class CResult<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -25,63 +25,63 @@ public class Result<T> implements Serializable {
     private T data;
 
 
-    private static <T> Result<T> build(Integer code, String message, T data) {
-        return Result.<T>builder()
+    private static <T> CResult<T> build(Integer code, String message, T data) {
+        return CResult.<T>builder()
                 .code(code)
                 .message(message)
                 .data(data)
                 .build();
     }
 
-    private static <T> Result<T> build(Integer code, String message) {
-        return Result.<T>builder()
+    private static <T> CResult<T> build(Integer code, String message) {
+        return CResult.<T>builder()
                 .code(code)
                 .message(message)
                 .build();
     }
 
-    public static <T> Result<T> success() {
+    public static <T> CResult<T> success() {
         return build(0, "ok", null);
     }
 
-    public static <T> Result<T> success(T data) {
+    public static <T> CResult<T> success(T data) {
         return build(0, "ok", data);
     }
 
-    public static <T> Result<T> success(String message, T data) {
+    public static <T> CResult<T> success(String message, T data) {
         return build(0, message, data);
     }
 
 
-    public static <T> Result<T> failed() {
+    public static <T> CResult<T> failed() {
         return build(1, "failed", null);
     }
 
-    public static <T> Result<T> failed(String message) {
+    public static <T> CResult<T> failed(String message) {
         return build(1, message, null);
     }
 
-    public static <T> Result<T> failed(String message, T data) {
+    public static <T> CResult<T> failed(String message, T data) {
         return build(1, message, data);
     }
 
-    public static <T> Result<T> failed(Integer code, String message) {
+    public static <T> CResult<T> failed(Integer code, String message) {
         return build(code, message);
     }
 
 
-    static <T> Result<T> restResult(T data, int code, String msg) {
-        Result<T> apiResult = new Result<>();
-        apiResult.setCode(code);
-        apiResult.setData(data);
-        apiResult.setMessage(msg);
-        return apiResult;
+    static <T> CResult<T> restResult(T data, int code, String msg) {
+        CResult<T> apiCResult = new CResult<>();
+        apiCResult.setCode(code);
+        apiCResult.setData(data);
+        apiCResult.setMessage(msg);
+        return apiCResult;
     }
 
-    public Result() {
+    public CResult() {
     }
 
-    public Result(Integer code, String message, T data) {
+    public CResult(Integer code, String message, T data) {
         this.code = code;
         this.message = message;
         this.data = data;

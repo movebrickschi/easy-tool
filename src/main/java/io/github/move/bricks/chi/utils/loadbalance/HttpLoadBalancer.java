@@ -1,5 +1,7 @@
 package io.github.move.bricks.chi.utils.loadbalance;
 
+import java.util.List;
+
 /**
  * 负载均衡工具类
  *
@@ -14,5 +16,11 @@ public interface HttpLoadBalancer {
      * @return 返回的链接
      */
     String chooseDynamic(String urls);
+
+    /**
+     * @param urls 包含权重的链接
+     * @return 返回的链接
+     */
+    String chooseDynamic(List<String> urls);
 
 }

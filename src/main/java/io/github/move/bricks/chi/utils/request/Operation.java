@@ -162,43 +162,43 @@ public interface Operation {
 
     /**
      * 单例形式
-     * @param result 请求结果
+     * @param CResult 请求结果
      * @param operationArgs 请求方法参数
      * @param tClass 返回类型
      * @param keys 内嵌子集key
      * @return 返回类型
      * @param <T> 参数类型
      */
-    default <T> Result<T> toSingle(Result<Object> result, OperationArgs operationArgs, Class<T> tClass, String... keys) {
+    default <T> CResult<T> toSingle(CResult<Object> CResult, OperationArgs operationArgs, Class<T> tClass, String... keys) {
         return null;
     }
 
     /**
      * data为空
-     * @param result 请求结果
+     * @param CResult 请求结果
      * @param operationArgs 请求方法参数
-     * @return Result
+     * @return CResult
      */
-    default Result noData(Result<Object> result, OperationArgs operationArgs) {
-        return Result.success();
+    default CResult noData(CResult<Object> CResult, OperationArgs operationArgs) {
+        return CResult.success();
     }
 
     /**
      * 集合形式
-     * @param result 请求结果
+     * @param CResult 请求结果
      * @param operationArgs 请求方法参数
      * @param tClass 返回类型
      * @param keys 内嵌子集key
      * @return 返回类型
      * @param <T> 参数类型
      */
-    default <T> Result<List<T>> toList(Result<Object> result, OperationArgs operationArgs, Class<T> tClass, String... keys) {
-        return Result.success(Collections.emptyList());
+    default <T> CResult<List<T>> toList(CResult<Object> CResult, OperationArgs operationArgs, Class<T> tClass, String... keys) {
+        return CResult.success(Collections.emptyList());
     }
 
     /**
      * map形式
-     * @param result 请求结果
+     * @param CResult 请求结果
      * @param operationArgs 请求方法参数
      * @param tClass 返回类型
      * @param siblingKes 同级key
@@ -206,9 +206,9 @@ public interface Operation {
      * @return 返回结果
      * @param <T> 请求类型
      */
-    default <T> Result<Map<String, Object>> toMap(Result<Object> result, OperationArgs operationArgs, Class<T> tClass, List<String> siblingKes,
-                                                  String... keys) {
-        return Result.success(Collections.emptyMap());
+    default <T> CResult<Map<String, Object>> toMap(CResult<Object> CResult, OperationArgs operationArgs, Class<T> tClass, List<String> siblingKes,
+                                                   String... keys) {
+        return CResult.success(Collections.emptyMap());
     }
 
 
@@ -218,24 +218,24 @@ public interface Operation {
      * @param tClass 返回类型
      * @param siblingKes 同级key
      * @param keys 内嵌子集key
-     * @return Result
+     * @return CResult
      * @param <T> 请求类型
      */
-    static <T> Result<T> getResult(OperationArgs operationArgs, Class<T> tClass, List<String> siblingKes, String... keys) {
+    static <T> CResult<T> getResult(OperationArgs operationArgs, Class<T> tClass, List<String> siblingKes, String... keys) {
         String resultStr = null;
         try {
             resultStr = ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(operationArgs);
         } catch (Exception e) {
-            return Result.success();
+            return CResult.success();
         }
         if (CharSequenceUtil.isBlank(resultStr)) {
-            return Result.failed("request resultStr is null");
+            return CResult.failed("request resultStr is null");
         }
-        Result result = JSONUtil.toBean(resultStr, Result.class);
-        if (LccConstants.SuccessEnum.SUCCESS_2_HUNDRED.getCode() != result.getCode()) {
-            return Result.failed(result.getMessage());
+        CResult CResult = JSONUtil.toBean(resultStr, CResult.class);
+        if (LccConstants.SuccessEnum.SUCCESS_2_HUNDRED.getCode() != CResult.getCode()) {
+            return CResult.failed(CResult.getMessage());
         }
-        return result;
+        return CResult;
     }
 
 

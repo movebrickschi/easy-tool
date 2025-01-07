@@ -19,21 +19,21 @@ import java.util.Objects;
 public class RequestArrayListData implements Operation {
 
     @Override
-    public <T> Result<List<T>> toList(Result<Object> result, OperationArgs operationArgs, Class<T> tClass, String... keys) {
-        if (result.getCode().intValue() == LccConstants.FAIL.intValue()) {
-            return Result.failed(result.getMessage());
+    public <T> CResult<List<T>> toList(CResult<Object> CResult, OperationArgs operationArgs, Class<T> tClass, String... keys) {
+        if (CResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
+            return CResult.failed(CResult.getMessage());
         }
         log.info("start----------------single format request:{},url:{},param:{}", operationArgs.getMethod(), operationArgs.getUrl(),
                 Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
                         CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
         //返回为空
-        if (Objects.isNull(result.getData()) || String.valueOf(result.getData()).startsWith("[]")) {
+        if (Objects.isNull(CResult.getData()) || String.valueOf(CResult.getData()).startsWith("[]")) {
             log.info("end and return empty----------------success request url:{},param:{}", operationArgs.getUrl(),
                     Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
                             CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
-            return Result.success(Collections.emptyList());
+            return CResult.success(Collections.emptyList());
         }
-        String resultByLevelKey = JSONUtil.toJsonStr(result.getData());
+        String resultByLevelKey = JSONUtil.toJsonStr(CResult.getData());
         //keys为子集的key
         if (!Objects.isNull(keys)) {
             for (String key : keys) {
@@ -42,12 +42,12 @@ public class RequestArrayListData implements Operation {
                     log.info("end and return empty----------------success post url:{},param:{}", operationArgs.getUrl(),
                             Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
                                     CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
-                    return Result.success(Collections.emptyList());
+                    return CResult.success(Collections.emptyList());
                 }
             }
         }
 
-        return Result.success(JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey), tClass));
+        return CResult.success(JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey), tClass));
     }
 
 }

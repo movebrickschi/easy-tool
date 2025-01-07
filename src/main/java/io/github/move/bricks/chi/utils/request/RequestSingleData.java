@@ -6,6 +6,8 @@ import cn.hutool.json.JSONUtil;
 import io.github.move.bricks.chi.constants.LccConstants;
 import lombok.extern.slf4j.Slf4j;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Objects;
 
 /**
@@ -48,11 +50,49 @@ public class RequestSingleData implements Operation {
         }
 
         //基本数据类型或者string
-        if (tClass.isPrimitive() || String.class.equals(tClass) || tClass.getGenericSuperclass().equals(Number.class)) {
+        if (tClass.isPrimitive() || String.class.equals(tClass) || Number.class.isAssignableFrom(tClass)) {
             log.info("end----------------success,base type single request url:{},param:{},CResult:{}", operationArgs.getUrl(),
                     Boolean.TRUE.equals(operationArgs.getIsPrintResultLog()) ?
                             CharSequenceUtil.subPre(JSONUtil.toJsonStr(CResult.getData()), operationArgs.getPrintLength()) : "");
-            return CResult.success((T) CResult.getData());
+
+            if (String.class.equals(tClass)) {
+                // If tClass is String, directly return the data as String
+                return CResult.success((T) CResult.getData().toString());
+            }
+
+            if (Number.class.isAssignableFrom(tClass)) {
+                // Convert CResult.getData() to the appropriate Number type
+                Object data = CResult.getData();
+                Number number;
+                if (data instanceof Number) {
+                    number = (Number) data;
+                } else if (data instanceof String) {
+                    // Try to parse the String to a Number
+                    try {
+                        number = NumberFormat.getInstance().parse((String) data);
+                    } catch (ParseException e) {
+                        log.error("Failed to parse String to Number: {}", data, e);
+                        return CResult.failed("Failed to parse String to Number");
+                    }
+                } else {
+                    log.error("Unsupported data type: {}", data.getClass().getName());
+                    return CResult.failed("Unsupported data type");
+                }
+
+                if (tClass.equals(Integer.class)) {
+                    return CResult.success(tClass.cast(number.intValue()));
+                } else if (tClass.equals(Double.class)) {
+                    return CResult.success(tClass.cast(number.doubleValue()));
+                } else if (tClass.equals(Long.class)) {
+                    return CResult.success(tClass.cast(number.longValue()));
+                } else if (tClass.equals(Float.class)) {
+                    return CResult.success(tClass.cast(number.floatValue()));
+                } else if (tClass.equals(Short.class)) {
+                    return CResult.success(tClass.cast(number.shortValue()));
+                } else if (tClass.equals(Byte.class)) {
+                    return CResult.success(tClass.cast(number.byteValue()));
+                }
+            }
         }
         return CResult.success(JSONUtil.toBean(resultByLevelKey, tClass));
     }

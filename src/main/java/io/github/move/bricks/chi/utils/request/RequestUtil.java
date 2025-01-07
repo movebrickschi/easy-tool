@@ -63,8 +63,8 @@ public final class RequestUtil {
         JSONObject jsonObject = JSONUtil.parseObj(resultStr);
         Result<Object> result = new Result<>();
         //防止出现字符串"null"
-        result.setData(jsonObject.isNull(operationArgs.getReturnDateField()) ? null :
-                jsonObject.get(operationArgs.getReturnDateField()));
+        result.setData(jsonObject.isNull(operationArgs.getReturnDataField()) ? null :
+                jsonObject.get(operationArgs.getReturnDataField()));
         result.setCode(jsonObject.getInt(operationArgs.getReturnCodeField()));
         result.setMessage(jsonObject.getStr(operationArgs.getReturnMessageField()));
         if (operationArgs.getReturnSuccessCode().intValue() != result.getCode().intValue()) {

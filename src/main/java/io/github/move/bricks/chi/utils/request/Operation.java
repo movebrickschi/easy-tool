@@ -161,53 +161,68 @@ public interface Operation {
     };
 
     /**
-     * 单例形式
-     * @param CResult 请求结果
+     * 单例形式,返回对应数据类型
+     * @param cResult 请求结果
      * @param operationArgs 请求方法参数
      * @param tClass 返回类型
-     * @param keys 内嵌子集key
+     * @param key data里面的一个key(取出data中的一个字段转换成对应的类型)
+     * @param keys 内嵌子集key,由外向内的嵌套key
      * @return 返回类型
      * @param <T> 参数类型
      */
-    default <T> CResult<T> toSingle(CResult<Object> CResult, OperationArgs operationArgs, Class<T> tClass, String... keys) {
+    default <T> CResult<T> toSingle(CResult<Object> cResult, OperationArgs operationArgs, Class<T> tClass, String key,
+                                    String... keys) {
         return null;
     }
 
     /**
-     * data为空
-     * @param CResult 请求结果
+     * data为空的场景
+     * @param cResult 请求结果
      * @param operationArgs 请求方法参数
      * @return CResult
      */
-    default CResult noData(CResult<Object> CResult, OperationArgs operationArgs) {
+    default CResult noData(CResult<Object> cResult, OperationArgs operationArgs) {
         return CResult.success();
     }
 
     /**
-     * 集合形式
-     * @param CResult 请求结果
+     * 将data转换成list的场景
+     * @param cResult 请求结果
      * @param operationArgs 请求方法参数
      * @param tClass 返回类型
-     * @param keys 内嵌子集key
+     * @param keys 内嵌子集key,由外向内的嵌套key
      * @return 返回类型
      * @param <T> 参数类型
      */
-    default <T> CResult<List<T>> toList(CResult<Object> CResult, OperationArgs operationArgs, Class<T> tClass, String... keys) {
+    default <T> CResult<List<T>> toList(CResult<Object> cResult, OperationArgs operationArgs, Class<T> tClass,
+                                        String... keys) {
         return CResult.success(Collections.emptyList());
     }
 
     /**
-     * map形式
-     * @param CResult 请求结果
+     * 转换为map形式
+     * @param cResult 请求结果
      * @param operationArgs 请求方法参数
      * @param tClass 返回类型
      * @param siblingKes 同级key
-     * @param keys 内嵌子集key
+     * @param keys 内嵌子集key,由外向内的嵌套key
      * @return 返回结果
      * @param <T> 请求类型
      */
-    default <T> CResult<Map<String, Object>> toMap(CResult<Object> CResult, OperationArgs operationArgs, Class<T> tClass, List<String> siblingKes,
+    default <T> CResult<Map<String, Object>> toMap(CResult<Object> cResult, OperationArgs operationArgs,
+                                                   Class<T> tClass, List<String> siblingKes,
                                                    String... keys) {
+        return CResult.success(Collections.emptyMap());
+    }
+
+    /**
+     * 获取Data下面的数据，如果穿keys则取对应的key和value存入map，否则取全部data放入map
+     * @param cResult 请求结果
+     * @param operationArgs 请求方法参数
+     * @param keys data下对应key的字段，例如：data下有a,b,c三个key，则keys为["a","b","c"]
+     * @return 返回结果
+     */
+    default CResult<Map<String, Object>> toMap(CResult<Object> cResult, OperationArgs operationArgs, String... keys) {
         return CResult.success(Collections.emptyMap());
     }
 
@@ -217,7 +232,7 @@ public interface Operation {
      * @param operationArgs 请求方法参数
      * @param tClass 返回类型
      * @param siblingKes 同级key
-     * @param keys 内嵌子集key
+     * @param keys 内嵌子集key,由外向内的嵌套key
      * @return CResult
      * @param <T> 请求类型
      */
@@ -231,11 +246,11 @@ public interface Operation {
         if (CharSequenceUtil.isBlank(resultStr)) {
             return CResult.failed("request resultStr is null");
         }
-        CResult CResult = JSONUtil.toBean(resultStr, CResult.class);
-        if (LccConstants.SuccessEnum.SUCCESS_2_HUNDRED.getCode() != CResult.getCode()) {
-            return CResult.failed(CResult.getMessage());
+        CResult cResult = JSONUtil.toBean(resultStr, CResult.class);
+        if (LccConstants.SuccessEnum.SUCCESS_2_HUNDRED.getCode() != cResult.getCode()) {
+            return CResult.failed(cResult.getMessage());
         }
-        return CResult;
+        return cResult;
     }
 
 

@@ -1,16 +1,17 @@
 package io.github.move.bricks.chi.utils.request;
 
 
+import io.github.move.bricks.chi.constants.LccConstants;
 import lombok.Builder;
 
 import java.io.Serializable;
 
+
 @Builder
 public class CResult<T> implements Serializable {
     private static final long serialVersionUID = 1L;
-
     /**
-     * 返回code码，成功--0 ， 失败--1
+     * 返回code码，成功--LccConstants.SUCCESS ， 失败--LccConstants.FAIL
      */
     private Integer code;
 
@@ -41,28 +42,28 @@ public class CResult<T> implements Serializable {
     }
 
     public static <T> CResult<T> success() {
-        return build(0, "ok", null);
+        return build(LccConstants.SUCCESS, "ok", null);
     }
 
     public static <T> CResult<T> success(T data) {
-        return build(0, "ok", data);
+        return build(LccConstants.SUCCESS, "ok", data);
     }
 
     public static <T> CResult<T> success(String message, T data) {
-        return build(0, message, data);
+        return build(LccConstants.SUCCESS, message, data);
     }
 
 
     public static <T> CResult<T> failed() {
-        return build(1, "failed", null);
+        return build(LccConstants.FAIL, "failed", null);
     }
 
     public static <T> CResult<T> failed(String message) {
-        return build(1, message, null);
+        return build(LccConstants.FAIL, message, null);
     }
 
     public static <T> CResult<T> failed(String message, T data) {
-        return build(1, message, data);
+        return build(LccConstants.FAIL, message, data);
     }
 
     public static <T> CResult<T> failed(Integer code, String message) {

@@ -13,14 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RequestNoData implements Operation {
     @Override
-    public CResult noData(CResult<Object> CResult, OperationArgs operationArgs) {
-        if (CResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
-            return CResult.failed(CResult.getMessage());
+    public CResult noData(CResult<Object> cResult, OperationArgs operationArgs) {
+        if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
+            return CResult.failed(cResult.getMessage());
         }
         log.info("end----------------success,request url:{},param:{}", operationArgs.getUrl(),
                 Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
                         CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
-        return CResult;
+        return cResult;
     }
 
 

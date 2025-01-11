@@ -67,6 +67,10 @@ public abstract class AbstractRedisUtil {
      */
     public <T> T get(String key, Class<T> beanClass) {
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
+            if (String.class.equals(beanClass)) {
+                // If tClass is String, directly return the data as String
+                return (T) redisTemplate.opsForValue().get(key).toString();
+            }
             if (beanClass == byte.class || beanClass == Byte.class ||
                     beanClass == short.class || beanClass == Short.class ||
                     beanClass == int.class || beanClass == Integer.class ||

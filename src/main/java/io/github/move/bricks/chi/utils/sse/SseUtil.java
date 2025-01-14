@@ -14,7 +14,6 @@ import reactor.core.publisher.Flux;
  * @version 1.0
  */
 @Slf4j
-@Component
 public class SseUtil extends AbstractSseHandler {
 
     @Override

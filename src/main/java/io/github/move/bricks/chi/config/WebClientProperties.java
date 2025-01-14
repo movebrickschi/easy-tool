@@ -2,6 +2,7 @@ package io.github.move.bricks.chi.config;
 
 import lombok.Data;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -11,14 +12,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @version 1.0
  */
 @Data
-@ConditionalOnMissingBean(WebClientProperties.class)
-@ConfigurationProperties(prefix = WebClientProperties.PREFIX)
 public class WebClientProperties {
 
     /**
      * 配置前缀
      */
     public static final String PREFIX = "webclient";
+
+    /**
+     * 是否开启
+     */
+    private boolean enabled = false;
 
     /**
      * 基础url

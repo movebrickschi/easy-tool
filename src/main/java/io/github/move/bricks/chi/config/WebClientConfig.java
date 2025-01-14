@@ -1,14 +1,17 @@
 package io.github.move.bricks.chi.config;
 
 import io.github.move.bricks.chi.utils.loadbalance.HttpLoadBalancerClient;
+import io.github.move.bricks.chi.utils.sse.SseUtil;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -29,14 +32,24 @@ import java.time.Duration;
 @Slf4j
 @AutoConfiguration
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties({WebClientProperties.class})
 public class WebClientConfig {
 
     @Resource
     private HttpLoadBalancerClient httpLoadBalancerClient;
 
     @Bean
+    @ConditionalOnMissingBean(WebClientProperties.class)
+    @ConfigurationProperties(prefix = WebClientProperties.PREFIX)
+    @ConditionalOnProperty(prefix = WebClientProperties.PREFIX, value = "enabled", havingValue = "true",
+            matchIfMissing =
+            true)
+    public WebClientProperties webClientProperties() {
+        return new WebClientProperties();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(WebClient.class)
+    @ConditionalOnBean(WebClientProperties.class)
     public WebClient createWebClient(WebClientProperties webClientProperties) {
         // 配置HTTP连接池
         ConnectionProvider provider = ConnectionProvider.builder("custom")
@@ -77,4 +90,13 @@ public class WebClientConfig {
                 ))
                 .build();
     }
+
+
+    @Bean
+    @ConditionalOnBean(WebClient.class)
+    public SseUtil sseUtil() {
+        return new SseUtil();
+    }
+
+
 }

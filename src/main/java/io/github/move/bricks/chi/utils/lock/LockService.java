@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 /**
  * 分布式锁封装方法
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 @Component

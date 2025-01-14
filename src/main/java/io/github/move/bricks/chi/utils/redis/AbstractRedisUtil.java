@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * reidis抽象基础操作类
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 public abstract class AbstractRedisUtil {

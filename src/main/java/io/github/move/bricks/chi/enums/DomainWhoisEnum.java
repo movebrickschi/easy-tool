@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 /**
  * 域名Whois枚举类
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 public final class DomainWhoisEnum {

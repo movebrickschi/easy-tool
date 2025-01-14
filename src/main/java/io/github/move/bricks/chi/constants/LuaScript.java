@@ -3,7 +3,7 @@ package io.github.move.bricks.chi.constants;
 /**
  * redis脚本类
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 public final class LuaScript {

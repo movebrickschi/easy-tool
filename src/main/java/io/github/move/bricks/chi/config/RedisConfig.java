@@ -3,7 +3,7 @@ package io.github.move.bricks.chi.config;
 /**
  * redis配置
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 public class RedisConfig {

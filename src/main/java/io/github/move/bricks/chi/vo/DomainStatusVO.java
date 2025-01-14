@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * 域名状态vo
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 @Data

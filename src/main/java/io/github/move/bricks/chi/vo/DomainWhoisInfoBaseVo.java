@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * 域名whois信息(DomainWhoisInfo)Vo类
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 @Data

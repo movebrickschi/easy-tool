@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * 签名工具
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 public class SignatureUtil {

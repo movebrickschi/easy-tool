@@ -10,8 +10,8 @@ import java.util.Map;
 
 /**
  * 封装公用请求类
- *
- * @author Liu Chunchi
+ * 使用示例：{@link io.github.move.bricks.chi.demo.RequestUtilDemo}
+ * @author MoveBricks Chi
  * @version 1.0
  */
 @Slf4j

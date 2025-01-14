@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * 负载均衡工具类
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 public interface HttpLoadBalancer {

@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * 请求参数对象
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 @Data

@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 /***
  * 请求方法
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 public interface Operation {

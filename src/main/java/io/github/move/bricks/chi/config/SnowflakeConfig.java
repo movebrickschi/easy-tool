@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * 雪花算法初始化全局对象
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 @Configuration

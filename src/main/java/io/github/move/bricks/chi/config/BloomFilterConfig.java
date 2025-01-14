@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * 配置布隆过滤器
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 @Configuration

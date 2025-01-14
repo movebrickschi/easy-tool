@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * 请求返回单例类型
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 @Slf4j

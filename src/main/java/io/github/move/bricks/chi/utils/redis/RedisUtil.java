@@ -5,11 +5,12 @@ import org.springframework.stereotype.Component;
 /**
  * reidis操作类
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 @Component
 public class RedisUtil extends AbstractRedisUtil {
+
 
 
 }

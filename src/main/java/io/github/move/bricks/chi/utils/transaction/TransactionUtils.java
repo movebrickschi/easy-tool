@@ -10,7 +10,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 /**
  * 手动事物工具
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 

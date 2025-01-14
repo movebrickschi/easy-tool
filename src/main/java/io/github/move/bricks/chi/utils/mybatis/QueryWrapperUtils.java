@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 /**
  * 实体wrapper工具类
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 public class QueryWrapperUtils {

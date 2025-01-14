@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 多线程线程池共享变量拷贝工具类
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 @Slf4j

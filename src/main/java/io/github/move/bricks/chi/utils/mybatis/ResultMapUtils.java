@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 /**
  * 根据实体类,生成mybatis的resultMap
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 public class ResultMapUtils {
@@ -46,7 +46,7 @@ public class ResultMapUtils {
             if ("serialVersionUID".equals(property)) {
                 continue;//忽略掉这个属性
             }
-            resultMap.append("    <if test=\"");
+            resultMap.append("    <if demo=\"");
             resultMap.append(property + "!=null\">");
             resultMap.append(property2Column(property).toUpperCase());
             resultMap.append("=#{" + property + ", jdbcType=" + javaType2jdbcType(javaType.toLowerCase()) + "},</if>\n");

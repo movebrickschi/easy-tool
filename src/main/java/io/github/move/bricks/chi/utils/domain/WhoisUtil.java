@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 
 /**
  * 获取域名信息工具
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  * @version 1.0
  */
 @Slf4j

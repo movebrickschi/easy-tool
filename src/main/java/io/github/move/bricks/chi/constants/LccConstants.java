@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * 常量类
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  */
 public final class LccConstants {
 

@@ -1,6 +1,7 @@
 package io.github.move.bricks.chi.utils.transaction;
 
 import jakarta.annotation.Resource;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -15,6 +16,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  */
 
 @Component
+@ConditionalOnBean(PlatformTransactionManager.class)
 public class TransactionUtils {
 
 

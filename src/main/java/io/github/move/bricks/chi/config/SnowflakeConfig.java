@@ -2,6 +2,7 @@ package io.github.move.bricks.chi.config;
 
 import cn.hutool.core.lang.Snowflake;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,7 @@ public class SnowflakeConfig {
 
 
     @Bean
+    @ConditionalOnMissingBean(Snowflake.class)
     public Snowflake getSnowflake() {
         return new Snowflake(workerId, dataCenterId);
     }

@@ -4,8 +4,10 @@ import cn.hutool.core.lang.TypeReference;
 import com.google.common.collect.Lists;
 import io.github.move.bricks.chi.constants.LuaScript;
 import jakarta.annotation.Resource;
-import lombok.*;
-import org.redisson.Redisson;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.redisson.api.RBloomFilter;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.TimeoutUtils;
@@ -29,9 +31,6 @@ public abstract class AbstractRedisUtil {
 
     @Resource(name = "redisTemplateByJacksonSerializer")
     protected RedisTemplate<String, Object> redisTemplate;
-
-    @Resource
-    protected Redisson redisson;
 
     @Resource
     protected RBloomFilter<String> agentBloomFilter;

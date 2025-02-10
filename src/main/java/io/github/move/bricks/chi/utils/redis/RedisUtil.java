@@ -4,12 +4,9 @@ import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
 import io.github.move.bricks.chi.constants.LuaScript;
-import jakarta.annotation.Resource;
 import lombok.SneakyThrows;
 import org.springframework.data.redis.core.Cursor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -17,12 +14,11 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * reidis操作类
+ * redis操作类
  *
  * @author MoveBricks Chi
  * @version 1.0
  */
-@Component
 public class RedisUtil extends AbstractRedisUtil {
     /**
      * 根据前缀移除
@@ -112,7 +108,7 @@ public class RedisUtil extends AbstractRedisUtil {
      */
     @Override
     public Long increment(String key, Long... delta) {
-        if (delta == null) {
+        if (ArrayUtil.isEmpty(delta)) {
             delta = new Long[]{1L};
         }
         return redisTemplate.opsForValue().increment(key, delta[0]);
@@ -128,7 +124,7 @@ public class RedisUtil extends AbstractRedisUtil {
      */
     @Override
     public Long increment(String key, long timeout, TimeUnit unit, Long... delta) {
-        if (delta == null) {
+        if (ArrayUtil.isEmpty(delta)) {
             delta = new Long[]{1L};
         }
         return execute(LuaScript.INCREMENT_SET_EXPIRE, key, timeout, unit, delta[0]);

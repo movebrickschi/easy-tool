@@ -41,8 +41,7 @@ public class WebClientConfig {
     @ConditionalOnMissingBean(WebClientProperties.class)
     @ConfigurationProperties(prefix = WebClientProperties.PREFIX)
     @ConditionalOnProperty(prefix = WebClientProperties.PREFIX, value = "enabled", havingValue = "true",
-            matchIfMissing =
-            true)
+            matchIfMissing = false)
     public WebClientProperties webClientProperties() {
         return new WebClientProperties();
     }

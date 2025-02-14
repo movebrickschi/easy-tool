@@ -8,7 +8,7 @@
         <version>3.3.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>io.github.liuchunchiuse</groupId>
+    <groupId>io.github.movebrickschi</groupId>
     <artifactId>lcc-tool</artifactId>
     <packaging>jar</packaging>
     <version>2.0.18</version>
@@ -31,9 +31,9 @@
     </developers>
 
     <scm>
-        <connection>https://github.com/liuchunchiuse/lcc-tool.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:liuchunchiuse/lcc-tool.git</developerConnection>
-        <url>https://github.com/liuchunchiuse/lcc-tool</url>
+        <connection>https://github.com/movebrickschi/lcc-tool.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:movebrickschi/lcc-tool.git</developerConnection>
+        <url>https://github.com/movebrickschi/lcc-tool</url>
     </scm>
 
     <properties>

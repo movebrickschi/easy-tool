@@ -41,14 +41,14 @@ public class RequestMapData implements Operation {
         String resultByLevelKey = JSONUtil.toJsonStr(cResult.getData());
         Map<String, Object> mapResult = Maps.newHashMap();
 
+        //data下同级对应key的字段取出放入map
         if (!siblingKes.isEmpty()) {
             for (String key : siblingKes) {
-                //data下对应key的字段取出放入map
                 mapResult.put(key, JSONUtil.parseObj(resultByLevelKey).getStr(key));
             }
         }
 
-        //keys为子集的key
+        //keys为dada下嵌套子集的集合,查询最底层的一个key的内容
         if (ArrayUtil.isNotEmpty(keys)) {
             for (String key : keys) {
                 //嵌套查询对应key的字段,获取到最终结果放入resultByLevelKey,给下面类型转换使用
@@ -66,11 +66,13 @@ public class RequestMapData implements Operation {
                         CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
         if (resultByLevelKey.startsWith("[")) {
             //返回结果为list
-            mapResult.put(RETURN_TYPE_LIST, JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey), ThreadLocal.class));
+            mapResult.put(RETURN_TYPE_LIST, JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey), tClass));
             return CResult.success(mapResult);
         }
-        //返回单对象
-        mapResult.put(RETURN_TYPE_SINGLE, JSONUtil.toBean(resultByLevelKey, tClass));
+        if (JSONUtil.isTypeJSON(resultByLevelKey)) {
+            //返回单对象
+            mapResult.put(RETURN_TYPE_SINGLE, JSONUtil.toBean(resultByLevelKey, tClass));
+        }
         return CResult.success(mapResult);
     }
 

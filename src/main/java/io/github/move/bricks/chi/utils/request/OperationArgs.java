@@ -1,5 +1,6 @@
 package io.github.move.bricks.chi.utils.request;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.google.common.collect.Maps;
 import io.github.move.bricks.chi.constants.LccConstants;
 import lombok.AllArgsConstructor;
@@ -127,5 +128,23 @@ public class OperationArgs {
      * 多个header,不同的name
      */
     private Map<String, String> headersMap = Maps.newHashMap();
+
+    /**
+     * 用于反序列化返回结果，例如将case_id_list字段转换为caseIdList
+     * {@link com.fasterxml.jackson.databind.PropertyNamingStrategies}
+     */
+    private PropertyNamingStrategy propertyNamingStrategy = null;
+
+    public void setUrl(String url) {
+        if (!isValidUrl(url)) {
+            throw new IllegalArgumentException("Invalid URL format");
+        }
+        this.url = url;
+    }
+
+    private boolean isValidUrl(String url) {
+        // 使用正则表达式或其他方式验证URL格式
+        return url != null && url.matches("^(https?|ftp)://.*$");
+    }
 
 }

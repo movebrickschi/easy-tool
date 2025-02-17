@@ -4,6 +4,7 @@ import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.move.bricks.chi.utils.request.CResult;
 import io.github.move.bricks.chi.utils.request.Operation;
@@ -108,7 +109,7 @@ public abstract class AbstractGetResult implements GetResult {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(ConvertNamingStrategy.of(propertyNamingStrategy));
         //忽略不存在的字段
-        objectMapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
             return CResult.success(objectMapper.readValue(JSONUtil.toJsonStr(data),
                     objectMapper.getTypeFactory().constructCollectionType(List.class, tClass)));
@@ -124,7 +125,7 @@ public abstract class AbstractGetResult implements GetResult {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(ConvertNamingStrategy.of(propertyNamingStrategy));
         //忽略不存在的字段
-        objectMapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
             return CResult.success(objectMapper.readValue(JSONUtil.toJsonStr(data), tClass));
         } catch (JsonProcessingException e) {

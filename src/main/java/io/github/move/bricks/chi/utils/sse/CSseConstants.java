@@ -15,7 +15,7 @@ public final class CSseConstants {
     @AllArgsConstructor
     public enum SseEventType {
         /**
-         * sse事件类型开始
+         * sse 结束事件类型
          */
         FINISH("finish"),
         ;

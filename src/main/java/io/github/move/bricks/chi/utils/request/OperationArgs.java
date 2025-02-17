@@ -1,6 +1,5 @@
 package io.github.move.bricks.chi.utils.request;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.google.common.collect.Maps;
 import io.github.move.bricks.chi.constants.LccConstants;
 import lombok.AllArgsConstructor;
@@ -58,6 +57,12 @@ public class OperationArgs {
     private String body;
 
     /**
+     * 参数对象，用于自动转换为指定格式，配合writePropertyNamingStrategy使用
+     * @since 2.1.0
+     */
+    private Object param;
+
+    /**
      * 请求方式,默认为post
      */
     @Builder.Default
@@ -70,23 +75,23 @@ public class OperationArgs {
     private Operation.Application application = Operation.Application.JSON;
 
     /**
-     * 返回默认结果code字段
+     * 设置状态码默认返回的字段，默认为code
      */
     @Builder.Default
     private String returnCodeField = "code";
     /**
-     * 返回默认结果data字段
+     * 设置返回值默认返回的字段，默认为data
      */
     @Builder.Default
     private String returnDataField = "data";
     /**
-     * 返回的消息字段
+     * 设置消息默认返回的字段，默认为message
      */
     @Builder.Default
     private String returnMessageField = "message";
 
     /**
-     * 第三方返回的状态码,默认200
+     * 第三方正确返回的状态码,默认200
      */
     @Builder.Default
     private Integer returnSuccessCode = LccConstants.SuccessEnum.SUCCESS_2_HUNDRED.getCode();
@@ -130,10 +135,18 @@ public class OperationArgs {
     private Map<String, String> headersMap = Maps.newHashMap();
 
     /**
-     * 用于反序列化返回结果，例如将case_id_list字段转换为caseIdList
-     * {@link com.fasterxml.jackson.databind.PropertyNamingStrategies}
+     * 用于读取数据时，例如将case_id_list字段转换为caseIdList
+     * {@link io.github.move.bricks.chi.utils.request_v2.NamingStrategyConstants}
+     * @since 2.1.0
      */
-    private PropertyNamingStrategy propertyNamingStrategy = null;
+    private String readPropertyNamingStrategy = null;
+
+    /**
+     * 用于传入参数对象，例如将字段caseIdList转换为case_id_list
+     * {@link io.github.move.bricks.chi.utils.request_v2.NamingStrategyConstants}
+     * @since 2.1.0
+     */
+    private String writePropertyNamingStrategy = null;
 
     public void setUrl(String url) {
         if (!isValidUrl(url)) {

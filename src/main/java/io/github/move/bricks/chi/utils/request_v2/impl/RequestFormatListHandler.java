@@ -9,6 +9,7 @@ import io.github.move.bricks.chi.constants.LccConstants;
 import io.github.move.bricks.chi.utils.request.CResult;
 import io.github.move.bricks.chi.utils.request.OperationArgs;
 import io.github.move.bricks.chi.utils.request_v2.AbstractGetResult;
+import io.github.move.bricks.chi.utils.request_v2.ConvertNamingStrategy;
 import io.github.move.bricks.chi.utils.request_v2.RequestFormatApi;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,17 +33,10 @@ public class RequestFormatListHandler extends AbstractGetResult implements Seria
         if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
             return CResult.failed(cResult.getMessage());
         }
-        log.info("start----------------single format request:{},url:{},param:{}", operationArgs.getMethod(),
-                operationArgs.getUrl(),
-                Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
-                                operationArgs.getPrintLength()) : "");
+        logRequest(operationArgs, this.getClass().getName());
         //返回为空
         if (Objects.isNull(cResult.getData()) || String.valueOf(cResult.getData()).startsWith("[]")) {
-            log.info("end and return empty----------------success request url:{},param:{}", operationArgs.getUrl(),
-                    Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                            CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
-                                    operationArgs.getPrintLength()) : "");
+            logEmptyResponse(operationArgs);
             return CResult.success(Collections.emptyList());
         }
         String resultByLevelKey = JSONUtil.toJsonStr(cResult.getData());
@@ -51,25 +45,23 @@ public class RequestFormatListHandler extends AbstractGetResult implements Seria
             for (String key : keys) {
                 resultByLevelKey = JSONUtil.parseObj(resultByLevelKey).getStr(key);
                 if (CharSequenceUtil.isBlank(resultByLevelKey) || resultByLevelKey.startsWith("[]")) {
-                    log.info("end and return empty----------------success post url:{},param:{}", operationArgs.getUrl(),
-                            Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                                    CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
-                                            operationArgs.getPrintLength()) : "");
+                    logEmptyResponse(operationArgs);
                     return CResult.success(Collections.emptyList());
                 }
             }
         }
         //如果需要字段转换
-        if (Objects.nonNull(operationArgs.getPropertyNamingStrategy())) {
+        if (CharSequenceUtil.isNotBlank(operationArgs.getReadPropertyNamingStrategy())) {
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setPropertyNamingStrategy(operationArgs.getPropertyNamingStrategy());
+            objectMapper.setPropertyNamingStrategy(ConvertNamingStrategy.of(operationArgs.getReadPropertyNamingStrategy()));
             try {
                 CResult.success(objectMapper.readValue(JSONUtil.toJsonStr(resultByLevelKey),
                         objectMapper.getTypeFactory().constructCollectionType(List.class, tClass)));
             } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                throw new IllegalArgumentException("result is " + JSONUtil.toJsonStr(resultByLevelKey));
             }
         }
         return CResult.success(JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey), tClass));
     }
+
 }

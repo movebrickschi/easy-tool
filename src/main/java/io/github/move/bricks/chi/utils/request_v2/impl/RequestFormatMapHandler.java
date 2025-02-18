@@ -111,6 +111,8 @@ public class RequestFormatMapHandler extends AbstractGetResult implements Serial
                 } else {
                     mapResult.put(key, siblingValue);
                 }
+            } else {
+                mapResult.put(key, siblingValue);
             }
         }
         return mapResult;

@@ -4,6 +4,7 @@ import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.move.bricks.chi.constants.LccConstants;
 import io.github.move.bricks.chi.utils.request.CResult;
@@ -53,6 +54,8 @@ public class RequestFormatListHandler extends AbstractGetResult implements Seria
         //如果需要字段转换
         if (CharSequenceUtil.isNotBlank(operationArgs.getReadPropertyNamingStrategy())) {
             ObjectMapper objectMapper = new ObjectMapper();
+            //忽略不存在的字段
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             objectMapper.setPropertyNamingStrategy(ConvertNamingStrategy.of(operationArgs.getReadPropertyNamingStrategy()));
             try {
                 CResult.success(objectMapper.readValue(JSONUtil.toJsonStr(resultByLevelKey),

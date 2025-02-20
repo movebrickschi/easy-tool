@@ -1,11 +1,16 @@
 package io.github.move.bricks.chi.utils.request_v2;
 
 import cn.hutool.core.text.CharSequenceUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import io.github.move.bricks.chi.utils.request.CResult;
 import io.github.move.bricks.chi.utils.request.Operation;
 import io.github.move.bricks.chi.utils.request.OperationArgs;
@@ -29,8 +34,13 @@ public abstract class AbstractGetResult implements GetResult {
     public CResult<Object> getResult(OperationArgs operationArgs) {
         String resultStr = null;
         if (Objects.nonNull(operationArgs.getParam()) && CharSequenceUtil.isNotBlank(operationArgs.getWritePropertyNamingStrategy())) {
-            operationArgs.setBody(writeWithNamingStrategy(operationArgs.getParam(),
-                    operationArgs.getReadPropertyNamingStrategy()));
+            if (ArrayUtil.isNotEmpty(operationArgs.getIgnoreFields())) {
+                operationArgs.setBody(writeWithNamingStrategy(operationArgs.getParam(),
+                        operationArgs.getReadPropertyNamingStrategy(), operationArgs.getIgnoreFields()));
+            } else {
+                operationArgs.setBody(writeWithNamingStrategy(operationArgs.getParam(),
+                        operationArgs.getReadPropertyNamingStrategy()));
+            }
         }
         try {
             resultStr = Operation.ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(operationArgs);
@@ -38,18 +48,19 @@ public abstract class AbstractGetResult implements GetResult {
             log.error("request url:{}---------------------error:{}", operationArgs.getUrl(), e.getMessage());
             return CResult.failed(e.getMessage());
         }
-        log.info("request:{},url:{},param:{},return resultStr:{}", operationArgs.getMethod(), operationArgs.getUrl(),
-                operationArgs.getParams().isEmpty() ? CharSequenceUtil.subPre(operationArgs.getBody(),
+        log.info("==>request:{}\n==>url:{}\n==>param:{}\n==>return:{}", operationArgs.getMethod(),
+                operationArgs.getUrl(),
+                operationArgs.getParams().isEmpty() ? LogFormatUtil.subPre(operationArgs.getBody(),
                         operationArgs.getPrintLength()) :
-                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
+                        LogFormatUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
                                 operationArgs.getPrintLength()),
-                Boolean.TRUE.equals(operationArgs.getIsPrintResultLog()) ? CharSequenceUtil.subPre(resultStr,
-                        operationArgs.getPrintLength()) : "未设置打印");
+                LogFormatUtil.printSubPre(operationArgs.getIsPrintResultLog(), resultStr,
+                        operationArgs.getPrintLength()));
         if (CharSequenceUtil.isBlank(resultStr)) {
-            log.info("end----------------request url:{},param:{},resultStr return null", operationArgs.getUrl(),
-                    operationArgs.getParams().isEmpty() ? CharSequenceUtil.subPre(operationArgs.getBody(),
+            log.info("end----------------request \n==>url:{}\n==>param:{}\n==>return null", operationArgs.getUrl(),
+                    operationArgs.getParams().isEmpty() ? LogFormatUtil.subPre(operationArgs.getBody(),
                             operationArgs.getPrintLength()) :
-                            CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
+                            LogFormatUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
                                     operationArgs.getPrintLength()));
             return CResult.failed("request resultStr is null");
         }
@@ -61,10 +72,10 @@ public abstract class AbstractGetResult implements GetResult {
         CResult.setCode(jsonObject.getInt(operationArgs.getReturnCodeField()));
         CResult.setMessage(jsonObject.getStr(operationArgs.getReturnMessageField()));
         if (operationArgs.getReturnSuccessCode().intValue() != CResult.getCode().intValue()) {
-            log.error("end----------------request url:{},param:{},error:{}", operationArgs.getUrl(),
-                    operationArgs.getParams().isEmpty() ? CharSequenceUtil.subPre(operationArgs.getBody(),
+            log.error("end----------------request \n==>url:{}\n==>param:{}\n==>error:{}", operationArgs.getUrl(),
+                    operationArgs.getParams().isEmpty() ? LogFormatUtil.subPre(operationArgs.getBody(),
                             operationArgs.getPrintLength()) :
-                            CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
+                            LogFormatUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
                                     operationArgs.getPrintLength()),
                     CResult.getMessage());
             return CResult.failed(CResult.getMessage());
@@ -75,10 +86,11 @@ public abstract class AbstractGetResult implements GetResult {
 
 
     public void logRequest(OperationArgs operationArgs, String className) {
-        log.info("start----------------{} format request:{},url:{},param:{}", className, operationArgs.getMethod(),
+        log.info("start----------------{} format\n==>request:{}\n==>url:{}\n==>param:{}", className,
+                operationArgs.getMethod(),
                 operationArgs.getUrl(),
                 Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
+                        LogFormatUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
                                 operationArgs.getPrintLength()) : "");
     }
 
@@ -87,9 +99,9 @@ public abstract class AbstractGetResult implements GetResult {
     }
 
     public void logEmptyResponse(OperationArgs operationArgs) {
-        log.info("end and return empty----------------success request url:{},param:{}", operationArgs.getUrl(),
+        log.info("end and return empty----------------success\n==>request url:{}\n==>param:{}", operationArgs.getUrl(),
                 Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
+                        LogFormatUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
                                 operationArgs.getPrintLength()) : "");
     }
 
@@ -130,6 +142,26 @@ public abstract class AbstractGetResult implements GetResult {
             return CResult.success(objectMapper.readValue(JSONUtil.toJsonStr(data), tClass));
         } catch (JsonProcessingException e) {
             log.error("读取数据时转换异常", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public String writeWithNamingStrategy(Object data, String propertyNamingStrategy, String... ignoreFields) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setPropertyNamingStrategy(ConvertNamingStrategy.of(propertyNamingStrategy));
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept(ignoreFields);
+        JsonFilter jsonFilterAnnotation = data.getClass().getAnnotation(JsonFilter.class);
+        if (Objects.isNull(jsonFilterAnnotation) || CharSequenceUtil.isBlank(jsonFilterAnnotation.value())) {
+            throw new IllegalArgumentException("请使用@JsonFilter注解标注需要过滤的字段");
+        }
+        String filterName = jsonFilterAnnotation.value();
+        log.info("filterName:{}", filterName);
+        FilterProvider filters = new SimpleFilterProvider().addFilter(filterName, filter);
+        try {
+            return objectMapper.writer(filters).writeValueAsString(data);
+        } catch (JsonProcessingException e) {
+            log.error("参数转换异常", e);
             throw new RuntimeException(e);
         }
     }

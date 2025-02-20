@@ -12,6 +12,7 @@ import io.github.move.bricks.chi.utils.request.Operation;
 import io.github.move.bricks.chi.utils.request.OperationArgs;
 import io.github.move.bricks.chi.utils.request_v2.AbstractGetResult;
 import io.github.move.bricks.chi.utils.request_v2.ConvertNamingStrategy;
+import io.github.move.bricks.chi.utils.request_v2.LogFormatUtil;
 import io.github.move.bricks.chi.utils.request_v2.RequestFormatApi;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,7 +39,7 @@ public class RequestFormatMapHandler extends AbstractGetResult implements Serial
         if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
             return CResult.failed(cResult.getMessage());
         }
-        logRequest(operationArgs, this.getClass().getName());
+        logRequest(operationArgs, this.getClass().getSimpleName());
         //返回为空
         if (Objects.isNull(cResult.getData())) {
             logEmptyResponse(operationArgs);
@@ -68,7 +69,7 @@ public class RequestFormatMapHandler extends AbstractGetResult implements Serial
         }
         log.info("end----------------success,post url:{},param:{}", operationArgs.getUrl(),
                 Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
+                        LogFormatUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
                                 operationArgs.getPrintLength()) : "");
         //不是json,直接返回
         if (!JSONUtil.isTypeJSON(resultByLevelKey)) {

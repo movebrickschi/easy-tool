@@ -119,9 +119,10 @@ public class OperationArgs {
     /**
      * 是否打印返回日志
      * 增加此字段因为如果返回内容过多导致日志文件过大,比如Embedding
+     * 默认全部打印
      */
     @Builder.Default
-    private int printLength = 500;
+    private int printLength = -1;
 
 
     /**
@@ -147,6 +148,13 @@ public class OperationArgs {
      * @since 2.1.0
      */
     private String writePropertyNamingStrategy = null;
+
+    /**
+     * 忽略字段，将指定字段排移除
+     * 使用此功能，必须在对应实体类上使用@{@link com.fasterxml.jackson.annotation.JsonFilter}
+     * @since 2.1.3
+     */
+    private String[] ignoreFields = null;
 
     public void setUrl(String url) {
         if (!isValidUrl(url)) {

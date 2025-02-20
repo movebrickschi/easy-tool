@@ -7,6 +7,7 @@ import io.github.move.bricks.chi.constants.LccConstants;
 import io.github.move.bricks.chi.utils.request.CResult;
 import io.github.move.bricks.chi.utils.request.OperationArgs;
 import io.github.move.bricks.chi.utils.request_v2.AbstractGetResult;
+import io.github.move.bricks.chi.utils.request_v2.LogFormatUtil;
 import io.github.move.bricks.chi.utils.request_v2.RequestFormatApi;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,7 +30,7 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
         if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
             return CResult.failed(cResult.getMessage());
         }
-        logRequest(operationArgs, this.getClass().getName());
+        logRequest(operationArgs, this.getClass().getSimpleName());
         //返回为空
         if (Objects.isNull(cResult.getData())) {
             logEmptyResponse(operationArgs);
@@ -59,7 +60,7 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
             log.info("end----------------success,base type single request url:{},param:{},CResult:{}",
                     operationArgs.getUrl(),
                     Boolean.TRUE.equals(operationArgs.getIsPrintResultLog()) ?
-                            CharSequenceUtil.subPre(JSONUtil.toJsonStr(cResult.getData()),
+                            LogFormatUtil.subPre(JSONUtil.toJsonStr(cResult.getData()),
                                     operationArgs.getPrintLength()) : "");
 
             if (String.class.equals(tClass)) {

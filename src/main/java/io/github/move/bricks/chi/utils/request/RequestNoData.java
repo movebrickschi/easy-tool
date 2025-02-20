@@ -3,6 +3,7 @@ package io.github.move.bricks.chi.utils.request;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.json.JSONUtil;
 import io.github.move.bricks.chi.constants.LccConstants;
+import io.github.move.bricks.chi.utils.request_v2.LogFormatUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -18,8 +19,8 @@ public class RequestNoData implements Operation {
             return CResult.failed(cResult.getMessage());
         }
         log.info("end----------------success,request url:{},param:{}", operationArgs.getUrl(),
-                Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
+                LogFormatUtil.printSubPre(operationArgs.getIsPrintArgsLog(), operationArgs.getParams(),
+                        operationArgs.getPrintLength()));
         return cResult;
     }
 

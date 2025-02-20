@@ -5,6 +5,7 @@ import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
 import io.github.move.bricks.chi.constants.LccConstants;
+import io.github.move.bricks.chi.utils.request_v2.LogFormatUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.NumberFormat;
@@ -27,12 +28,13 @@ public class RequestSingleData implements Operation {
         }
 
         log.info("start----------------single format request:{},url:{},param:{}", operationArgs.getMethod(), operationArgs.getUrl(),
-                Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
+                LogFormatUtil.printSubPre(operationArgs.getIsPrintArgsLog(), operationArgs.getParams(),
+                        operationArgs.getPrintLength()));
         //返回为空
         if (Objects.isNull(cResult.getData())) {
             log.info("end and return empty----------------success request url:{},param:{}", operationArgs.getUrl(),
-                    JSONUtil.toJsonStr(operationArgs.getParams()));
+                    LogFormatUtil.printSubPre(operationArgs.getIsPrintArgsLog(), operationArgs.getParams(),
+                            operationArgs.getPrintLength()));
             return CResult.success();
         }
 
@@ -48,8 +50,8 @@ public class RequestSingleData implements Operation {
                 data = JSONUtil.parseObj(cResult.getData()).get(it);
                 if (Objects.isNull(data) || data.toString().startsWith("[]")) {
                     log.info("end and return empty----------------success post url:{},param:{}", operationArgs.getUrl(),
-                            Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                                    CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
+                            LogFormatUtil.printSubPre(operationArgs.getIsPrintArgsLog(), operationArgs.getParams(),
+                                    operationArgs.getPrintLength()));
                     return CResult.success();
                 }
             }
@@ -59,9 +61,11 @@ public class RequestSingleData implements Operation {
         //基本数据类型或者string
         if (tClass.isPrimitive() || String.class.equals(tClass) || Number.class.isAssignableFrom(tClass)) {
             log.info("end----------------success,base type single request url:{},param:{},CResult:{}", operationArgs.getUrl(),
-                    Boolean.TRUE.equals(operationArgs.getIsPrintResultLog()) ?
-                            CharSequenceUtil.subPre(JSONUtil.toJsonStr(cResult.getData()),
-                                    operationArgs.getPrintLength()) : "");
+                    LogFormatUtil.printSubPre(operationArgs.getIsPrintArgsLog(), operationArgs.getParams(),
+                            operationArgs.getPrintLength()),
+                    LogFormatUtil.printSubPre(operationArgs.getIsPrintArgsLog(), cResult.getData(),
+                            operationArgs.getPrintLength())
+            );
 
             if (String.class.equals(tClass)) {
                 // If tClass is String, directly return the data as String

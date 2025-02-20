@@ -13,6 +13,7 @@ import java.util.Map;
  * 使用示例：{@link io.github.move.bricks.chi.demo.RequestUtilDemo}
  * @author MoveBricks Chi
  * @version 1.0
+ * @deprecated V1版本，请使用V2版本
  */
 @Slf4j
 public final class RequestUtilV1 {

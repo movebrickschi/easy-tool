@@ -5,6 +5,7 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Maps;
 import io.github.move.bricks.chi.constants.LccConstants;
+import io.github.move.bricks.chi.utils.request_v2.LogFormatUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -28,13 +29,13 @@ public class RequestMapData implements Operation {
             return CResult.failed(cResult.getMessage());
         }
         log.info("start----------------single format request:{},url:{},param:{}", operationArgs.getMethod(), operationArgs.getUrl(),
-                Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
+                LogFormatUtil.printSubPre(operationArgs.getIsPrintArgsLog(), operationArgs.getParams(),
+                        operationArgs.getPrintLength()));
         //返回为空
         if (Objects.isNull(cResult.getData())) {
             log.info("end and return empty----------------success request url:{},param:{}", operationArgs.getUrl(),
-                    Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                            CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
+                    LogFormatUtil.printSubPre(operationArgs.getIsPrintArgsLog(), operationArgs.getParams(),
+                            operationArgs.getPrintLength()));
             return CResult.success();
         }
         //data数据
@@ -55,15 +56,15 @@ public class RequestMapData implements Operation {
                 resultByLevelKey = JSONUtil.parseObj(resultByLevelKey).getStr(key);
                 if (CharSequenceUtil.isBlank(resultByLevelKey) || resultByLevelKey.startsWith("[]")) {
                     log.info("end and return empty----------------success post url:{},param:{}", operationArgs.getUrl(),
-                            Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                                    CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
+                            LogFormatUtil.printSubPre(operationArgs.getIsPrintArgsLog(), operationArgs.getParams(),
+                                    operationArgs.getPrintLength()));
                     return CResult.success();
                 }
             }
         }
         log.info("end----------------success,post url:{},param:{}", operationArgs.getUrl(),
-                Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()), operationArgs.getPrintLength()) : "");
+                LogFormatUtil.printSubPre(operationArgs.getIsPrintArgsLog(), operationArgs.getParams(),
+                        operationArgs.getPrintLength()));
         if (resultByLevelKey.startsWith("[")) {
             //返回结果为list
             mapResult.put(RETURN_TYPE_LIST, JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey), tClass));
@@ -83,15 +84,13 @@ public class RequestMapData implements Operation {
         }
         log.info("start----------------single format request:{},url:{},param:{}", operationArgs.getMethod(),
                 operationArgs.getUrl(),
-                Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                        CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
-                                operationArgs.getPrintLength()) : "");
+                LogFormatUtil.printSubPre(operationArgs.getIsPrintArgsLog(), operationArgs.getParams(),
+                        operationArgs.getPrintLength()));
         //返回为空
         if (Objects.isNull(cResult.getData())) {
             log.info("end and return empty----------------success request url:{},param:{}", operationArgs.getUrl(),
-                    Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                            CharSequenceUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
-                                    operationArgs.getPrintLength()) : "");
+                    LogFormatUtil.printSubPre(operationArgs.getIsPrintArgsLog(), operationArgs.getParams(),
+                            operationArgs.getPrintLength()));
             return CResult.success();
         }
         Map<String, Object> mapResult = Maps.newHashMap();

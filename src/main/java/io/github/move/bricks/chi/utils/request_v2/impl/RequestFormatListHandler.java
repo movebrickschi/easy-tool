@@ -34,7 +34,7 @@ public class RequestFormatListHandler extends AbstractGetResult implements Seria
         if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
             return CResult.failed(cResult.getMessage());
         }
-        logRequest(operationArgs, this.getClass().getName());
+        logRequest(operationArgs, this.getClass().getSimpleName());
         //返回为空
         if (Objects.isNull(cResult.getData()) || String.valueOf(cResult.getData()).startsWith("[]")) {
             logEmptyResponse(operationArgs);
@@ -58,7 +58,7 @@ public class RequestFormatListHandler extends AbstractGetResult implements Seria
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             objectMapper.setPropertyNamingStrategy(ConvertNamingStrategy.of(operationArgs.getReadPropertyNamingStrategy()));
             try {
-                CResult.success(objectMapper.readValue(JSONUtil.toJsonStr(resultByLevelKey),
+                return CResult.success(objectMapper.readValue(JSONUtil.toJsonStr(resultByLevelKey),
                         objectMapper.getTypeFactory().constructCollectionType(List.class, tClass)));
             } catch (JsonProcessingException e) {
                 throw new IllegalArgumentException("result is " + JSONUtil.toJsonStr(resultByLevelKey));

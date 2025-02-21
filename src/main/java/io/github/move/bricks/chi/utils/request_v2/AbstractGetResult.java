@@ -37,10 +37,10 @@ public abstract class AbstractGetResult implements GetResult {
         if (Objects.nonNull(operationArgs.getParam()) && CharSequenceUtil.isNotBlank(operationArgs.getWritePropertyNamingStrategy())) {
             if (ArrayUtil.isNotEmpty(operationArgs.getIgnoreFields())) {
                 operationArgs.setBody(writeWithNamingStrategy(operationArgs.getParam(),
-                        operationArgs.getReadPropertyNamingStrategy(), operationArgs.getIgnoreFields()));
+                        operationArgs.getWritePropertyNamingStrategy(), operationArgs.getIgnoreFields()));
             } else {
                 operationArgs.setBody(writeWithNamingStrategy(operationArgs.getParam(),
-                        operationArgs.getReadPropertyNamingStrategy()));
+                        operationArgs.getWritePropertyNamingStrategy()));
             }
         }
 

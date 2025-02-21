@@ -54,7 +54,7 @@ public abstract class AbstractGetResult implements GetResult {
             log.error("request url:{}---------------------error:{}", operationArgs.getUrl(), e.getMessage());
             return CResult.failed(e.getMessage());
         }
-        log.info("==>request:{}\n==>url:{}\n==>param:{}\n==>return:{}", operationArgs.getMethod(),
+        log.info("\n==>request:{}\n==>url:{}\n==>param:{}\n==>return:{}", operationArgs.getMethod(),
                 operationArgs.getUrl(), LogFormatUtil.subPre(operationArgs.getBody(),
                         operationArgs.getPrintLength()),
                 LogFormatUtil.printSubPre(operationArgs.getIsPrintResultLog(), resultStr,
@@ -87,7 +87,7 @@ public abstract class AbstractGetResult implements GetResult {
 
 
     public void logRequest(OperationArgs operationArgs, String className) {
-        log.info("start----------------{} format\n==>request:{}\n==>url:{}\n==>param:{}", className,
+        log.info("{} start format----------------\n==>request:{}\n==>url:{}\n==>param:{}", className,
                 operationArgs.getMethod(),
                 operationArgs.getUrl(),
                 Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?

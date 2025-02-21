@@ -1,7 +1,5 @@
 package io.github.move.bricks.chi.utils.request_v2.impl;
 
-import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.json.JSONUtil;
 import io.github.move.bricks.chi.constants.LccConstants;
 import io.github.move.bricks.chi.utils.request.CResult;
 import io.github.move.bricks.chi.utils.request.OperationArgs;
@@ -26,9 +24,9 @@ public class RequestFormatNoDataHandler extends AbstractGetResult implements Ser
         if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
             return CResult.failed(cResult.getMessage());
         }
-        log.info("end----------------success,request url:{},param:{}", operationArgs.getUrl(),
+        log.info("end----------------success,request \n==>url:{}\n==>param:{}", operationArgs.getUrl(),
                 Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                        LogFormatUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
+                        LogFormatUtil.subPre(operationArgs.getBody(),
                                 operationArgs.getPrintLength()) : "");
         return cResult;
     }

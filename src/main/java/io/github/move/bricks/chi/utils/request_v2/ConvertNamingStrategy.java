@@ -1,7 +1,9 @@
 package io.github.move.bricks.chi.utils.request_v2;
 
+import cn.hutool.core.text.CharSequenceUtil;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * json 转换命名策略
@@ -10,9 +12,14 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
  * @version 1.0
  * @since 2.1.0
  */
+@Slf4j
 public final class ConvertNamingStrategy {
 
     public static PropertyNamingStrategy of(String currentNamingStrategy) {
+        if (CharSequenceUtil.isBlank(currentNamingStrategy)) {
+            log.info("not set naming strategy, use default naming strategy: SNAKE_CASE");
+            return PropertyNamingStrategies.SNAKE_CASE;
+        }
         return switch (currentNamingStrategy) {
             case NamingStrategyConstants.LOWER_CAMEL_CASE -> PropertyNamingStrategies.LOWER_CAMEL_CASE;
             case NamingStrategyConstants.UPPER_CAMEL_CASE -> PropertyNamingStrategies.UPPER_CAMEL_CASE;

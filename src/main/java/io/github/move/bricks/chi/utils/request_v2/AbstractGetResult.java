@@ -2,7 +2,6 @@ package io.github.move.bricks.chi.utils.request_v2;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -12,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import io.github.move.bricks.chi.utils.object.ObjectConvertUtil;
 import io.github.move.bricks.chi.utils.request.CResult;
 import io.github.move.bricks.chi.utils.request.Operation;
 import io.github.move.bricks.chi.utils.request.OperationArgs;
@@ -34,20 +34,16 @@ public abstract class AbstractGetResult implements GetResult {
     @Override
     public CResult<Object> getResult(OperationArgs operationArgs) {
         String resultStr = null;
-        if (Objects.nonNull(operationArgs.getParam()) && CharSequenceUtil.isNotBlank(operationArgs.getWritePropertyNamingStrategy())) {
-            if (ArrayUtil.isNotEmpty(operationArgs.getIgnoreFields())) {
-                operationArgs.setBody(writeWithNamingStrategy(operationArgs.getParam(),
-                        operationArgs.getWritePropertyNamingStrategy(), operationArgs.getIgnoreFields()));
-            } else {
-                operationArgs.setBody(writeWithNamingStrategy(operationArgs.getParam(),
-                        operationArgs.getWritePropertyNamingStrategy()));
-            }
-        }
-
-        if (MapUtil.isNotEmpty(operationArgs.getParams())) {
+        Object param = operationArgs.getParam();
+        //param优先级最高
+        if (Objects.nonNull(param)) {
+            operationArgs.setBody(ObjectConvertUtil.customConvertToString(param,
+                    obj -> ObjectConvertUtil.writeWithNamingStrategy(param,
+                            operationArgs.getWritePropertyNamingStrategy(),
+                            operationArgs.getIgnoreFields())));
+        } else if (MapUtil.isNotEmpty(operationArgs.getParams())) {
             operationArgs.setBody(JSONUtil.toJsonStr(operationArgs.getParams()));
         }
-
         try {
             resultStr = Operation.ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(operationArgs);
         } catch (Exception e) {

@@ -111,11 +111,9 @@ public final class ObjectConvertUtil implements Serializable {
      * 自定义转换为json字符串
      * @param object 待转换对象
      * @param convertSupplier 转换器
-     * @param ignoreFields 忽略字段
      * @return 转换后的字符串
      */
-    public static String customConvertToString(Object object, Function<Object, String> convertSupplier,
-                                               String... ignoreFields) {
+    public static String customConvertToString(Object object, Function<Object, String> convertSupplier) {
         if (object instanceof String) {
             return (String) object;
         } else if (object instanceof Map<?, ?>) {

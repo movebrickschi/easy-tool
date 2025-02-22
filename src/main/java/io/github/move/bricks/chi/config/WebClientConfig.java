@@ -1,6 +1,8 @@
 package io.github.move.bricks.chi.config;
 
 import io.github.move.bricks.chi.utils.loadbalance.HttpLoadBalancerClient;
+import io.github.move.bricks.chi.utils.sse.DefaultSseClient;
+import io.github.move.bricks.chi.utils.sse.SseClient;
 import io.github.move.bricks.chi.utils.sse.SseUtil;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -95,6 +97,12 @@ public class WebClientConfig {
     @ConditionalOnBean(WebClient.class)
     public SseUtil sseUtil() {
         return new SseUtil();
+    }
+
+    @Bean
+    @ConditionalOnBean(WebClient.class)
+    public SseClient sseClient(WebClient webClient) {
+        return new DefaultSseClient(webClient);
     }
 
 

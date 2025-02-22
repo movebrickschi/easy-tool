@@ -1,9 +1,11 @@
 package io.github.move.bricks.chi.utils.sse;
 
 import io.github.move.bricks.chi.utils.object.ObjectConvertUtil;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
 import java.util.Objects;
@@ -15,7 +17,7 @@ import java.util.Objects;
  * @version 1.0
  */
 @Slf4j
-public class SseUtil extends AbstractSseHandler {
+public final class SseUtil extends AbstractSseHandler {
 
     @Override
     public Flux<ServerSentEvent<String>> getSse(SseArgs sseArgs) {
@@ -23,8 +25,8 @@ public class SseUtil extends AbstractSseHandler {
         if (Objects.nonNull(sseArgs.getObjectConverter())) {
             body = ObjectConvertUtil.customConvertToString(sseArgs.getObject(),
                     obj -> ObjectConvertUtil.writeWithNamingStrategy(sseArgs.getObjectConverter().getObject(),
-                            sseArgs.getObjectConverter().getWritePropertyNamingStrategy()),
-                    sseArgs.getObjectConverter().getIgnoreFields());
+                            sseArgs.getObjectConverter().getWritePropertyNamingStrategy(),
+                            sseArgs.getObjectConverter().getIgnoreFields()));
 
         }
         log.info("Start to get sse\n==>url:{}\n==>acceptType:{}\n==>contentType:{}\n==>body:{}",

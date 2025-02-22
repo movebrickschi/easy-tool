@@ -1,0 +1,62 @@
+package io.github.move.bricks.chi.utils.sse;
+
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
+import reactor.core.publisher.Flux;
+
+import java.util.function.Consumer;
+
+/**
+ * SseClient
+ *
+ * @author Liu Chunchi
+ */
+public interface SseClient {
+
+    RequestBodyUri post();
+
+    RequestBodyUri get();
+
+    RequestBodyUri put();
+
+    interface Uri<S extends RequestHeaders<?>> {
+        S uri(String uri);
+    }
+
+    interface RequestHeaders<S extends RequestHeaders<S>> {
+        S accept(MediaType... acceptableMediaTypes);
+
+        S accept(MediaType acceptableMediaTypes);
+
+        Flux<ServerSentEvent<String>> execute();
+    }
+
+
+    interface RequestBody extends RequestHeaders<RequestBody> {
+        RequestBodyUri contentType(MediaType contentType);
+
+        RequestHeadersUri<?> bodyValue(Object body);
+
+        RequestHeadersUri<?> bodyValue(Object body, boolean toJson);
+
+        RequestHeadersUri<?> bodyValue(Object body, String propertyNamingStrategy, String... ignoreFields);
+
+        RequestHeadersUri<?> process(Consumer<ServerSentEvent<String>> consumer);
+
+        RequestHeadersUri<?> endEvent(String endEvent);
+
+    }
+
+
+    interface Response {
+    }
+
+    interface RequestHeadersUri<S extends RequestHeaders<S>> extends Uri<S>, RequestHeaders<S> {
+
+    }
+
+    interface RequestBodyUri extends RequestBody, Response, RequestHeadersUri<RequestBody> {
+
+    }
+
+}

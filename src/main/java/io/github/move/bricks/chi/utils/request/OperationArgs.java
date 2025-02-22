@@ -48,16 +48,20 @@ public class OperationArgs {
     /**
      * Map类型请求参数
      */
+    @Deprecated(since = "2.1.4")
     @Builder.Default
     private Map<String, Object> params = Collections.emptyMap();
 
     /**
      * json字符串类型请求参数
      */
+    @Deprecated(since = "2.1.4")
     private String body;
 
     /**
-     * 参数对象，用于自动转换为指定格式，配合writePropertyNamingStrategy使用
+     * 参数对象(可以是json字符串、Map或者对象实体)
+     * 如果自动转换为指定格式，配合writePropertyNamingStrategy使用
+     * param高于params和body
      * @since 2.1.0
      */
     private Object param;

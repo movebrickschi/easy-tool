@@ -1,11 +1,9 @@
 package io.github.move.bricks.chi.utils.sse;
 
 import io.github.move.bricks.chi.utils.object.ObjectConvertUtil;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.codec.ServerSentEvent;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
 import java.util.Objects;
@@ -16,6 +14,7 @@ import java.util.Objects;
  * @author MoveBricks Chi
  * @version 1.0
  */
+@Deprecated(since = "2.1.5", forRemoval = true)
 @Slf4j
 public final class SseUtil extends AbstractSseHandler {
 

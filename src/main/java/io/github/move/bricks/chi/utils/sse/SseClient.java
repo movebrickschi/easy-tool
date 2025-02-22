@@ -7,9 +7,11 @@ import reactor.core.publisher.Flux;
 import java.util.function.Consumer;
 
 /**
- * SseClient
+ * sse 客户端
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
+ * @version 1.0
+ * @since 2.1.5
  */
 public interface SseClient {
 

@@ -18,11 +18,11 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- *
+ * 默认的SseClient实现
  *
  * @author MoveBricks Chi 
  * @version 1.0
- * @since 1.0
+ * @since 2.1.5
  */
 public final class DefaultSseClient implements SseClient {
 

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import io.github.move.bricks.chi.utils.request_v2.ConvertNamingStrategy;
+import io.github.move.bricks.chi.utils.request_v2.NamingStrategyConstants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -29,12 +30,11 @@ import java.util.function.Function;
 @Slf4j
 public final class ObjectConvertUtil implements Serializable {
 
-
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-    static {
-        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    }
+    private static final ThreadLocal<ObjectMapper> OBJECT_MAPPER_THREAD_LOCAL = ThreadLocal.withInitial(() -> {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper;
+    });
 
     /**
      * 对象转换为json字符串
@@ -44,7 +44,8 @@ public final class ObjectConvertUtil implements Serializable {
      * @return 转换后的字符串
      */
     public static String writeWithNamingStrategy(Object data, String propertyNamingStrategy, String... ignoreFields) {
-        OBJECT_MAPPER.setPropertyNamingStrategy(ConvertNamingStrategy.of(propertyNamingStrategy));
+        ObjectMapper objectMapper = OBJECT_MAPPER_THREAD_LOCAL.get();
+        objectMapper.setPropertyNamingStrategy(ConvertNamingStrategy.of(propertyNamingStrategy));
         JsonFilter jsonFilterAnnotation = data.getClass().getAnnotation(JsonFilter.class);
         if (Objects.isNull(jsonFilterAnnotation) || CharSequenceUtil.isBlank(jsonFilterAnnotation.value())) {
             throw new IllegalArgumentException("请使用@JsonFilter注解标注需要过滤的字段");
@@ -63,10 +64,12 @@ public final class ObjectConvertUtil implements Serializable {
         }
 
         try {
-            return OBJECT_MAPPER.writer(filters).writeValueAsString(data);
+            return objectMapper.writer(filters).writeValueAsString(data);
         } catch (JsonProcessingException e) {
             log.error("参数转换异常", e);
             throw new RuntimeException(e);
+        } finally {
+            OBJECT_MAPPER_THREAD_LOCAL.remove();
         }
     }
 
@@ -78,14 +81,25 @@ public final class ObjectConvertUtil implements Serializable {
      * @return 转换后的对象集合
      */
     public static <T> List<T> convertListWithNamingStrategy(Object data, Class<T> tClass,
-                                                            String propertyNamingStrategy) {
-        OBJECT_MAPPER.setPropertyNamingStrategy(ConvertNamingStrategy.of(propertyNamingStrategy));
+                                                            String... propertyNamingStrategy) {
+        ObjectMapper objectMapper = OBJECT_MAPPER_THREAD_LOCAL.get();
+        setPropertyNamingStrategy(objectMapper, propertyNamingStrategy);
         try {
-            return OBJECT_MAPPER.readValue(JSONUtil.toJsonStr(data),
-                    OBJECT_MAPPER.getTypeFactory().constructCollectionType(List.class, tClass));
+            return objectMapper.readValue(JSONUtil.toJsonStr(data),
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, tClass));
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("result is " + JSONUtil.toJsonStr(data));
+        } finally {
+            OBJECT_MAPPER_THREAD_LOCAL.remove();
         }
+    }
+
+    private static void setPropertyNamingStrategy(ObjectMapper objectMapper, String... propertyNamingStrategy) {
+        String defaultPropertyNamingStrategy = NamingStrategyConstants.SNAKE_CASE;
+        if (ArrayUtil.isNotEmpty(propertyNamingStrategy)) {
+            defaultPropertyNamingStrategy = propertyNamingStrategy[0];
+        }
+        objectMapper.setPropertyNamingStrategy(ConvertNamingStrategy.of(defaultPropertyNamingStrategy));
     }
 
 
@@ -96,14 +110,17 @@ public final class ObjectConvertUtil implements Serializable {
      * @param propertyNamingStrategy 属性命名策略
      * @return 转换后的对象
      */
-    public static <T> T convertWithNamingStrategy(Object data, Class<T> tClass, String propertyNamingStrategy) {
-        OBJECT_MAPPER.setPropertyNamingStrategy(ConvertNamingStrategy.of(propertyNamingStrategy));
+    public static <T> T convertWithNamingStrategy(Object data, Class<T> tClass, String... propertyNamingStrategy) {
+        ObjectMapper objectMapper = OBJECT_MAPPER_THREAD_LOCAL.get();
+        setPropertyNamingStrategy(objectMapper, propertyNamingStrategy);
         //忽略不存在的字段
         try {
-            return OBJECT_MAPPER.readValue(JSONUtil.toJsonStr(data), tClass);
+            return objectMapper.readValue(JSONUtil.toJsonStr(data), tClass);
         } catch (JsonProcessingException e) {
             log.error("读取数据时转换异常", e);
             throw new RuntimeException(e);
+        } finally {
+            OBJECT_MAPPER_THREAD_LOCAL.remove();
         }
     }
 

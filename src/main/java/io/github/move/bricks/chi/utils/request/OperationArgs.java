@@ -2,6 +2,7 @@ package io.github.move.bricks.chi.utils.request;
 
 import com.google.common.collect.Maps;
 import io.github.move.bricks.chi.constants.LccConstants;
+import io.github.move.bricks.chi.utils.request_v2.NamingStrategyConstants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -147,11 +148,12 @@ public class OperationArgs {
     private String readPropertyNamingStrategy = null;
 
     /**
-     * 用于传入参数对象，例如将字段caseIdList转换为case_id_list
-     * {@link io.github.move.bricks.chi.utils.request_v2.NamingStrategyConstants}
+     * 用于传入参数对象，例如将字段caseIdList转换为case_id_list,
+     * 默认为SNACK_CASE {@link io.github.move.bricks.chi.utils.request_v2.NamingStrategyConstants}
      * @since 2.1.0
      */
-    private String writePropertyNamingStrategy = null;
+    @Builder.Default
+    private String writePropertyNamingStrategy = NamingStrategyConstants.SNAKE_CASE;
 
     /**
      * 忽略字段，将指定字段排移除

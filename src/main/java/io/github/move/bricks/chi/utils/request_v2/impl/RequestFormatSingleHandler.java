@@ -4,6 +4,7 @@ import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
 import io.github.move.bricks.chi.constants.LccConstants;
+import io.github.move.bricks.chi.utils.object.ObjectConvertUtil;
 import io.github.move.bricks.chi.utils.request.CResult;
 import io.github.move.bricks.chi.utils.request.OperationArgs;
 import io.github.move.bricks.chi.utils.request_v2.AbstractGetResult;
@@ -56,7 +57,7 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
 
 
         //基本数据类型或者string
-        if (isBasicType(tClass)) {
+        if (ObjectConvertUtil.isBasicType(tClass)) {
             log.info("end----------------success,base type single request\n==>url:{}\n==>CResult:{}",
                     operationArgs.getUrl(),
                     Boolean.TRUE.equals(operationArgs.getIsPrintResultLog()) ?
@@ -70,12 +71,17 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
 
             if (Number.class.isAssignableFrom(tClass)) {
                 // Convert CResult.getData() to the appropriate Number type
-                return convertNumber(data, tClass);
+                T t = ObjectConvertUtil.convertNumber(data, tClass);
+                if (Objects.isNull(t)) {
+                    return CResult.failed("转换失败");
+                }
+                return CResult.success(t);
             }
         }
         //如果需要字段转换
         if (CharSequenceUtil.isNotBlank(operationArgs.getReadPropertyNamingStrategy())) {
-            return convertWithNamingStrategy(data, tClass, operationArgs.getReadPropertyNamingStrategy());
+            return CResult.success(ObjectConvertUtil.convertWithNamingStrategy(data, tClass,
+                    operationArgs.getReadPropertyNamingStrategy()));
         }
         return CResult.success(JSONUtil.toBean(JSONUtil.toJsonStr(data), tClass));
     }

@@ -149,11 +149,11 @@ public class OperationArgs {
 
     /**
      * 用于传入参数对象，例如将字段caseIdList转换为case_id_list,
-     * 默认为SNACK_CASE {@link io.github.move.bricks.chi.utils.request_v2.NamingStrategyConstants}
+     * {@link io.github.move.bricks.chi.utils.request_v2.NamingStrategyConstants}
      * @since 2.1.0
      */
     @Builder.Default
-    private String writePropertyNamingStrategy = NamingStrategyConstants.SNAKE_CASE;
+    private String writePropertyNamingStrategy = null;
 
     /**
      * 忽略字段，将指定字段排移除

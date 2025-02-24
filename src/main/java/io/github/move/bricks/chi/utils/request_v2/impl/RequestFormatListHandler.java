@@ -3,10 +3,10 @@ package io.github.move.bricks.chi.utils.request_v2.impl;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.move.bricks.chi.constants.LccConstants;
+import io.github.move.bricks.chi.utils.object.ObjectConvertUtil;
 import io.github.move.bricks.chi.utils.request.CResult;
 import io.github.move.bricks.chi.utils.request.OperationArgs;
 import io.github.move.bricks.chi.utils.request_v2.AbstractGetResult;
@@ -53,16 +53,8 @@ public class RequestFormatListHandler extends AbstractGetResult implements Seria
         }
         //如果需要字段转换
         if (CharSequenceUtil.isNotBlank(operationArgs.getReadPropertyNamingStrategy())) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            //忽略不存在的字段
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            objectMapper.setPropertyNamingStrategy(ConvertNamingStrategy.of(operationArgs.getReadPropertyNamingStrategy()));
-            try {
-                return CResult.success(objectMapper.readValue(JSONUtil.toJsonStr(resultByLevelKey),
-                        objectMapper.getTypeFactory().constructCollectionType(List.class, tClass)));
-            } catch (JsonProcessingException e) {
-                throw new IllegalArgumentException("result is " + JSONUtil.toJsonStr(resultByLevelKey));
-            }
+            return CResult.success(ObjectConvertUtil.convertListWithNamingStrategy(JSONUtil.toJsonStr(resultByLevelKey), tClass,
+                    operationArgs.getReadPropertyNamingStrategy()));
         }
         return CResult.success(JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey), tClass));
     }

@@ -11,10 +11,11 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import io.github.move.bricks.chi.utils.request_v2.ConvertNamingStrategy;
-import io.github.move.bricks.chi.utils.request_v2.NamingStrategyConstants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -95,11 +96,11 @@ public final class ObjectConvertUtil implements Serializable {
     }
 
     private static void setPropertyNamingStrategy(ObjectMapper objectMapper, String... propertyNamingStrategy) {
-        String defaultPropertyNamingStrategy = NamingStrategyConstants.SNAKE_CASE;
+        String defaultPropertyNamingStrategy = null;
         if (ArrayUtil.isNotEmpty(propertyNamingStrategy)) {
             defaultPropertyNamingStrategy = propertyNamingStrategy[0];
+            objectMapper.setPropertyNamingStrategy(ConvertNamingStrategy.of(defaultPropertyNamingStrategy));
         }
-        objectMapper.setPropertyNamingStrategy(ConvertNamingStrategy.of(defaultPropertyNamingStrategy));
     }
 
 
@@ -138,6 +139,55 @@ public final class ObjectConvertUtil implements Serializable {
         } else {
             return convertSupplier.apply(object);
         }
+    }
+
+    /**
+     * 转换为数字类型
+     * @param data 待转换数据
+     * @param tClass 目标类型
+     * @return 转换后的数字类型
+     */
+    public static <T> T convertNumber(Object data, Class<T> tClass) {
+        Number number;
+        if (data instanceof Number) {
+            number = (Number) data;
+        } else if (data instanceof String) {
+            // Try to parse the String to a Number
+            try {
+                number = NumberFormat.getInstance().parse((String) data);
+            } catch (ParseException e) {
+                log.error("Failed to parse String to Number: {}", data, e);
+                return null;
+            }
+        } else {
+            log.error("Unsupported data type: {}", data.getClass().getName());
+            return null;
+        }
+
+        if (tClass.equals(Integer.class)) {
+            return tClass.cast(number.intValue());
+        } else if (tClass.equals(Double.class)) {
+            return tClass.cast(number.doubleValue());
+        } else if (tClass.equals(Long.class)) {
+            return tClass.cast(number.longValue());
+        } else if (tClass.equals(Float.class)) {
+            return tClass.cast(number.floatValue());
+        } else if (tClass.equals(Short.class)) {
+            return tClass.cast(number.shortValue());
+        } else if (tClass.equals(Byte.class)) {
+            return tClass.cast(number.byteValue());
+        }
+        log.error("Unsupported number type");
+        return null;
+    }
+
+    /**
+     * 判断是否是基本类型
+     * @param tClass 类型
+     * @return 是否是基本类型
+     */
+    public static <T> boolean isBasicType(Class<T> tClass) {
+        return tClass.isPrimitive() || String.class.equals(tClass) || Number.class.isAssignableFrom(tClass);
     }
 
 

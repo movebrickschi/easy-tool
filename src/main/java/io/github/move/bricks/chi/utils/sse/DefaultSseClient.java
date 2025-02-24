@@ -147,6 +147,13 @@ public final class DefaultSseClient implements SseClient {
 
         @Override
         public Flux<ServerSentEvent<String>> execute() {
+            logger.info("""
+                            execute:==================================================
+                            ==>uri:{}
+                            ==>acceptType:{}
+                            ==>contentType:{}
+                            ==>body:{}""",
+                    this.uri, this.acceptType, this.contentType, this.body);
             return webClient.post()
                     .uri(this.uri)
                     .accept(this.acceptType)

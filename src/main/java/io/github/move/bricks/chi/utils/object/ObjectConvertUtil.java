@@ -47,25 +47,21 @@ public final class ObjectConvertUtil implements Serializable {
     public static String writeWithNamingStrategy(Object data, String propertyNamingStrategy, String... ignoreFields) {
         ObjectMapper objectMapper = OBJECT_MAPPER_THREAD_LOCAL.get();
         objectMapper.setPropertyNamingStrategy(ConvertNamingStrategy.of(propertyNamingStrategy));
-        JsonFilter jsonFilterAnnotation = data.getClass().getAnnotation(JsonFilter.class);
-        if (Objects.isNull(jsonFilterAnnotation) || CharSequenceUtil.isBlank(jsonFilterAnnotation.value())) {
-            throw new IllegalArgumentException("请使用@JsonFilter注解标注需要过滤的字段");
-        }
-        String filterName = jsonFilterAnnotation.value();
-        log.info("filterName:{}", filterName);
-
-        FilterProvider filters;
+        FilterProvider filters = null;
         if (ArrayUtil.isNotEmpty(ignoreFields)) {
+            JsonFilter jsonFilterAnnotation = data.getClass().getAnnotation(JsonFilter.class);
+            if (Objects.isNull(jsonFilterAnnotation) || CharSequenceUtil.isBlank(jsonFilterAnnotation.value())) {
+                throw new IllegalArgumentException("请使用@JsonFilter注解标注需要过滤的字段");
+            }
+            String filterName = jsonFilterAnnotation.value();
+            log.info("filterName:{}", filterName);
             SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept(ignoreFields);
             filters = new SimpleFilterProvider().addFilter(filterName, filter);
-        } else {
-            // 创建一个不进行任何过滤的 FilterProvider
-            filters = new SimpleFilterProvider().setFailOnUnknownId(false).addFilter(filterName,
-                    SimpleBeanPropertyFilter.serializeAll());
         }
-
         try {
-            return objectMapper.writer(filters).writeValueAsString(data);
+
+            return Objects.nonNull(filters) ? objectMapper.writer(filters).writeValueAsString(data) :
+                    objectMapper.writeValueAsString(data);
         } catch (JsonProcessingException e) {
             log.error("参数转换异常", e);
             throw new RuntimeException(e);

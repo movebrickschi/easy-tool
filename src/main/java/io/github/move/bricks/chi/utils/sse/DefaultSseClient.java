@@ -140,7 +140,7 @@ public final class DefaultSseClient implements SseClient {
         }
 
         @Override
-        public RequestHeadersUri<?> process(Consumer<ServerSentEvent<String>> consumer) {
+        public RequestBody process(Consumer<ServerSentEvent<String>> consumer) {
             this.consumer = consumer;
             return this;
         }

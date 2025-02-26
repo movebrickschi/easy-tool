@@ -30,6 +30,8 @@ public interface SseClient {
 
         S accept(MediaType acceptableMediaTypes);
 
+        S process(Consumer<ServerSentEvent<String>> consumer);
+
         Flux<ServerSentEvent<String>> execute();
     }
 
@@ -42,8 +44,6 @@ public interface SseClient {
         RequestHeadersUri<?> bodyValue(Object body, boolean toJson);
 
         RequestHeadersUri<?> bodyValue(Object body, String propertyNamingStrategy, String... ignoreFields);
-
-        RequestHeadersUri<?> process(Consumer<ServerSentEvent<String>> consumer);
 
         RequestHeadersUri<?> endEvent(String endEvent);
 

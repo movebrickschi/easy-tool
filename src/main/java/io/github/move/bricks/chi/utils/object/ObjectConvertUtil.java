@@ -183,8 +183,8 @@ public final class ObjectConvertUtil implements Serializable {
      * @return 是否是基本类型
      */
     public static <T> boolean isBasicType(Class<T> tClass) {
-        return tClass.isPrimitive() || String.class.equals(tClass) || Number.class.isAssignableFrom(tClass);
+        return tClass.isPrimitive() || String.class.equals(tClass) || Number.class.isAssignableFrom(tClass)
+                || Character.class.equals(tClass) || Boolean.class.equals(tClass);
     }
-
 
 }

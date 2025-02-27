@@ -4,6 +4,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import reactor.core.publisher.Flux;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 /**
@@ -31,6 +32,8 @@ public interface SseClient {
         S accept(MediaType acceptableMediaTypes);
 
         S process(Consumer<ServerSentEvent<String>> consumer);
+
+        S stopBy(BooleanSupplier supplier);
 
         Flux<ServerSentEvent<String>> execute();
     }

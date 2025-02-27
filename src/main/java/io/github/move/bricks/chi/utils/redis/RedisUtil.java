@@ -4,12 +4,11 @@ import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
 import io.github.move.bricks.chi.constants.LuaScript;
+import io.github.move.bricks.chi.utils.object.ObjectConvertUtil;
 import lombok.SneakyThrows;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.ScanOptions;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -48,17 +47,7 @@ public class RedisUtil extends AbstractRedisUtil {
     @Override
     public <T> T get(String key, Class<T> beanClass) {
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
-            if (String.class.equals(beanClass)) {
-                // If tClass is String, directly return the data as String
-                return (T) redisTemplate.opsForValue().get(key).toString();
-            }
-            if (beanClass == byte.class || beanClass == Byte.class ||
-                    beanClass == short.class || beanClass == Short.class ||
-                    beanClass == int.class || beanClass == Integer.class ||
-                    beanClass == long.class || beanClass == Long.class ||
-                    beanClass == float.class || beanClass == Float.class ||
-                    beanClass == double.class || beanClass == Double.class ||
-                    beanClass == BigDecimal.class || beanClass == BigInteger.class) {
+            if (ObjectConvertUtil.isBasicType(beanClass)) {
                 return (T) redisTemplate.opsForValue().get(key);
             }
             return JSONUtil.toBean(JSONUtil.toJsonStr(redisTemplate.opsForValue().get(key)), beanClass);

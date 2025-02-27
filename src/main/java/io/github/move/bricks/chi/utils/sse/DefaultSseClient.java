@@ -15,6 +15,7 @@ import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 /**
@@ -65,6 +66,8 @@ public final class DefaultSseClient implements SseClient {
         private String endEvent;
 
         private Consumer<ServerSentEvent<String>> consumer;
+
+        private BooleanSupplier stopSupplier;
 
         private WebClient webClient;
 
@@ -142,6 +145,12 @@ public final class DefaultSseClient implements SseClient {
         @Override
         public RequestBody process(Consumer<ServerSentEvent<String>> consumer) {
             this.consumer = consumer;
+            return this;
+        }
+
+        @Override
+        public RequestBody stopBy(BooleanSupplier supplier) {
+            this.stopSupplier = supplier;
             return this;
         }
 

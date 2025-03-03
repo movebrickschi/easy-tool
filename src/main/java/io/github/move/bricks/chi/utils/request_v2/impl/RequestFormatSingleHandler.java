@@ -63,19 +63,12 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
                     Boolean.TRUE.equals(operationArgs.getIsPrintResultLog()) ?
                             LogFormatUtil.subPre(JSONUtil.toJsonStr(cResult.getData()),
                                     operationArgs.getPrintLength()) : "");
-
-            if (String.class.equals(tClass)) {
-                // If tClass is String, directly return the data as String
-                return CResult.success((T) data.toString());
-            }
-
-            if (Number.class.isAssignableFrom(tClass)) {
-                // Convert CResult.getData() to the appropriate Number type
-                T t = ObjectConvertUtil.convertNumber(data, tClass);
-                if (Objects.isNull(t)) {
-                    return CResult.failed("转换失败");
-                }
-                return CResult.success(t);
+            try {
+                T result = ObjectConvertUtil.convertBasicType(data, tClass);
+                return CResult.success(result);
+            } catch (IllegalArgumentException e) {
+                log.error("转换失败", e);
+                return CResult.failed("转换失败");
             }
         }
         //如果需要字段转换

@@ -187,4 +187,27 @@ public final class ObjectConvertUtil implements Serializable {
                 || Character.class.equals(tClass) || Boolean.class.equals(tClass);
     }
 
+
+    /**
+     * 转换为基本类型
+     * @param data 待转换数据
+     * @param tClass 目标类型
+     * @return 转换后的基本类型
+     */
+    public static <T> T convertBasicType(Object data, Class<T> tClass) {
+        if (String.class.equals(tClass)) {
+            return (T) data.toString();
+        }
+        if (Number.class.isAssignableFrom(tClass)) {
+            T t = ObjectConvertUtil.convertNumber(data, tClass);
+            if (Objects.isNull(t)) {
+                throw new IllegalArgumentException("转换失败");
+            }
+            return t;
+        }
+        if (Boolean.class.equals(tClass)) {
+            return (T) data;
+        }
+        throw new IllegalArgumentException("不支持的类型: " + tClass.getName());
+    }
 }

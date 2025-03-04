@@ -1,14 +1,11 @@
 package io.github.move.bricks.chi.utils.request;
 
 import com.google.common.collect.Maps;
-import io.github.move.bricks.chi.constants.LccConstants;
-import io.github.move.bricks.chi.utils.request_v2.NamingStrategyConstants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -18,9 +15,6 @@ import java.util.Map;
  * @version 1.0
  */
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class OperationArgsV2 {
 
     /**
@@ -44,18 +38,6 @@ public class OperationArgsV2 {
     private int readTimeout = 30 * 1000;
 
     /**
-     * Map类型请求参数
-     */
-    @Deprecated(since = "2.1.4")
-    private Map<String, Object> params = Collections.emptyMap();
-
-    /**
-     * json字符串类型请求参数
-     */
-    @Deprecated(since = "2.1.4")
-    private String body;
-
-    /**
      * 参数对象(可以是json字符串、Map或者对象实体)
      * 如果自动转换为指定格式，配合writePropertyNamingStrategy使用
      * param高于params和body
@@ -74,49 +56,6 @@ public class OperationArgsV2 {
     private Operation.Application application = Operation.Application.JSON;
 
     /**
-     * 设置状态码默认返回的字段，默认为code
-     */
-    private String returnCodeField = "code";
-    /**
-     * 设置返回值默认返回的字段，默认为data
-     */
-    private String returnDataField = "data";
-    /**
-     * 设置消息默认返回的字段，默认为message
-     */
-    private String returnMessageField = "message";
-
-    /**
-     * 第三方正确返回的状态码,默认200
-     */
-    private Integer returnSuccessCode = LccConstants.SuccessEnum.SUCCESS_2_HUNDRED.getCode();
-
-    /**
-     * 业务需要返回的状态码
-     */
-    private Integer bizReturnSuccessCode = LccConstants.SuccessEnum.SUCCESS_ZERO.getCode();
-
-    /**
-     * 是否打印返回日志
-     * 增加此字段因为如果返回内容过多导致日志文件过大,比如Embedding
-     */
-    private Boolean isPrintResultLog = true;
-
-    /**
-     * 是否打印返回日志
-     * 增加此字段因为如果返回内容过多导致日志文件过大,比如Embedding
-     */
-    private Boolean isPrintArgsLog = true;
-
-    /**
-     * 是否打印返回日志
-     * 增加此字段因为如果返回内容过多导致日志文件过大,比如Embedding
-     * 默认全部打印
-     */
-    private int printLength = -1;
-
-
-    /**
      * 多个header,同一个name
      */
     private Map<String, List<String>> headers = Maps.newHashMap();
@@ -127,29 +66,23 @@ public class OperationArgsV2 {
     private Map<String, String> headersMap = Maps.newHashMap();
 
     /**
-     * 用于读取数据时，例如将case_id_list字段转换为caseIdList
-     * {@link NamingStrategyConstants}
-     * @since 2.1.0
+     * 读取结果转换配置
      */
-    private String readPropertyNamingStrategy = null;
-
-    /**
-     * 用于传入参数对象，例如将字段caseIdList转换为case_id_list,
-     * {@link NamingStrategyConstants}
-     * @since 2.1.0
-     */
-    private String writePropertyNamingStrategy = null;
-
-    /**
-     * 忽略字段，将指定字段排移除
-     * 使用此功能，必须在对应实体类上使用@{@link com.fasterxml.jackson.annotation.JsonFilter}
-     * @since 2.1.3
-     */
-    private String[] ignoreFields = null;
-
     private ObjectConvertConfig readConvertConfig;
-
+    /**
+     * 写入参数转换配置
+     */
     private ObjectConvertConfig writeConvertConfig;
+
+    /**
+     * 日志配置
+     */
+    private LogConfig logConfig;
+
+    /**
+     * 返回结果配置
+     */
+    private ReturnConfig returnConfig;
 
 
     public static class Builder {
@@ -173,17 +106,6 @@ public class OperationArgsV2 {
          */
         private int readTimeout = 30 * 1000;
 
-        /**
-         * Map类型请求参数
-         */
-        @Deprecated(since = "2.1.4")
-        private Map<String, Object> params = Collections.emptyMap();
-
-        /**
-         * json字符串类型请求参数
-         */
-        @Deprecated(since = "2.1.4")
-        private String body;
 
         /**
          * 参数对象(可以是json字符串、Map或者对象实体)
@@ -204,49 +126,6 @@ public class OperationArgsV2 {
         private Operation.Application application = Operation.Application.JSON;
 
         /**
-         * 设置状态码默认返回的字段，默认为code
-         */
-        private String returnCodeField = "code";
-        /**
-         * 设置返回值默认返回的字段，默认为data
-         */
-        private String returnDataField = "data";
-        /**
-         * 设置消息默认返回的字段，默认为message
-         */
-        private String returnMessageField = "message";
-
-        /**
-         * 第三方正确返回的状态码,默认200
-         */
-        private Integer returnSuccessCode = LccConstants.SuccessEnum.SUCCESS_2_HUNDRED.getCode();
-
-        /**
-         * 业务需要返回的状态码
-         */
-        private Integer bizReturnSuccessCode = LccConstants.SuccessEnum.SUCCESS_ZERO.getCode();
-
-        /**
-         * 是否打印返回日志
-         * 增加此字段因为如果返回内容过多导致日志文件过大,比如Embedding
-         */
-        private Boolean isPrintResultLog = true;
-
-        /**
-         * 是否打印返回日志
-         * 增加此字段因为如果返回内容过多导致日志文件过大,比如Embedding
-         */
-        private Boolean isPrintArgsLog = true;
-
-        /**
-         * 是否打印返回日志
-         * 增加此字段因为如果返回内容过多导致日志文件过大,比如Embedding
-         * 默认全部打印
-         */
-        private int printLength = -1;
-
-
-        /**
          * 多个header,同一个name
          */
         private Map<String, List<String>> headers = Maps.newHashMap();
@@ -256,30 +135,22 @@ public class OperationArgsV2 {
          */
         private Map<String, String> headersMap = Maps.newHashMap();
 
-        /**
-         * 用于读取数据时，例如将case_id_list字段转换为caseIdList
-         * {@link NamingStrategyConstants}
-         * @since 2.1.0
-         */
-        private String readPropertyNamingStrategy = null;
 
         /**
-         * 用于传入参数对象，例如将字段caseIdList转换为case_id_list,
-         * {@link NamingStrategyConstants}
-         * @since 2.1.0
-         */
-        private String writePropertyNamingStrategy = null;
-
-        /**
-         * 忽略字段，将指定字段排移除
-         * 使用此功能，必须在对应实体类上使用@{@link com.fasterxml.jackson.annotation.JsonFilter}
+         * 读取数据格式配置
          * @since 2.1.3
          */
-        private String[] ignoreFields = null;
-
         private ObjectConvertConfig readConvertConfig;
 
+        /**
+         * 参数数据格式配置
+         * @since 2.1.3
+         */
         private ObjectConvertConfig writeConvertConfig;
+
+        private ReturnConfig returnConfig = new ReturnConfig();
+
+        private LogConfig logConfig = new LogConfig();
 
         public Builder url(String url) {
             this.url = url;
@@ -301,16 +172,6 @@ public class OperationArgsV2 {
             return this;
         }
 
-        public Builder params(Map<String, Object> params) {
-            this.params = params;
-            return this;
-        }
-
-        public Builder body(String body) {
-            this.body = body;
-            return this;
-        }
-
         public Builder param(Object param) {
             this.param = param;
             return this;
@@ -326,38 +187,23 @@ public class OperationArgsV2 {
             return this;
         }
 
-        public Builder returnCodeField(String returnCodeField) {
-            this.returnCodeField = returnCodeField;
+        public Builder returnConfig(ReturnConfig returnConfig) {
+            this.returnConfig = returnConfig;
             return this;
         }
 
-        public Builder returnDataField(String returnDataField) {
-            this.returnDataField = returnDataField;
+        public Builder logConfig(LogConfig logConfig) {
+            this.logConfig = logConfig;
             return this;
         }
 
-        public Builder returnSuccessCode(Integer returnSuccessCode) {
-            this.returnSuccessCode = returnSuccessCode;
+        public Builder logConfig(int printLength) {
+            this.logConfig = new LogConfig(true, true, printLength);
             return this;
         }
 
-        public Builder bizReturnSuccessCode(Integer bizReturnSuccessCode) {
-            this.bizReturnSuccessCode = bizReturnSuccessCode;
-            return this;
-        }
-
-        public Builder isPrintResultLog(Boolean isPrintResultLog) {
-            this.isPrintResultLog = isPrintResultLog;
-            return this;
-        }
-
-        public Builder isPrintArgsLog(Boolean isPrintArgsLog) {
-            this.isPrintArgsLog = isPrintArgsLog;
-            return this;
-        }
-
-        public Builder printLength(int printLength) {
-            this.printLength = printLength;
+        public Builder logConfig(Boolean isPrintArgsLog, Boolean isPrintResultLog, int printLength) {
+            this.logConfig = new LogConfig(isPrintArgsLog, isPrintResultLog, printLength);
             return this;
         }
 
@@ -371,28 +217,8 @@ public class OperationArgsV2 {
             return this;
         }
 
-        public Builder readPropertyNamingStrategy(String readPropertyNamingStrategy) {
-            this.readPropertyNamingStrategy = readPropertyNamingStrategy;
-            return this;
-        }
-
-        public Builder writePropertyNamingStrategy(String writePropertyNamingStrategy) {
-            this.writePropertyNamingStrategy = writePropertyNamingStrategy;
-            return this;
-        }
-
-        public Builder ignoreFields(String... ignoreFields) {
-            this.ignoreFields = ignoreFields;
-            return this;
-        }
-
-        public Builder writeConvertConfig(Object object, String namingStrategy, String... ignoreFields) {
-            this.writeConvertConfig = new ObjectConvertConfig(object, namingStrategy, ignoreFields);
-            return this;
-        }
-
-        public Builder writeConvertConfig(Object object) {
-            this.writeConvertConfig = new ObjectConvertConfig(object);
+        public Builder writeConvertConfig(String namingStrategy, String... ignoreFields) {
+            this.writeConvertConfig = new ObjectConvertConfig(namingStrategy, ignoreFields);
             return this;
         }
 
@@ -409,24 +235,15 @@ public class OperationArgsV2 {
         public OperationArgsV2 build() {
             OperationArgsV2 operationArgsV2 = new OperationArgsV2();
             operationArgsV2.setUrl(url);
-            operationArgsV2.setParams(params);
-            operationArgsV2.setBody(body);
+            operationArgsV2.setParam(param);
             operationArgsV2.setMethod(method);
             operationArgsV2.setApplication(application);
-            operationArgsV2.setReturnCodeField(returnCodeField);
-            operationArgsV2.setReturnDataField(returnDataField);
-            operationArgsV2.setReturnSuccessCode(returnSuccessCode);
-            operationArgsV2.setBizReturnSuccessCode(bizReturnSuccessCode);
-            operationArgsV2.setIsPrintResultLog(isPrintResultLog);
-            operationArgsV2.setIsPrintArgsLog(isPrintArgsLog);
-            operationArgsV2.setPrintLength(printLength);
             operationArgsV2.setHeaders(headers);
             operationArgsV2.setHeadersMap(headersMap);
-            operationArgsV2.setReadPropertyNamingStrategy(readPropertyNamingStrategy);
-            operationArgsV2.setWritePropertyNamingStrategy(writePropertyNamingStrategy);
-            operationArgsV2.setIgnoreFields(ignoreFields);
             operationArgsV2.setWriteConvertConfig(writeConvertConfig);
             operationArgsV2.setReadConvertConfig(readConvertConfig);
+            operationArgsV2.setLogConfig(logConfig);
+            operationArgsV2.setReturnConfig(returnConfig);
             return operationArgsV2;
         }
 

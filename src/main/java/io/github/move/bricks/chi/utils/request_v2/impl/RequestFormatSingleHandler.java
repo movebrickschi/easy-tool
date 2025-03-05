@@ -6,7 +6,7 @@ import cn.hutool.json.JSONUtil;
 import io.github.move.bricks.chi.constants.LccConstants;
 import io.github.move.bricks.chi.utils.object.ObjectConvertUtil;
 import io.github.move.bricks.chi.utils.request.CResult;
-import io.github.move.bricks.chi.utils.request.OperationArgs;
+import io.github.move.bricks.chi.utils.request_v2.OperationArgsV2;
 import io.github.move.bricks.chi.utils.request_v2.AbstractGetResult;
 import io.github.move.bricks.chi.utils.request_v2.LogFormatUtil;
 import io.github.move.bricks.chi.utils.request_v2.RequestFormatApi;
@@ -25,7 +25,7 @@ import java.util.Objects;
 @Slf4j
 public class RequestFormatSingleHandler extends AbstractGetResult implements Serializable, RequestFormatApi {
     @Override
-    public <T> CResult<T> toSingle(OperationArgs operationArgs, Class<T> tClass, String key,
+    public <T> CResult<T> toSingle(OperationArgsV2 operationArgs, Class<T> tClass, String key,
                                    String... keys) {
         CResult<Object> cResult = getResult(operationArgs);
         if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
@@ -60,9 +60,9 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
         if (ObjectConvertUtil.isBasicType(tClass)) {
             log.info("end----------------success,base type single request\n==>url:{}\n==>CResult:{}",
                     operationArgs.getUrl(),
-                    Boolean.TRUE.equals(operationArgs.getIsPrintResultLog()) ?
+                    Boolean.TRUE.equals(operationArgs.getLogConfig().getPrintResultLog()) ?
                             LogFormatUtil.subPre(JSONUtil.toJsonStr(cResult.getData()),
-                                    operationArgs.getPrintLength()) : "");
+                                    operationArgs.getLogConfig().getPrintLength()) : "");
             try {
                 T result = ObjectConvertUtil.convertBasicType(data, tClass);
                 return CResult.success(result);
@@ -72,9 +72,9 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
             }
         }
         //如果需要字段转换
-        if (CharSequenceUtil.isNotBlank(operationArgs.getReadPropertyNamingStrategy())) {
+        if (Objects.nonNull(operationArgs.getReadConvertConfig())) {
             return CResult.success(ObjectConvertUtil.convertWithNamingStrategy(data, tClass,
-                    operationArgs.getReadPropertyNamingStrategy()));
+                    operationArgs.getReadConvertConfig().getNamingStrategy()));
         }
         return CResult.success(JSONUtil.toBean(JSONUtil.toJsonStr(data), tClass));
     }

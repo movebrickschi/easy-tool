@@ -108,7 +108,7 @@ public final class DefaultSseClient implements SseClient {
         @Override
         public RequestHeadersUri<?> bodyValue(Object body, String propertyNamingStrategy, String... ignoreFields) {
             this.body = ObjectConvertUtil.customConvertToString(body,
-                    obj -> ObjectConvertUtil.writeWithNamingStrategy(obj,
+                    () -> ObjectConvertUtil.writeWithNamingStrategy(body,
                             propertyNamingStrategy,
                             ignoreFields));
             return this;

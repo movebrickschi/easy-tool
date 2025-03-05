@@ -1,7 +1,6 @@
 package io.github.move.bricks.chi.utils.request_v2;
 
 import io.github.move.bricks.chi.utils.request.CResult;
-import io.github.move.bricks.chi.utils.request.OperationArgs;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
@@ -25,7 +24,7 @@ public interface RequestFormatApi {
      * @return 返回类型
      * @param <T> 参数类型
      */
-    default <T> CResult<T> toSingle(OperationArgs operationArgs, Class<T> tClass) {
+    default <T> CResult<T> toSingle(OperationArgsV2 operationArgs, Class<T> tClass) {
         return toSingle(operationArgs, tClass, null, ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
@@ -37,7 +36,7 @@ public interface RequestFormatApi {
      * @return 返回类型
      * @param <T> 参数类型
      */
-    default <T> CResult<T> toSingle(OperationArgs operationArgs, Class<T> tClass,
+    default <T> CResult<T> toSingle(OperationArgsV2 operationArgs, Class<T> tClass,
                                     String... keys) {
         return toSingle(operationArgs, tClass, null, keys);
     }
@@ -50,7 +49,7 @@ public interface RequestFormatApi {
      * @return 返回类型
      * @param <T> 参数类型
      */
-    default <T> CResult<T> toSingle(OperationArgs operationArgs, Class<T> tClass, String key) {
+    default <T> CResult<T> toSingle(OperationArgsV2 operationArgs, Class<T> tClass, String key) {
         return toSingle(operationArgs, tClass, key, ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
@@ -63,7 +62,7 @@ public interface RequestFormatApi {
      * @return 返回类型
      * @param <T> 参数类型
      */
-    default <T> CResult<T> toSingle(OperationArgs operationArgs, Class<T> tClass, String key,
+    default <T> CResult<T> toSingle(OperationArgsV2 operationArgs, Class<T> tClass, String key,
                                     String... keys) {
         return CResult.success();
     }
@@ -77,7 +76,7 @@ public interface RequestFormatApi {
      * @return 返回类型
      * @param <T> 参数类型
      */
-    default <T> CResult<List<T>> toList(OperationArgs operationArgs, Class<T> tClass,
+    default <T> CResult<List<T>> toList(OperationArgsV2 operationArgs, Class<T> tClass,
                                         String... keys) {
         return CResult.success(Collections.emptyList());
     }
@@ -93,7 +92,7 @@ public interface RequestFormatApi {
      * @return 返回结果
      * @param <T> 请求类型
      */
-    default <T> CResult<Map<String, Object>> toMap(OperationArgs operationArgs,
+    default <T> CResult<Map<String, Object>> toMap(OperationArgsV2 operationArgs,
                                                    Class<T> tClass, List<String> siblingKes,
                                                    Boolean siblingKesEnd,
                                                    String... keys) {
@@ -108,7 +107,7 @@ public interface RequestFormatApi {
      * @param keys data下对应key的字段，例如：data下有a,b,c三个key，则keys为["a","b","c"]
      * @return 返回结果
      */
-    default <T> CResult<Map<String, Object>> toMap(OperationArgs operationArgs, Class<T> tClass,
+    default <T> CResult<Map<String, Object>> toMap(OperationArgsV2 operationArgs, Class<T> tClass,
                                                    List<String> siblingKes, String... keys) {
         return toMap(operationArgs, tClass, siblingKes, false, keys);
     }
@@ -120,7 +119,7 @@ public interface RequestFormatApi {
      * @param keys data下对应key的字段，例如：data下有a,b,c三个key，则keys为["a","b","c"]
      * @return 返回结果
      */
-    default <T> CResult<Map<String, Object>> toMap(OperationArgs operationArgs, Class<T> tClass, String... keys) {
+    default <T> CResult<Map<String, Object>> toMap(OperationArgsV2 operationArgs, Class<T> tClass, String... keys) {
         return toMap(operationArgs, tClass, Collections.emptyList(), false, keys);
     }
 
@@ -131,7 +130,7 @@ public interface RequestFormatApi {
      * @param siblingKes data下对应同级key
      * @return 返回结果
      */
-    default <T> CResult<Map<String, Object>> toMap(OperationArgs operationArgs, Class<T> tClass,
+    default <T> CResult<Map<String, Object>> toMap(OperationArgsV2 operationArgs, Class<T> tClass,
                                                    List<String> siblingKes) {
         return toMap(operationArgs, tClass, siblingKes, false, ArrayUtils.EMPTY_STRING_ARRAY);
     }
@@ -142,7 +141,7 @@ public interface RequestFormatApi {
      * @param tClass 返回类型
      * @return 返回结果
      */
-    default <T> CResult<Map<String, Object>> toMap(OperationArgs operationArgs, Class<T> tClass) {
+    default <T> CResult<Map<String, Object>> toMap(OperationArgsV2 operationArgs, Class<T> tClass) {
         return toMap(operationArgs, tClass, ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
@@ -152,7 +151,7 @@ public interface RequestFormatApi {
      * @param keys data下对应key的字段，例如：data下有a,b,c三个key，则keys为["a","b","c"]
      * @return 返回结果
      */
-    default CResult<Map<String, Object>> toMap(OperationArgs operationArgs, String... keys) {
+    default CResult<Map<String, Object>> toMap(OperationArgsV2 operationArgs, String... keys) {
         return toMap(operationArgs, Object.class, Arrays.asList(keys), true, ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
@@ -161,7 +160,7 @@ public interface RequestFormatApi {
      * @param operationArgs 请求方法参数
      * @return CResult
      */
-    default CResult<?> noData(OperationArgs operationArgs) {
+    default CResult<?> noData(OperationArgsV2 operationArgs) {
         return CResult.success();
     }
 

@@ -9,10 +9,9 @@ import com.google.common.collect.Maps;
 import io.github.move.bricks.chi.constants.LccConstants;
 import io.github.move.bricks.chi.utils.request.CResult;
 import io.github.move.bricks.chi.utils.request.Operation;
-import io.github.move.bricks.chi.utils.request.OperationArgs;
+import io.github.move.bricks.chi.utils.request_v2.OperationArgsV2;
 import io.github.move.bricks.chi.utils.request_v2.AbstractGetResult;
-import io.github.move.bricks.chi.utils.request_v2.ConvertNamingStrategy;
-import io.github.move.bricks.chi.utils.request_v2.LogFormatUtil;
+import io.github.move.bricks.chi.utils.object.ConvertNamingStrategy;
 import io.github.move.bricks.chi.utils.request_v2.RequestFormatApi;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +30,7 @@ import java.util.Objects;
 @Slf4j
 public class RequestFormatMapHandler extends AbstractGetResult implements Serializable, RequestFormatApi {
     @Override
-    public <T> CResult<Map<String, Object>> toMap(OperationArgs operationArgs,
+    public <T> CResult<Map<String, Object>> toMap(OperationArgsV2 operationArgs,
                                                   Class<T> tClass, List<String> siblingKes,
                                                   Boolean siblingKesEnd,
                                                   String... keys) {
@@ -50,7 +49,8 @@ public class RequestFormatMapHandler extends AbstractGetResult implements Serial
         Map<String, Object> mapResult = Maps.newHashMap();
         //data下同级对应key的字段取出放入map
         if (!siblingKes.isEmpty()) {
-            mapResult.putAll(getSiblingValues(resultByLevelKey, siblingKes, operationArgs.getReadPropertyNamingStrategy()));
+            mapResult.putAll(getSiblingValues(resultByLevelKey, siblingKes,
+                    operationArgs.getReadConvertConfig().getNamingStrategy()));
             if (Boolean.TRUE.equals(siblingKesEnd)) {
                 return CResult.success(mapResult);
             }
@@ -67,10 +67,7 @@ public class RequestFormatMapHandler extends AbstractGetResult implements Serial
                 }
             }
         }
-        log.info("end----------------success,post \n==>url:{}\n==>param:{}", operationArgs.getUrl(),
-                Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                        LogFormatUtil.subPre(operationArgs.getBody(),
-                                operationArgs.getPrintLength()) : "");
+        log.info("end----------------success,post \n==>url:{}", operationArgs.getUrl());
         //不是json,直接返回
         if (!JSONUtil.isTypeJSON(resultByLevelKey)) {
             mapResult.put(Operation.RETURN_TYPE_SINGLE, resultByLevelKey);

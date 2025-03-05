@@ -1,5 +1,6 @@
 package io.github.move.bricks.chi.utils.sse;
 
+import io.github.move.bricks.chi.constants.NamingStrategyConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,7 +24,7 @@ public class ObjectConverter {
     private Object object;
     /**
      * 用于传入参数对象，例如将字段caseIdList转换为case_id_list
-     * {@link io.github.move.bricks.chi.utils.request_v2.NamingStrategyConstants}
+     * {@link NamingStrategyConstants}
      * @since 2.1.4
      */
     private String writePropertyNamingStrategy = null;

@@ -1,8 +1,9 @@
-package io.github.move.bricks.chi.utils.request_v2;
+package io.github.move.bricks.chi.utils.object;
 
 import cn.hutool.core.text.CharSequenceUtil;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import io.github.move.bricks.chi.constants.NamingStrategyConstants;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -14,6 +15,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public final class ConvertNamingStrategy {
+    private ConvertNamingStrategy() {
+        //
+    }
 
     public static PropertyNamingStrategy of(String currentNamingStrategy) {
         if (CharSequenceUtil.isBlank(currentNamingStrategy)) {

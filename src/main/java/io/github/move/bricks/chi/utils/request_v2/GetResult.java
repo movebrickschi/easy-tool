@@ -19,4 +19,12 @@ public interface GetResult {
      */
     CResult<Object> getResult(OperationArgs operationArgs);
 
+    /**
+     * 获取结果
+     * @param operationArgs 参数对象
+     * @return 结果对象
+     * @since 2.1.11
+     */
+    CResult<Object> getResult(OperationArgsV2 operationArgs);
+
 }

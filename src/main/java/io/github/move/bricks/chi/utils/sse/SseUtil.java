@@ -23,7 +23,7 @@ public final class SseUtil extends AbstractSseHandler {
         String body = null;
         if (Objects.nonNull(sseArgs.getObjectConverter())) {
             body = ObjectConvertUtil.customConvertToString(sseArgs.getObject(),
-                    obj -> ObjectConvertUtil.writeWithNamingStrategy(sseArgs.getObjectConverter().getObject(),
+                    () -> ObjectConvertUtil.writeWithNamingStrategy(sseArgs.getObjectConverter().getObject(),
                             sseArgs.getObjectConverter().getWritePropertyNamingStrategy(),
                             sseArgs.getObjectConverter().getIgnoreFields()));
 

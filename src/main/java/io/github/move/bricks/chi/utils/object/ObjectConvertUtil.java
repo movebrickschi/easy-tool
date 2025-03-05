@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import io.github.move.bricks.chi.utils.request_v2.ConvertNamingStrategy;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -19,7 +18,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * 对象转换工具类
@@ -127,13 +126,13 @@ public final class ObjectConvertUtil implements Serializable {
      * @param convertSupplier 转换器
      * @return 转换后的字符串
      */
-    public static String customConvertToString(Object object, Function<Object, String> convertSupplier) {
-        if (object instanceof String) {
-            return (String) object;
+    public static String customConvertToString(Object object, Supplier<String> convertSupplier) {
+        if (object instanceof String result) {
+            return result;
         } else if (object instanceof Map<?, ?>) {
             return JSONUtil.toJsonStr(object);
         } else {
-            return convertSupplier.apply(object);
+            return convertSupplier.get();
         }
     }
 

@@ -3,14 +3,11 @@ package io.github.move.bricks.chi.utils.request_v2.impl;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.move.bricks.chi.constants.LccConstants;
 import io.github.move.bricks.chi.utils.object.ObjectConvertUtil;
 import io.github.move.bricks.chi.utils.request.CResult;
-import io.github.move.bricks.chi.utils.request.OperationArgs;
+import io.github.move.bricks.chi.utils.request_v2.OperationArgsV2;
 import io.github.move.bricks.chi.utils.request_v2.AbstractGetResult;
-import io.github.move.bricks.chi.utils.request_v2.ConvertNamingStrategy;
 import io.github.move.bricks.chi.utils.request_v2.RequestFormatApi;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,7 +26,7 @@ import java.util.Objects;
 @Slf4j
 public class RequestFormatListHandler extends AbstractGetResult implements Serializable, RequestFormatApi {
     @Override
-    public <T> CResult<List<T>> toList(OperationArgs operationArgs, Class<T> tClass, String... keys) {
+    public <T> CResult<List<T>> toList(OperationArgsV2 operationArgs, Class<T> tClass, String... keys) {
         CResult<Object> cResult = getResult(operationArgs);
         if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
             return CResult.failed(cResult.getMessage());
@@ -52,9 +49,9 @@ public class RequestFormatListHandler extends AbstractGetResult implements Seria
             }
         }
         //如果需要字段转换
-        if (CharSequenceUtil.isNotBlank(operationArgs.getReadPropertyNamingStrategy())) {
+        if (Objects.nonNull(operationArgs.getReadConvertConfig())) {
             return CResult.success(ObjectConvertUtil.convertListWithNamingStrategy(JSONUtil.toJsonStr(resultByLevelKey), tClass,
-                    operationArgs.getReadPropertyNamingStrategy()));
+                    operationArgs.getReadConvertConfig().getNamingStrategy()));
         }
         return CResult.success(JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey), tClass));
     }

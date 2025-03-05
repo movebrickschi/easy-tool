@@ -1,15 +1,16 @@
 package io.github.move.bricks.chi.utils.request_v2;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import io.github.move.bricks.chi.constants.RequestConstants;
 import io.github.move.bricks.chi.utils.object.ObjectConvertUtil;
-import io.github.move.bricks.chi.utils.request.CResult;
-import io.github.move.bricks.chi.utils.request.Operation;
-import io.github.move.bricks.chi.utils.request.OperationArgs;
+import io.github.move.bricks.chi.utils.request.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -28,14 +29,15 @@ public abstract class AbstractGetResult implements GetResult {
         //param优先级最高
         if (Objects.nonNull(param)) {
             operationArgs.setBody(ObjectConvertUtil.customConvertToString(param,
-                    obj -> ObjectConvertUtil.writeWithNamingStrategy(param,
+                    () -> ObjectConvertUtil.writeWithNamingStrategy(param,
                             operationArgs.getWritePropertyNamingStrategy(),
                             operationArgs.getIgnoreFields())));
         } else if (MapUtil.isNotEmpty(operationArgs.getParams())) {
             operationArgs.setBody(JSONUtil.toJsonStr(operationArgs.getParams()));
         }
         try {
-            resultStr = Operation.ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(operationArgs);
+            RequestParams requestParams = BeanUtil.copyProperties(operationArgs, RequestParams.class);
+            resultStr = Operation.ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(requestParams);
         } catch (Exception e) {
             log.error("request url:{}---------------------error:{}", operationArgs.getUrl(), e.getMessage());
             return CResult.failed(e.getMessage());
@@ -72,24 +74,65 @@ public abstract class AbstractGetResult implements GetResult {
     }
 
 
-    public void logRequest(OperationArgs operationArgs, String className) {
-        log.info("{} start format----------------\n==>request:{}\n==>url:{}\n==>param:{}", className,
+    @Override
+    public CResult<Object> getResult(OperationArgsV2 operationArgs) {
+        String resultStr = null;
+        Object param = operationArgs.getParam();
+        RequestParams requestParams = BeanUtil.copyProperties(operationArgs, RequestParams.class);
+        String bodyForLog = null;
+        if (RequestConstants.FORM_METHODS.contains(requestParams.getMethod()) && param instanceof Map<?, ?>) {
+            requestParams.setMapParams((Map<String, Object>) param);
+            bodyForLog = JSONUtil.toJsonStr(param);
+        } else {
+            requestParams.setBody(ObjectConvertUtil.customConvertToString(param, () ->
+                    ObjectConvertUtil.writeWithNamingStrategy(param,
+                            operationArgs.getWriteConvertConfig().getNamingStrategy(),
+                            operationArgs.getWriteConvertConfig().getIgnoreFields())));
+            bodyForLog = requestParams.getBody();
+        }
+        try {
+            resultStr = Operation.ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(requestParams);
+        } catch (Exception e) {
+            log.error("request url:{}---------------------error:{}", operationArgs.getUrl(), e.getMessage());
+            return CResult.failed(e.getMessage());
+        }
+        log.info("\n==>request:{}\n==>url:{}\n==>param:{}\n==>return:{}", operationArgs.getMethod(),
+                operationArgs.getUrl(), LogFormatUtil.subPre(bodyForLog,
+                        operationArgs.getLogConfig().getPrintLength()),
+                LogFormatUtil.printSubPre(operationArgs.getLogConfig().getPrintResultLog(), resultStr,
+                        operationArgs.getLogConfig().getPrintLength()));
+        if (CharSequenceUtil.isBlank(resultStr)) {
+            log.info("end----------------request \n==>url:{}\n==>param:{}\n==>return null", operationArgs.getUrl(),
+                    LogFormatUtil.subPre(bodyForLog,
+                            operationArgs.getLogConfig().getPrintLength()));
+            return CResult.failed("request resultStr is null");
+        }
+        JSONObject jsonObject = JSONUtil.parseObj(resultStr);
+        CResult<Object> CResult = new CResult<>();
+        //防止出现字符串"null"
+        CResult.setData(jsonObject.isNull(operationArgs.getReturnConfig().getReturnDataField()) ? null :
+                jsonObject.get(operationArgs.getReturnConfig().getReturnDataField()));
+        CResult.setCode(jsonObject.getInt(operationArgs.getReturnConfig().getReturnCodeField()));
+        CResult.setMessage(jsonObject.getStr(operationArgs.getReturnConfig().getReturnMessageField()));
+        if (operationArgs.getReturnConfig().getReturnSuccessCode() != CResult.getCode()) {
+            log.error("end----------------request \n==>url:{}\n==>param:{}\n==>error:{}", operationArgs.getUrl(),
+                    LogFormatUtil.subPre(bodyForLog, operationArgs.getLogConfig().getPrintLength()),
+                    CResult.getMessage());
+            return CResult.failed(CResult.getMessage());
+        }
+        CResult.setCode(operationArgs.getReturnConfig().getBizReturnSuccessCode());
+        return CResult;
+    }
+
+
+    public void logRequest(OperationArgsV2 operationArgs, String className) {
+        log.info("{} start format----------------\n==>request:{}\n==>url:{}", className,
                 operationArgs.getMethod(),
-                operationArgs.getUrl(),
-                Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                        LogFormatUtil.subPre(operationArgs.getBody(),
-                                operationArgs.getPrintLength()) : "");
+                operationArgs.getUrl());
     }
 
-    public boolean isEmptyData(Object data) {
-        return Objects.isNull(data) || String.valueOf(data).startsWith("[]");
-    }
-
-    public void logEmptyResponse(OperationArgs operationArgs) {
-        log.info("end and return empty----------------success\n==>request url:{}\n==>param:{}", operationArgs.getUrl(),
-                Boolean.TRUE.equals(operationArgs.getIsPrintArgsLog()) ?
-                        LogFormatUtil.subPre(operationArgs.getBody(),
-                                operationArgs.getPrintLength()) : "");
+    public void logEmptyResponse(OperationArgsV2 operationArgs) {
+        log.info("end and return empty----------------success\n==>request url:{}", operationArgs.getUrl());
     }
 
     public String getNestedValue(String resultByLevelKey, String... keys) {

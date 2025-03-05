@@ -1,11 +1,11 @@
-package io.github.move.bricks.chi.utils.request;
+package io.github.move.bricks.chi.utils.request_v2;
 
 /**
  * 日志配置
  *
  * @author MoveBricks Chi 
  * @version 1.0
- * @since 1.0
+ * @since 2.1.11
  */
 public class LogConfig {
 

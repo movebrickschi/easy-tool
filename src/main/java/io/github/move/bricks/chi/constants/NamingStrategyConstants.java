@@ -1,5 +1,6 @@
-package io.github.move.bricks.chi.utils.request_v2;
+package io.github.move.bricks.chi.constants;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -56,4 +57,6 @@ public final class NamingStrategyConstants implements Serializable {
     public static final String LOWER_DOT_CASE = "LOWER_DOT_CASE";
 
 
+    @Serial
+    private static final long serialVersionUID = 7870836474119420271L;
 }

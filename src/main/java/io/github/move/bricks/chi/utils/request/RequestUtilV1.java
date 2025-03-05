@@ -1,8 +1,10 @@
 package io.github.move.bricks.chi.utils.request;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import io.github.move.bricks.chi.utils.request_v2.RequestParams;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -96,14 +98,16 @@ public final class RequestUtilV1 {
      * @return 原始数据
      */
     public static JSONObject parseJsonObject(OperationArgs operationArgs) {
-        return JSONUtil.parseObj(Operation.ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(operationArgs));
+        return JSONUtil.parseObj(Operation.ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(BeanUtil.copyProperties(operationArgs, RequestParams.class)));
     }
 
 
     private static CResult<Object> getResult(OperationArgs operationArgs) {
         String resultStr = null;
         try {
-            resultStr = Operation.ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(operationArgs);
+
+            resultStr =
+                    Operation.ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(BeanUtil.copyProperties(operationArgs,RequestParams.class));
         } catch (Exception e) {
             log.error("request url:{}---------------------error:{}", operationArgs.getUrl(), e.getMessage());
             return CResult.failed(e.getMessage());

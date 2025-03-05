@@ -2,10 +2,9 @@ package io.github.move.bricks.chi.demo;
 
 import cn.hutool.core.io.resource.InputStreamResource;
 import io.github.move.bricks.chi.constants.LccConstants;
-import io.github.move.bricks.chi.utils.request.CResult;
-import io.github.move.bricks.chi.utils.request.Operation;
-import io.github.move.bricks.chi.utils.request.OperationArgs;
-import io.github.move.bricks.chi.utils.request.RequestUtil;
+import io.github.move.bricks.chi.utils.request.*;
+import io.github.move.bricks.chi.utils.request_v2.OperationArgsV2;
+import io.github.move.bricks.chi.utils.request_v2.ReturnConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,11 +26,13 @@ public class RequestUtilDemo {
      * @param file 文件
      */
     public void uploadFile(MultipartFile file) {
-        CResult<Map<String, Object>> uploadResult = RequestUtil.parseMap(OperationArgs.builder()
-                .params(Map.of("key", getInputStream(file)))
+        CResult<Map<String, Object>> uploadResult = RequestUtil.parseMap(OperationArgsV2.builder()
+                .param(Map.of("key", getInputStream(file)))
                 .method(Operation.Method.POST_FORM)
                 .application(Operation.Application.MULTIPART_FORM_DATA)
-                .returnSuccessCode(LccConstants.SuccessEnum.SUCCESS_ZERO.getCode())
+                .returnConfig(ReturnConfig.builder()
+                        .returnSuccessCode(LccConstants.SuccessEnum.SUCCESS_ZERO.getCode())
+                        .build())
                 .url("url")
                 .build());
     }

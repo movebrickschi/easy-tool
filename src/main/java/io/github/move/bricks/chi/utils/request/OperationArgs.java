@@ -2,7 +2,7 @@ package io.github.move.bricks.chi.utils.request;
 
 import com.google.common.collect.Maps;
 import io.github.move.bricks.chi.constants.LccConstants;
-import io.github.move.bricks.chi.utils.request_v2.NamingStrategyConstants;
+import io.github.move.bricks.chi.constants.NamingStrategyConstants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +17,7 @@ import java.util.Map;
  * @author MoveBricks Chi
  * @version 1.0
  */
+@Deprecated(since = "2.1.11")
 @Data
 @Builder
 @AllArgsConstructor
@@ -142,14 +143,14 @@ public class OperationArgs {
 
     /**
      * 用于读取数据时，例如将case_id_list字段转换为caseIdList
-     * {@link io.github.move.bricks.chi.utils.request_v2.NamingStrategyConstants}
+     * {@link NamingStrategyConstants}
      * @since 2.1.0
      */
     private String readPropertyNamingStrategy = null;
 
     /**
      * 用于传入参数对象，例如将字段caseIdList转换为case_id_list,
-     * {@link io.github.move.bricks.chi.utils.request_v2.NamingStrategyConstants}
+     * {@link NamingStrategyConstants}
      * @since 2.1.0
      */
     @Builder.Default

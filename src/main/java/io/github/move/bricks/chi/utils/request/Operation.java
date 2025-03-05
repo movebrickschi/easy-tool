@@ -5,8 +5,10 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Maps;
 import io.github.move.bricks.chi.constants.LccConstants;
+import io.github.move.bricks.chi.utils.request_v2.RequestParams;
 import lombok.Getter;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +27,7 @@ public interface Operation {
     String RETURN_TYPE_SINGLE = "single";
     String CONTENT_TYPE = "Content-Type";
 
-    public enum Method {
+    enum Method {
         POST_BODY,
         POST_BODY_HEADERS,
         POST_FORM,
@@ -42,7 +44,7 @@ public interface Operation {
     }
 
     @Getter
-    public enum Application {
+    enum Application {
         JSON("application/json"),
         MULTIPART_FORM_DATA("multipart/form-data"),
         X_WWW_FORM_URLENCODED("application/x-www-form-urlencoded"),
@@ -57,93 +59,92 @@ public interface Operation {
 
     }
 
-    Function<OperationArgs, String> POST = param -> HttpRequest.post(param.getUrl())
+    Function<RequestParams, String> POST = param -> HttpRequest.post(param.getUrl())
             .header(CONTENT_TYPE, param.getApplication().getContent())
-            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(param.getBody())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
-    Function<OperationArgs, String> POST_BODY_HEADERS = param -> HttpRequest.post(param.getUrl())
+    Function<RequestParams, String> POST_BODY_HEADERS = param -> HttpRequest.post(param.getUrl())
             .headerMap(param.getHeadersMap(), true)
-            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(param.getBody())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
-    Function<OperationArgs, String> POST_MULTIPLE_HEADERS = param -> HttpRequest.post(param.getUrl())
+    Function<RequestParams, String> POST_MULTIPLE_HEADERS = param -> HttpRequest.post(param.getUrl())
             .header(param.getHeaders())
-            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(param.getBody())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
-    Function<OperationArgs, String> POST_MULTIPLE_DIFFERENT_HEADERS = param -> HttpRequest.post(param.getUrl())
+    Function<RequestParams, String> POST_MULTIPLE_DIFFERENT_HEADERS = param -> HttpRequest.post(param.getUrl())
             .headerMap(param.getHeadersMap(), true)
-            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(param.getBody())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
-    Function<OperationArgs, String> POST_FORM = param -> HttpRequest.post(param.getUrl())
-            .form(param.getParams())
+    Function<RequestParams, String> POST_FORM = param -> HttpRequest.post(param.getUrl())
+            .form(param.getMapParams())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
-    Function<OperationArgs, String> POST_FORM_WITH_HEADERS = param -> HttpRequest.post(param.getUrl())
+    Function<RequestParams, String> POST_FORM_WITH_HEADERS = param -> HttpRequest.post(param.getUrl())
             .headerMap(param.getHeadersMap(), true)
-            .form(param.getParams())
+            .form(param.getMapParams())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
-    Function<OperationArgs, String> GET = param -> HttpRequest.get(param.getUrl())
-            .form(param.getParams())
+    Function<RequestParams, String> GET = param -> HttpRequest.get(param.getUrl())
+            .form(param.getMapParams())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
-    Function<OperationArgs, String> GET_HEADERS = param -> HttpRequest.get(param.getUrl())
+    Function<RequestParams, String> GET_HEADERS = param -> HttpRequest.get(param.getUrl())
             .headerMap(param.getHeadersMap(), true)
-            .form(param.getParams())
+            .form(param.getMapParams())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
-    Function<OperationArgs, String> PUT = param -> HttpRequest.put(param.getUrl())
+    Function<RequestParams, String> PUT = param -> HttpRequest.put(param.getUrl())
             .header(CONTENT_TYPE, param.getApplication().getContent())
-            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(param.getBody())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
-    Function<OperationArgs, String> PUT_HEADERS = param -> HttpRequest.put(param.getUrl())
+    Function<RequestParams, String> PUT_HEADERS = param -> HttpRequest.put(param.getUrl())
             .headerMap(param.getHeadersMap(), true)
-            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(param.getBody())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
-    Function<OperationArgs, String> DELETE = param -> HttpRequest.delete(param.getUrl())
+    Function<RequestParams, String> DELETE = param -> HttpRequest.delete(param.getUrl())
             .header(CONTENT_TYPE, param.getApplication().getContent())
-            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(param.getBody())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
-    Function<OperationArgs, String> DELETE_HEADERS = param -> HttpRequest.delete(param.getUrl())
+    Function<RequestParams, String> DELETE_HEADERS = param -> HttpRequest.delete(param.getUrl())
             .headerMap(param.getHeadersMap(), true)
-            .body(CharSequenceUtil.isNotBlank(param.getBody()) ? param.getBody() : JSONUtil.toJsonStr(param.getParams()))
+            .body(param.getBody())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
-    Function<OperationArgs, String> DELETE_NO_PARAM = param -> HttpRequest.delete(param.getUrl())
+    Function<RequestParams, String> DELETE_NO_PARAM = param -> HttpRequest.delete(param.getUrl())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
-
-    Supplier<Map<Method, Function<OperationArgs, String>>> ACTION_SUPPLIER = () -> {
-        Map<Method, Function<OperationArgs, String>> map = Maps.newHashMap();
+    Supplier<Map<Method, Function<RequestParams, String>>> ACTION_SUPPLIER = () -> {
+        Map<Method, Function<RequestParams, String>> map = Maps.newHashMap();
         map.put(Method.POST_BODY, POST);
         map.put(Method.POST_BODY_HEADERS, POST_BODY_HEADERS);
         map.put(Method.POST_FORM, POST_FORM);
@@ -236,7 +237,8 @@ public interface Operation {
      * @return CResult
      * @param <T> 请求类型
      */
-    static <T> CResult<T> getResult(OperationArgs operationArgs, Class<T> tClass, List<String> siblingKes, String... keys) {
+    static <T> CResult<T> getResult(RequestParams operationArgs, Class<T> tClass, List<String> siblingKes,
+                                    String... keys) {
         String resultStr = null;
         try {
             resultStr = ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(operationArgs);

@@ -72,17 +72,17 @@ public class OperationArgsV2 {
     /**
      * 写入参数转换配置
      */
-    private ObjectConvertConfig writeConvertConfig;
+    private ObjectConvertConfig writeConvertConfig = new ObjectConvertConfig();
 
     /**
      * 日志配置
      */
-    private LogConfig logConfig;
+    private LogConfig logConfig = new LogConfig();
 
     /**
      * 返回结果配置
      */
-    private ReturnConfig returnConfig;
+    private ReturnConfig returnConfig = new ReturnConfig();
 
     public static OperationArgsV2Builder builder() {
         return new OperationArgsV2Builder();
@@ -147,10 +147,16 @@ public class OperationArgsV2 {
         /**
          * 参数数据格式配置
          */
-        private ObjectConvertConfig writeConvertConfig;
+        private ObjectConvertConfig writeConvertConfig = new ObjectConvertConfig();
 
+        /**
+         * 返回结果配置
+         */
         private ReturnConfig returnConfig = new ReturnConfig();
 
+        /**
+         * 日志配置
+         */
         private LogConfig logConfig = new LogConfig();
 
         public OperationArgsV2Builder url(String url) {

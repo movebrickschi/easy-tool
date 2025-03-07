@@ -4,6 +4,7 @@ import io.github.move.bricks.chi.utils.loadbalance.HttpLoadBalancerClient;
 import io.github.move.bricks.chi.utils.sse.DefaultSseClient;
 import io.github.move.bricks.chi.utils.sse.SseClient;
 import io.github.move.bricks.chi.utils.sse.SseUtil;
+import io.github.move.bricks.chi.utils.sse.WebClientConfig;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
@@ -16,6 +17,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -34,7 +36,7 @@ import java.time.Duration;
 @Slf4j
 @AutoConfiguration
 @Configuration(proxyBeanMethods = false)
-public class WebClientConfig {
+public class DefaultWebClientConfigImpl implements WebClientConfig, Ordered {
 
     @Resource
     private HttpLoadBalancerClient httpLoadBalancerClient;
@@ -44,12 +46,13 @@ public class WebClientConfig {
     @ConfigurationProperties(prefix = WebClientProperties.PREFIX)
     @ConditionalOnProperty(prefix = WebClientProperties.PREFIX, value = "enabled", havingValue = "true",
             matchIfMissing = false)
+    @Override
     public WebClientProperties webClientProperties() {
         return new WebClientProperties();
     }
 
+    @Override
     @Bean
-    @ConditionalOnMissingBean(WebClient.class)
     @ConditionalOnBean(WebClientProperties.class)
     public WebClient createWebClient(WebClientProperties webClientProperties) {
         // 配置HTTP连接池
@@ -93,17 +96,22 @@ public class WebClientConfig {
     }
 
 
+    @Override
     @Bean
     @ConditionalOnBean(WebClient.class)
-    public SseUtil sseUtil() {
-        return new SseUtil();
+    public SseUtil sseUtil(WebClient webClient) {
+        return new SseUtil(webClient);
     }
 
+    @Override
     @Bean
     @ConditionalOnBean(WebClient.class)
     public SseClient sseClient(WebClient webClient) {
         return new DefaultSseClient(webClient);
     }
 
-
+    @Override
+    public int getOrder() {
+        return Integer.MAX_VALUE;
+    }
 }

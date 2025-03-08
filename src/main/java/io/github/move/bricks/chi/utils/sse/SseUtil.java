@@ -4,6 +4,7 @@ import io.github.move.bricks.chi.utils.object.ObjectConvertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
 import java.util.Objects;
@@ -17,6 +18,12 @@ import java.util.Objects;
 @Deprecated(since = "2.1.5", forRemoval = true)
 @Slf4j
 public final class SseUtil extends AbstractSseHandler {
+
+    private final WebClient webClient;
+
+    public SseUtil(WebClient webClient) {
+        this.webClient = webClient;
+    }
 
     @Override
     public Flux<ServerSentEvent<String>> getSse(SseArgs sseArgs) {

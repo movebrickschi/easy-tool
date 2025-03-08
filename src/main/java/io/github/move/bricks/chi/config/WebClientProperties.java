@@ -1,9 +1,6 @@
 package io.github.move.bricks.chi.config;
 
 import lombok.Data;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * webclient属性配置
@@ -27,7 +24,7 @@ public class WebClientProperties {
     /**
      * 基础url
      */
-    private String defaultUrl;
+    private String defaultUrl = "localhost:8080";
 
     /**
      * 最大连接数

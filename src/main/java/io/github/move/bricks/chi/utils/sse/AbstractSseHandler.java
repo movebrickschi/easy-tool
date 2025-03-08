@@ -15,9 +15,6 @@ import reactor.core.publisher.Flux;
 @Slf4j
 public abstract class AbstractSseHandler {
 
-    @Resource
-    protected WebClient webClient;
-
     /**
      * 获取sse
      *

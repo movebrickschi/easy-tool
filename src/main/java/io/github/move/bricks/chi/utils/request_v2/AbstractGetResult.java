@@ -80,10 +80,12 @@ public abstract class AbstractGetResult implements GetResult {
         Object param = operationArgs.getParam();
         RequestParams requestParams = BeanUtil.copyProperties(operationArgs, RequestParams.class);
         String bodyForLog = null;
+        // type is Map
         if (RequestConstants.FORM_METHODS.contains(requestParams.getMethod()) && param instanceof Map<?, ?>) {
             requestParams.setMapParams((Map<String, Object>) param);
             bodyForLog = JSONUtil.toJsonStr(param);
         } else {
+            //json type
             requestParams.setBody(ObjectConvertUtil.customConvertToString(param, () ->
                     ObjectConvertUtil.writeWithNamingStrategy(param,
                             operationArgs.getWriteConvertConfig().getNamingStrategy(),
@@ -99,7 +101,7 @@ public abstract class AbstractGetResult implements GetResult {
         log.info("\n==>request:{}\n==>url:{}\n==>param:{}\n==>return:{}", operationArgs.getMethod(),
                 operationArgs.getUrl(), LogFormatUtil.subPre(bodyForLog,
                         operationArgs.getLogConfig().getPrintLength()),
-                LogFormatUtil.printSubPre(operationArgs.getLogConfig().getPrintResultLog(), resultStr,
+                LogFormatUtil.printSubPre(operationArgs.getLogConfig().getIsPrintResultLog(), resultStr,
                         operationArgs.getLogConfig().getPrintLength()));
         if (CharSequenceUtil.isBlank(resultStr)) {
             log.info("end----------------request \n==>url:{}\n==>param:{}\n==>return null", operationArgs.getUrl(),

@@ -1,16 +1,22 @@
 package io.github.move.bricks.chi.utils.request;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.text.CharSequenceUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.google.common.collect.Lists;
 import io.github.move.bricks.chi.utils.request_v2.*;
 import io.github.move.bricks.chi.utils.request_v2.impl.RequestFormatListHandler;
 import io.github.move.bricks.chi.utils.request_v2.impl.RequestFormatMapHandler;
 import io.github.move.bricks.chi.utils.request_v2.impl.RequestFormatNoDataHandler;
 import io.github.move.bricks.chi.utils.request_v2.impl.RequestFormatSingleHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +60,13 @@ public final class RequestUtil implements Serializable {
 
     private static OperationArgsV2 format(OperationArgs operationArgs) {
         OperationArgsV2 operationArgsV2 = BeanUtil.copyProperties(operationArgs, OperationArgsV2.class);
+        List<Object> nonNull = getNonNull(operationArgs.getParam(), operationArgs.getBody(), operationArgs.getParams());
+        if (nonNull.size() > 1) {
+            throw new IllegalArgumentException("参数只能有一个");
+        }
+        if(nonNull.size() == 1){
+            operationArgsV2.setParam(nonNull.get(0));
+        }
         ReturnConfig returnConfig = new ReturnConfig(operationArgs.getReturnCodeField(),
                 operationArgs.getReturnDataField(),
                 operationArgs.getReturnMessageField(), operationArgs.getReturnSuccessCode(),
@@ -64,12 +77,29 @@ public final class RequestUtil implements Serializable {
                 .namingStrategy(operationArgs.getWritePropertyNamingStrategy())
                 .build();
         ObjectConvertConfig readConvertConfig = ObjectConvertConfig.builder()
-                .namingStrategy(operationArgs.getWritePropertyNamingStrategy())
+                .namingStrategy(operationArgs.getReadPropertyNamingStrategy())
                 .build();
 
         operationArgsV2.setWriteConvertConfig(writeConvertConfig);
         operationArgsV2.setReadConvertConfig(readConvertConfig);
+
+        LogConfig logConfig = LogConfig.builder()
+                .isPrintArgsLog(operationArgs.getIsPrintArgsLog())
+                .isPrintResultLog(operationArgs.getIsPrintResultLog())
+                .printLength(operationArgs.getPrintLength())
+                .build();
+        operationArgsV2.setLogConfig(logConfig);
+
         return operationArgsV2;
+    }
+
+
+    private static List<Object> getNonNull(Object param, String body, Map<String, Object> params) {
+        ArrayList<@Nullable Object> objects = Lists.newArrayList();
+        if (ObjectUtil.isNotNull(param)) objects.add(param);
+        if (CharSequenceUtil.isNotBlank(body)) objects.add(body);
+        if (CollUtil.isNotEmpty(params)) objects.add(params);
+        return objects;
     }
 
     /**

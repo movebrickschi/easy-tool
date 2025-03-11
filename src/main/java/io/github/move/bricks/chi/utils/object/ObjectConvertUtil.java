@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import io.github.move.bricks.chi.utils.object.serial.CustomModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -35,8 +36,11 @@ import java.util.function.Supplier;
 @Slf4j
 public final class ObjectConvertUtil implements Serializable {
 
-    private static final ThreadLocal<ObjectMapper> OBJECT_MAPPER_THREAD_LOCAL =
-            ThreadLocal.withInitial(ObjectMapper::new);
+    private static final ThreadLocal<ObjectMapper> OBJECT_MAPPER_THREAD_LOCAL = ThreadLocal.withInitial(() -> {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new CustomModule());
+        return mapper;
+    });
     @Serial
     private static final long serialVersionUID = -8576822600806112042L;
 

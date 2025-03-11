@@ -9,12 +9,12 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github.movebrickschi</groupId>
-    <artifactId>lcc-tool</artifactId>
+    <artifactId>easy-tool</artifactId>
     <packaging>jar</packaging>
-    <version>2.1.13</version>
+    <version>2.2.1</version>
 
-    <name>lcc-tool</name>
-    <description>lcc-tool日常工具集成</description>
+    <name>easy-tool</name>
+    <description>easy-tool日常工具集成</description>
 
     <licenses>
         <license>

@@ -60,7 +60,7 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
         if (ObjectConvertUtil.isBasicType(tClass)) {
             log.info("end----------------success,base type single request\n==>url:{}\n==>CResult:{}",
                     operationArgs.getUrl(),
-                    Boolean.TRUE.equals(operationArgs.getLogConfig().getPrintResultLog()) ?
+                    Boolean.TRUE.equals(operationArgs.getLogConfig().getIsPrintResultLog()) ?
                             LogFormatUtil.subPre(JSONUtil.toJsonStr(cResult.getData()),
                                     operationArgs.getLogConfig().getPrintLength()) : "");
             try {

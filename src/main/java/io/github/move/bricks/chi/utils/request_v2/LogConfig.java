@@ -1,5 +1,10 @@
 package io.github.move.bricks.chi.utils.request_v2;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * 日志配置
  *
@@ -7,6 +12,10 @@ package io.github.move.bricks.chi.utils.request_v2;
  * @version 1.0
  * @since 2.1.11
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class LogConfig {
 
     /**
@@ -28,40 +37,8 @@ public class LogConfig {
      */
     private int printLength = -1;
 
-    public LogConfig() {
-    }
-
     public LogConfig(int printLength) {
         this.printLength = printLength;
     }
 
-    public LogConfig(Boolean isPrintArgsLog, Boolean isPrintResultLog, int printLength) {
-        this.isPrintArgsLog = isPrintArgsLog;
-        this.isPrintResultLog = isPrintResultLog;
-        this.printLength = printLength;
-    }
-
-    public Boolean getPrintArgsLog() {
-        return isPrintArgsLog;
-    }
-
-    public void setPrintArgsLog(Boolean printArgsLog) {
-        isPrintArgsLog = printArgsLog;
-    }
-
-    public Boolean getPrintResultLog() {
-        return isPrintResultLog;
-    }
-
-    public void setPrintResultLog(Boolean printResultLog) {
-        isPrintResultLog = printResultLog;
-    }
-
-    public int getPrintLength() {
-        return printLength;
-    }
-
-    public void setPrintLength(int printLength) {
-        this.printLength = printLength;
-    }
 }

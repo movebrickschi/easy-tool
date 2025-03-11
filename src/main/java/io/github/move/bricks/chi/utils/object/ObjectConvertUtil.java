@@ -39,6 +39,8 @@ public final class ObjectConvertUtil implements Serializable {
     private static final ThreadLocal<ObjectMapper> OBJECT_MAPPER_THREAD_LOCAL = ThreadLocal.withInitial(() -> {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new CustomModule());
+        //读取时候，是否忽略在json字符串中存在但java对象实际没有的属性
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper;
     });
     @Serial
@@ -48,7 +50,7 @@ public final class ObjectConvertUtil implements Serializable {
      * 对象转换为json字符串
      * @param data 数据待转换对象
      * @param propertyNamingStrategy 属性命名策略
-     * @param isIncludeNull 是否过滤null值
+     * @param isIncludeNull 是否包含值为null的字段
      * @param ignoreFields 忽略字段
      * @return 转换后的字符串
      */
@@ -81,7 +83,7 @@ public final class ObjectConvertUtil implements Serializable {
     }
 
     /**
-     * 对象转换为json字符串
+     * 对象转换为json字符串，包含null字段
      * @param data 数据待转换对象
      * @param propertyNamingStrategy 属性命名策略 {@link io.github.move.bricks.chi.constants.NamingStrategyConstants}
      * @param ignoreFields 忽略字段
@@ -100,22 +102,8 @@ public final class ObjectConvertUtil implements Serializable {
      */
     public static <T> List<T> convertListWithNamingStrategy(Object object, Class<T> tClass,
                                                             String... propertyNamingStrategy) {
-        return convertListWithNamingStrategy(object, tClass, true, propertyNamingStrategy);
-    }
-
-    /**
-     * 将一个对象或者json字符串转换指定类型的对象集合
-     * @param object 可以是json或者对象
-     * @param tClass 目标类型
-     * @param isIncludeNull 是否包含null字段
-     * @param propertyNamingStrategy 属性命名策略
-     * @return 转换后的对象集合
-     */
-    public static <T> List<T> convertListWithNamingStrategy(Object object, Class<T> tClass, Boolean isIncludeNull,
-                                                            String... propertyNamingStrategy) {
         ObjectMapper objectMapper = OBJECT_MAPPER_THREAD_LOCAL.get();
         setPropertyNamingStrategy(objectMapper, propertyNamingStrategy);
-        configIncludeNullField(objectMapper, isIncludeNull);
         try {
             if (object instanceof String json) {
                 return objectMapper.readValue(json,
@@ -179,7 +167,7 @@ public final class ObjectConvertUtil implements Serializable {
 
 
     /**
-     * 自定义转换为json字符串
+     * 自定义转换为json字符串，如果是String类型直接返回，如果是Map类型则转换为json字符串，否则返回默认值
      * @param object 待转换对象
      * @param convertSupplier 转换器
      * @return 转换后的字符串
@@ -271,23 +259,35 @@ public final class ObjectConvertUtil implements Serializable {
     /**
      * 将对象转换为query形式
      * @param data 待转换对象
+     * @param isIncludeNull 是否包含值为null的字段
+     * @param namingStrategy 命名策略
+     * @return 转换后的带有?的query字符串
+     * @since 2.2.1
+     */
+    public static String convertToQueryString(Object data, Boolean isIncludeNull, String... namingStrategy) {
+        Map<String, Object> converted = null;
+        if (ArrayUtil.isEmpty(namingStrategy)) {
+            converted = ObjectConvertUtil.convertWithNamingStrategy(data, Map.class, isIncludeNull);
+        } else {
+            converted = ObjectConvertUtil.convertWithNamingStrategy(data, Map.class, isIncludeNull, namingStrategy);
+        }
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+        converted.forEach((k, v) -> queryParams.add(k, Objects.nonNull(v) ? v.toString() : ""));
+        return "?" + UriComponentsBuilder.newInstance()
+                .queryParams(queryParams)
+                .build()
+                .getQuery();
+    }
+
+    /**
+     * 将对象转换为query形式,不包含null字段
+     * @param data 待转换对象
      * @param namingStrategy 命名策略
      * @return 转换后的带有?的query字符串
      * @since 2.1.11
      */
     public static String convertToQueryString(Object data, String... namingStrategy) {
-        Map<String, Object> converted = null;
-        if (ArrayUtil.isEmpty(namingStrategy)) {
-            converted = ObjectConvertUtil.convertWithNamingStrategy(data, Map.class);
-        } else {
-            converted = ObjectConvertUtil.convertWithNamingStrategy(data, Map.class, namingStrategy);
-        }
-        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-        converted.forEach((k, v) -> queryParams.add(k, v.toString()));
-        return "?" + UriComponentsBuilder.newInstance()
-                .queryParams(queryParams)
-                .build()
-                .getQuery();
+        return convertToQueryString(data, false, namingStrategy);
     }
 
     /**
@@ -296,8 +296,8 @@ public final class ObjectConvertUtil implements Serializable {
      * @param isIncludeNull 是否包含null字段
      */
     private static void configIncludeNullField(ObjectMapper objectMapper, Boolean isIncludeNull) {
-        if (Boolean.TRUE.equals(isIncludeNull)) {
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        if (Boolean.FALSE.equals(isIncludeNull)) {
+            //写入序列化时，忽略值为null的属性
             objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         }
     }

@@ -5,16 +5,16 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.12</version>
+        <version>3.3.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>io.github.liuchunchiuse</groupId>
-    <artifactId>lcc-tool</artifactId>
+    <groupId>io.github.movebrickschi</groupId>
+    <artifactId>easy-tool</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.3</version>
+    <version>2.2.1</version>
 
-    <name>lcc-tool</name>
-    <description>lcc-tool日常工具集成</description>
+    <name>easy-tool</name>
+    <description>easy-tool日常工具集成</description>
 
     <licenses>
         <license>
@@ -31,18 +31,21 @@
     </developers>
 
     <scm>
-        <connection>https://github.com/liuchunchiuse/lcc-tool.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:liuchunchiuse/lcc-tool.git</developerConnection>
-        <url>https://github.com/liuchunchiuse/lcc-tool</url>
+        <connection>https://github.com/movebrickschi/lcc-tool.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:movebrickschi/lcc-tool.git</developerConnection>
+        <url>https://github.com/movebrickschi/lcc-tool</url>
     </scm>
 
     <properties>
-        <java.version>8</java.version>
-        <hutool.version>5.8.25</hutool.version>
-        <guava.version>32.0.0-android</guava.version>
-        <redisson.version>3.17.3</redisson.version>
+        <java.version>17</java.version>
+        <hutool.version>5.8.35</hutool.version>
+        <guava.version>32.0.1-jre</guava.version>
+        <redisson.version>3.41.0</redisson.version>
         <transmittable.version>2.12.6</transmittable.version>
         <commons-net.version>3.10.0</commons-net.version>
+        <mica-auto.version>3.1.4</mica-auto.version>
+        <mybatis-plus-core.version>3.5.6</mybatis-plus-core.version>
+        <commons-lang3.version>3.17.0</commons-lang3.version>
     </properties>
     <dependencies>
         <dependency>
@@ -91,6 +94,29 @@
             <artifactId>commons-net</artifactId>
             <version>${commons-net.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-core</artifactId>
+            <version>${mybatis-plus-core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.dreamlu</groupId>
+            <artifactId>mica-auto</artifactId>
+            <version>${mica-auto.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.17.0</version>
+        </dependency>
 
     </dependencies>
 
@@ -129,7 +155,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.3</version>
+                <version>3.10.1</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>

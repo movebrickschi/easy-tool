@@ -1,6 +1,6 @@
 ## 🈶项目简介
 
-lcc-tool是基于Spring Boot、hutool等全栈主流依赖构建的项目,主要用于方便日常一些业务开发。
+easy-tool是基于Spring Boot、hutool等全栈主流依赖构建的项目,主要用于方便日常一些业务开发。
 
 ## ✨项目特色
 

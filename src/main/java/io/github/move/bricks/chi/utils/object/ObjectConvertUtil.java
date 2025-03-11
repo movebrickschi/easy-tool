@@ -144,6 +144,7 @@ public final class ObjectConvertUtil implements Serializable {
      * 将一个对象或者json字符串转换指定类型的对象
      * @param data 待转换对象
      * @param tClass 目标类型
+     * @param isIncludeNull 是否包含值为null的字段，一般用于像Map类型不具体的对象
      * @param propertyNamingStrategy 属性命名策略
      * @return 转换后的对象
      */

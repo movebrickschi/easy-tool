@@ -9,12 +9,12 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github.liuchunchiuse</groupId>
-    <artifactId>lcc-tool</artifactId>
+    <artifactId>easy-tool</artifactId>
     <packaging>jar</packaging>
     <version>1.0.4</version>
 
-    <name>lcc-tool</name>
-    <description>lcc-tool日常工具集成</description>
+    <name>easy-tool</name>
+    <description>easy-tool日常工具集成</description>
 
     <licenses>
         <license>
@@ -31,9 +31,9 @@
     </developers>
 
     <scm>
-        <connection>https://github.com/liuchunchiuse/lcc-tool.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:liuchunchiuse/lcc-tool.git</developerConnection>
-        <url>https://github.com/liuchunchiuse/lcc-tool</url>
+        <connection>https://github.com/liuchunchiuse/easy-tool.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:liuchunchiuse/easy-tool.git</developerConnection>
+        <url>https://github.com/liuchunchiuse/easy-tool</url>
     </scm>
 
     <properties>

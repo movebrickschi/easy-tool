@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import io.github.move.bricks.chi.utils.object.serial.CustomModule;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -19,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.rmi.NotBoundException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.List;
@@ -54,6 +56,7 @@ public final class ObjectConvertUtil implements Serializable {
      * @param ignoreFields 忽略字段
      * @return 转换后的字符串
      */
+    @SneakyThrows
     public static String writeWithNamingStrategy(Object data, String propertyNamingStrategy, Boolean isIncludeNull,
                                                  String... ignoreFields) {
         ObjectMapper objectMapper = OBJECT_MAPPER_THREAD_LOCAL.get();
@@ -63,7 +66,8 @@ public final class ObjectConvertUtil implements Serializable {
         if (ArrayUtil.isNotEmpty(ignoreFields)) {
             JsonFilter jsonFilterAnnotation = data.getClass().getAnnotation(JsonFilter.class);
             if (Objects.isNull(jsonFilterAnnotation) || CharSequenceUtil.isBlank(jsonFilterAnnotation.value())) {
-                throw new IllegalArgumentException("请使用@JsonFilter注解标注需要过滤的字段");
+                throw new NotBoundException("Please annotate the fields to be filtered using the @JsonFilter " +
+                        "annotation");
             }
             String filterName = jsonFilterAnnotation.value();
             log.info("filterName:{}", filterName);
@@ -75,7 +79,7 @@ public final class ObjectConvertUtil implements Serializable {
             return Objects.nonNull(filters) ? objectMapper.writer(filters).writeValueAsString(data) :
                     objectMapper.writeValueAsString(data);
         } catch (JsonProcessingException e) {
-            log.error("参数转换异常");
+            log.error("convert to json string error:{}", e.getMessage());
             throw new RuntimeException(e);
         } finally {
             OBJECT_MAPPER_THREAD_LOCAL.remove();
@@ -112,7 +116,7 @@ public final class ObjectConvertUtil implements Serializable {
             return objectMapper.convertValue(object,
                     objectMapper.getTypeFactory().constructCollectionType(List.class, tClass));
         } catch (Exception e) {
-            log.error("参数转换异常");
+            log.error("convert to List<{}> error:{}", tClass.getName(), e.getMessage());
             throw new RuntimeException("Error parsing: " + e);
         } finally {
             OBJECT_MAPPER_THREAD_LOCAL.remove();
@@ -159,7 +163,7 @@ public final class ObjectConvertUtil implements Serializable {
             }
             return objectMapper.convertValue(data, tClass);
         } catch (Exception e) {
-            log.error("参数转换异常");
+            log.error("convert to {} error:{}", tClass.getName(), e.getMessage());
             throw new RuntimeException(e);
         } finally {
             OBJECT_MAPPER_THREAD_LOCAL.remove();
@@ -247,14 +251,14 @@ public final class ObjectConvertUtil implements Serializable {
         if (Number.class.isAssignableFrom(tClass)) {
             T t = ObjectConvertUtil.convertNumber(data, tClass);
             if (Objects.isNull(t)) {
-                throw new IllegalArgumentException("转换失败");
+                throw new IllegalArgumentException("convert number failed: " + data + " to " + tClass.getName());
             }
             return t;
         }
         if (Boolean.class.equals(tClass)) {
             return (T) data;
         }
-        throw new IllegalArgumentException("不支持的类型: " + tClass.getName());
+        throw new IllegalArgumentException("unsupported type: " + tClass.getName());
     }
 
     /**

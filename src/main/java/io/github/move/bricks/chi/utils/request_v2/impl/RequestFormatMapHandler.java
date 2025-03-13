@@ -67,7 +67,6 @@ public class RequestFormatMapHandler extends AbstractGetResult implements Serial
                 }
             }
         }
-        log.info("end----------------success,post \n==>url:{}", operationArgs.getUrl());
         //不是json,直接返回
         if (!JSONUtil.isTypeJSON(resultByLevelKey)) {
             mapResult.put(Operation.RETURN_TYPE_SINGLE, resultByLevelKey);

@@ -7,7 +7,9 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import io.github.move.bricks.chi.constants.RequestConstants;
 import io.github.move.bricks.chi.utils.object.ObjectConvertUtil;
-import io.github.move.bricks.chi.utils.request.*;
+import io.github.move.bricks.chi.utils.request.CResult;
+import io.github.move.bricks.chi.utils.request.Operation;
+import io.github.move.bricks.chi.utils.request.OperationArgs;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -39,7 +41,7 @@ public abstract class AbstractGetResult implements GetResult {
             RequestParams requestParams = BeanUtil.copyProperties(operationArgs, RequestParams.class);
             resultStr = Operation.ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(requestParams);
         } catch (Exception e) {
-            log.error("request url:{}---------------------error:{}", operationArgs.getUrl(), e.getMessage());
+            log.error("request url:{},error:{}", operationArgs.getUrl(), e.getMessage());
             return CResult.failed(e.getMessage());
         }
         log.info("\n==>request:{}\n==>url:{}\n==>param:{}\n==>return:{}", operationArgs.getMethod(),
@@ -48,7 +50,7 @@ public abstract class AbstractGetResult implements GetResult {
                 LogFormatUtil.printSubPre(operationArgs.getIsPrintResultLog(), resultStr,
                         operationArgs.getPrintLength()));
         if (CharSequenceUtil.isBlank(resultStr)) {
-            log.info("end----------------request \n==>url:{}\n==>param:{}\n==>return null", operationArgs.getUrl(),
+            log.info("end request \n==>url:{}\n==>param:{}\n==>return null", operationArgs.getUrl(),
                     LogFormatUtil.subPre(operationArgs.getBody(),
                             operationArgs.getPrintLength()));
             return CResult.failed("request resultStr is null");
@@ -61,7 +63,7 @@ public abstract class AbstractGetResult implements GetResult {
         CResult.setCode(jsonObject.getInt(operationArgs.getReturnCodeField()));
         CResult.setMessage(jsonObject.getStr(operationArgs.getReturnMessageField()));
         if (operationArgs.getReturnSuccessCode().intValue() != CResult.getCode().intValue()) {
-            log.error("end----------------request \n==>url:{}\n==>param:{}\n==>error:{}", operationArgs.getUrl(),
+            log.error("end request \n==>url:{}\n==>param:{}\n==>error:{}", operationArgs.getUrl(),
                     operationArgs.getParams().isEmpty() ? LogFormatUtil.subPre(operationArgs.getBody(),
                             operationArgs.getPrintLength()) :
                             LogFormatUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
@@ -95,7 +97,9 @@ public abstract class AbstractGetResult implements GetResult {
         try {
             resultStr = Operation.ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(requestParams);
         } catch (Exception e) {
-            log.error("request url:{}---------------------error:{}", operationArgs.getUrl(), e.getMessage());
+            log.error("\n==>request:{}\n==>url:{}\nparam:{}\n==>error:{}", operationArgs.getMethod(),
+                    operationArgs.getUrl(), LogFormatUtil.subPre(bodyForLog,
+                            operationArgs.getLogConfig().getPrintLength()), e.getMessage());
             return CResult.failed(e.getMessage());
         }
         log.info("\n==>request:{}\n==>url:{}\n==>param:{}\n==>return:{}", operationArgs.getMethod(),
@@ -104,10 +108,11 @@ public abstract class AbstractGetResult implements GetResult {
                 LogFormatUtil.printSubPre(operationArgs.getLogConfig().getIsPrintResultLog(), resultStr,
                         operationArgs.getLogConfig().getPrintLength()));
         if (CharSequenceUtil.isBlank(resultStr)) {
-            log.info("end----------------request \n==>url:{}\n==>param:{}\n==>return null", operationArgs.getUrl(),
+            log.info("\nrequest:{}\n==>url:{}\n==>param:{}\n==>return null", operationArgs.getMethod(),
+                    operationArgs.getUrl(),
                     LogFormatUtil.subPre(bodyForLog,
                             operationArgs.getLogConfig().getPrintLength()));
-            return CResult.failed("request resultStr is null");
+            return CResult.failed("request result is null");
         }
         JSONObject jsonObject = JSONUtil.parseObj(resultStr);
         CResult<Object> CResult = new CResult<>();
@@ -117,7 +122,8 @@ public abstract class AbstractGetResult implements GetResult {
         CResult.setCode(jsonObject.getInt(operationArgs.getReturnConfig().getReturnCodeField()));
         CResult.setMessage(jsonObject.getStr(operationArgs.getReturnConfig().getReturnMessageField()));
         if (operationArgs.getReturnConfig().getReturnSuccessCode() != CResult.getCode()) {
-            log.error("end----------------request \n==>url:{}\n==>param:{}\n==>error:{}", operationArgs.getUrl(),
+            log.error("\nrequest==>:{}\n==>url:{}\n==>param:{}\n==>error:{}", operationArgs.getMethod(),
+                    operationArgs.getUrl(),
                     LogFormatUtil.subPre(bodyForLog, operationArgs.getLogConfig().getPrintLength()),
                     CResult.getMessage());
             return CResult.failed(CResult.getMessage());
@@ -128,13 +134,12 @@ public abstract class AbstractGetResult implements GetResult {
 
 
     public void logRequest(OperationArgsV2 operationArgs, String className) {
-        log.info("{} start format----------------\n==>request:{}\n==>url:{}", className,
-                operationArgs.getMethod(),
+        log.info("{} start format...\n==>request:{}\n==>url:{}", className, operationArgs.getMethod(),
                 operationArgs.getUrl());
     }
 
     public void logEmptyResponse(OperationArgsV2 operationArgs) {
-        log.info("end and return empty----------------success\n==>request url:{}", operationArgs.getUrl());
+        log.info("end and return empty\n==>request url:{}", operationArgs.getUrl());
     }
 
     public String getNestedValue(String resultByLevelKey, String... keys) {

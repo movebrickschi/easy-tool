@@ -2,8 +2,8 @@ package io.github.move.bricks.chi.utils.request_v2.impl;
 
 import io.github.move.bricks.chi.constants.LccConstants;
 import io.github.move.bricks.chi.utils.request.CResult;
-import io.github.move.bricks.chi.utils.request_v2.OperationArgsV2;
 import io.github.move.bricks.chi.utils.request_v2.AbstractGetResult;
+import io.github.move.bricks.chi.utils.request_v2.OperationArgsV2;
 import io.github.move.bricks.chi.utils.request_v2.RequestFormatApi;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +23,7 @@ public class RequestFormatNoDataHandler extends AbstractGetResult implements Ser
         if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
             return CResult.failed(cResult.getMessage());
         }
-        log.info("end----------------success,request \n==>url:{}", operationArgs.getUrl());
+        log.info("end success,request\n==>url:{}", operationArgs.getUrl());
         return cResult;
     }
 }

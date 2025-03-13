@@ -6,9 +6,9 @@ import cn.hutool.json.JSONUtil;
 import io.github.move.bricks.chi.constants.LccConstants;
 import io.github.move.bricks.chi.utils.object.ObjectConvertUtil;
 import io.github.move.bricks.chi.utils.request.CResult;
-import io.github.move.bricks.chi.utils.request_v2.OperationArgsV2;
 import io.github.move.bricks.chi.utils.request_v2.AbstractGetResult;
 import io.github.move.bricks.chi.utils.request_v2.LogFormatUtil;
+import io.github.move.bricks.chi.utils.request_v2.OperationArgsV2;
 import io.github.move.bricks.chi.utils.request_v2.RequestFormatApi;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,18 +58,13 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
 
         //基本数据类型或者string
         if (ObjectConvertUtil.isBasicType(tClass)) {
-            log.info("end----------------success,base type single request\n==>url:{}\n==>CResult:{}",
+            log.info("end success,base type single request\n==>url:{}\n==>CResult:{}",
                     operationArgs.getUrl(),
                     Boolean.TRUE.equals(operationArgs.getLogConfig().getIsPrintResultLog()) ?
                             LogFormatUtil.subPre(JSONUtil.toJsonStr(cResult.getData()),
                                     operationArgs.getLogConfig().getPrintLength()) : "");
-            try {
-                T result = ObjectConvertUtil.convertBasicType(data, tClass);
-                return CResult.success(result);
-            } catch (IllegalArgumentException e) {
-                log.error("转换失败", e);
-                return CResult.failed("转换失败");
-            }
+            T result = ObjectConvertUtil.convertBasicType(data, tClass);
+            return CResult.success(result);
         }
         //如果需要字段转换
         if (Objects.nonNull(operationArgs.getReadConvertConfig())) {

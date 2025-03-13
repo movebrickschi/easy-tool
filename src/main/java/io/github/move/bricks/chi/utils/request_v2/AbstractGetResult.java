@@ -83,9 +83,16 @@ public abstract class AbstractGetResult implements GetResult {
         RequestParams requestParams = BeanUtil.copyProperties(operationArgs, RequestParams.class);
         String bodyForLog = null;
         // type is Map
-        if (RequestConstants.FORM_METHODS.contains(requestParams.getMethod()) && param instanceof Map<?, ?>) {
-            requestParams.setMapParams((Map<String, Object>) param);
-            bodyForLog = JSONUtil.toJsonStr(param);
+        if (RequestConstants.FORM_METHODS.contains(requestParams.getMethod()) && Objects.nonNull(param)) {
+            if (param instanceof Map<?, ?>) {
+                requestParams.setMapParams((Map<String, Object>) param);
+            } else {
+                Map map = ObjectConvertUtil.convertWithNamingStrategy(param, Map.class,
+                        operationArgs.getWriteConvertConfig().getIsIncludeNull(),
+                        operationArgs.getWriteConvertConfig().getNamingStrategy());
+                requestParams.setMapParams((Map<String, Object>) map);
+            }
+            bodyForLog = JSONUtil.toJsonStr(requestParams.getMapParams());
         } else {
             //json type
             requestParams.setBody(ObjectConvertUtil.customConvertToString(param, () ->
@@ -141,6 +148,7 @@ public abstract class AbstractGetResult implements GetResult {
     public void logEmptyResponse(OperationArgsV2 operationArgs) {
         log.info("end and return empty\n==>request url:{}", operationArgs.getUrl());
     }
+
 
     public String getNestedValue(String resultByLevelKey, String... keys) {
         for (String key : keys) {

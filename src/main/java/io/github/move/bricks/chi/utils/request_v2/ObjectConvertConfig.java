@@ -29,22 +29,27 @@ public class ObjectConvertConfig {
      */
     private String namingStrategy;
     /**
-     * 目标类型,用于读取
+     * 是否包含null值,默认不包含
      */
-    private Class<?> tClass;
+    @Builder.Default
+    private Boolean isIncludeNull = false;
+
+    public ObjectConvertConfig(String namingStrategy, Boolean isIncludeNull, String... ignoreFields) {
+        this.namingStrategy = namingStrategy;
+        this.isIncludeNull = isIncludeNull;
+        this.ignoreFields = ignoreFields;
+    }
 
     public ObjectConvertConfig(String namingStrategy, String... ignoreFields) {
         this.namingStrategy = namingStrategy;
         this.ignoreFields = ignoreFields;
+        this.isIncludeNull = false;
     }
 
-    public ObjectConvertConfig(String namingStrategy, Class<?> tClass) {
+    public ObjectConvertConfig(String namingStrategy) {
         this.namingStrategy = namingStrategy;
-        this.tClass = tClass;
+        this.isIncludeNull = false;
     }
 
-    public ObjectConvertConfig(Class<?> tClass) {
-        this.tClass = tClass;
-    }
 
 }

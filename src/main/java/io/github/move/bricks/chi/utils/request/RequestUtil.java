@@ -54,7 +54,6 @@ public final class RequestUtil implements Serializable {
 
     private static OperationArgsV2 format(OperationArgs operationArgs, Class<?> tClass) {
         OperationArgsV2 operationArgsV2 = format(operationArgs);
-        operationArgsV2.getReadConvertConfig().setTClass(tClass);
         return operationArgsV2;
     }
 

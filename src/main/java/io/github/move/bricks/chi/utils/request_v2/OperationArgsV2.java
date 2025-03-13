@@ -40,8 +40,8 @@ public class OperationArgsV2 {
 
     /**
      * 参数对象(可以是json字符串、Map或者对象实体)
-     * 如果自动转换为指定格式，配合writePropertyNamingStrategy使用
-     * param高于params和body
+     * 如果转换为指定格式，配合writePropertyNamingStrategy使用
+     * {注意：DELETE_NO_PARAM无需传此字段}
      */
     private Object param;
 
@@ -234,8 +234,9 @@ public class OperationArgsV2 {
             return this;
         }
 
-        public OperationArgsV2Builder readConvertConfig(String namingStrategy, Class<?> tClass) {
-            this.readConvertConfig = new ObjectConvertConfig(namingStrategy, tClass);
+        public OperationArgsV2Builder writeConvertConfig(String namingStrategy, Boolean isIncludeNull,
+                                                         String... ignoreFields) {
+            this.writeConvertConfig = new ObjectConvertConfig(namingStrategy, isIncludeNull, ignoreFields);
             return this;
         }
 
@@ -244,8 +245,8 @@ public class OperationArgsV2 {
             return this;
         }
 
-        public OperationArgsV2Builder readConvertConfig(Class<?> tClass) {
-            this.readConvertConfig = new ObjectConvertConfig(tClass);
+        public OperationArgsV2Builder readConvertConfig(String namingStrategy, Boolean isIncludeNull) {
+            this.readConvertConfig = new ObjectConvertConfig(namingStrategy, isIncludeNull);
             return this;
         }
 

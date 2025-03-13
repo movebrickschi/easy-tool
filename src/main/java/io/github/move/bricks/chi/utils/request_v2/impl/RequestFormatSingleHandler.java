@@ -69,6 +69,7 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
         //如果需要字段转换
         if (Objects.nonNull(operationArgs.getReadConvertConfig())) {
             return CResult.success(ObjectConvertUtil.convertWithNamingStrategy(data, tClass,
+                    operationArgs.getReadConvertConfig().getIsIncludeNull(),
                     operationArgs.getReadConvertConfig().getNamingStrategy()));
         }
         return CResult.success(JSONUtil.toBean(JSONUtil.toJsonStr(data), tClass));

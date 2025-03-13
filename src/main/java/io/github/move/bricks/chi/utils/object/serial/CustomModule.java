@@ -65,9 +65,6 @@ public class CustomModule extends SimpleModule {
 
         // Duration 反序列化
         this.addDeserializer(Duration.class, DurationDeserializer.INSTANCE);
-
-        this.addDeserializer(Date.class, new CustomDateDeserializer());
-
     }
 
 }

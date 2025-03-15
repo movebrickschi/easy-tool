@@ -98,6 +98,7 @@ public abstract class AbstractGetResult implements GetResult {
             requestParams.setBody(ObjectConvertUtil.customConvertToString(param, () ->
                     ObjectConvertUtil.writeWithNamingStrategy(param,
                             operationArgs.getWriteConvertConfig().getNamingStrategy(),
+                            operationArgs.getWriteConvertConfig().getIsIncludeNull(),
                             operationArgs.getWriteConvertConfig().getIgnoreFields())));
             bodyForLog = requestParams.getBody();
         }

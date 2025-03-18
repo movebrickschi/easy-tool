@@ -6,7 +6,7 @@ package io.github.move.bricks.chi.config;
  * @author MoveBricks Chi
  * @version 1.0
  */
-public class RedisConfig {
+public class RedisProperties {
     private RedisPoolConfig pool = new RedisPoolConfig();
     private String host;
     private String password;

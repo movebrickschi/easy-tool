@@ -5,14 +5,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
-import io.github.move.bricks.chi.config.RedisConfig;
+import io.github.move.bricks.chi.config.RedisProperties;
 import io.github.move.bricks.chi.utils.loadbalance.HttpLoadBalancerClient;
 import io.github.move.bricks.chi.utils.redis.RedisUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -40,12 +39,12 @@ public class AutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "spring.data.redis", name = "host")
-    public RedisConfig constructBootRedisConfig() {
-        return new RedisConfig();
+    public RedisProperties constructBootRedisConfig() {
+        return new RedisProperties();
     }
 
     @Bean("redisTemplateByJacksonSerializer")
-    @ConditionalOnClass(RedisConfig.class)
+    @ConditionalOnClass(RedisProperties.class)
     @ConditionalOnProperty(prefix = "spring.data.redis", name = "host")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
 

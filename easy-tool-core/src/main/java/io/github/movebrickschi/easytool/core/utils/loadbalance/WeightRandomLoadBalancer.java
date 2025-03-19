@@ -19,6 +19,8 @@ public class WeightRandomLoadBalancer {
     //定义服务器列表及服务器权重值
     protected static final Map<String, Integer> ADDRESS_MAP = new ConcurrentHashMap<>();
 
+    private static final Random RANDOM = new Random();
+
     //记录服务器权重总和
     public static String weightRandom() {
         AtomicInteger totalWeight = new AtomicInteger(0);
@@ -35,7 +37,7 @@ public class WeightRandomLoadBalancer {
                 totalWeight.addAndGet(entry.getValue());
             }
             //生成一个随机数
-            int randomWeight = new Random().nextInt(totalWeight.get());
+            int randomWeight = RANDOM.nextInt(totalWeight.get());
             //遍历服务器列表，根据服务器权重值选择对应地址
             for (Map.Entry<String, Integer> entry : ADDRESS_MAP.entrySet()) {
                 String serverAddress = entry.getKey();

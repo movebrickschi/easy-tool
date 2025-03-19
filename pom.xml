@@ -7,8 +7,10 @@
     <packaging>pom</packaging>
     <modules>
         <module>easy-tool-core</module>
-        <module>easy-redis-tool-spring-boot-starter</module>
-        <module>easy-request-tool</module>
+        <module>easy-tool-redis-spring-boot-starter</module>
+        <module>easy-tool-request</module>
+        <module>easy-tool-mybatis-plus</module>
+        <module>easy-tool-ai</module>
     </modules>
     <version>3.0.0-test</version>
 
@@ -49,9 +51,51 @@
         <mybatis-plus-core.version>3.5.6</mybatis-plus-core.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>
         <spring-boot-starter.version>3.3.6</spring-boot-starter.version>
+        <lombok.version>1.18.28</lombok.version>
+        <spring.web.version>6.2.1</spring.web.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-net</groupId>
+                <artifactId>commons-net</artifactId>
+                <version>${commons-net.version}</version>
+            </dependency>
 
+            <dependency>
+                <groupId>net.dreamlu</groupId>
+                <artifactId>mica-auto</artifactId>
+                <version>${mica-auto.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+
+        </dependencies>
+    </dependencyManagement>
 
 
     <build>

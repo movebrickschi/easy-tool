@@ -2,19 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.6</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
     <groupId>io.github.movebrickschi</groupId>
     <artifactId>easy-tool</artifactId>
-    <packaging>jar</packaging>
-    <version>2.2.4</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>easy-tool-core</module>
+        <module>easy-redis-tool-spring-boot-starter</module>
+        <module>easy-request-tool</module>
+    </modules>
+    <version>3.0.0-test</version>
 
-    <name>easy-tool</name>
-    <description>easy-tool日常工具集成</description>
+    <name>${project.artifactId}</name>
+    <description>Daily tool integration</description>
 
     <licenses>
         <license>
@@ -31,12 +30,15 @@
     </developers>
 
     <scm>
-        <connection>https://github.com/movebrickschi/lcc-tool.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:movebrickschi/lcc-tool.git</developerConnection>
-        <url>https://github.com/movebrickschi/lcc-tool</url>
+        <connection>https://github.com/movebrickschi/easy-tool.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:movebrickschi/easy-tool.git</developerConnection>
+        <url>https://github.com/movebrickschi/easy-tool</url>
     </scm>
 
     <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
         <hutool.version>5.8.35</hutool.version>
         <guava.version>32.0.1-jre</guava.version>
@@ -46,79 +48,8 @@
         <mica-auto.version>3.1.4</mica-auto.version>
         <mybatis-plus-core.version>3.5.6</mybatis-plus-core.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>
+        <spring-boot-starter.version>3.3.6</spring-boot-starter.version>
     </properties>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>${hutool.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson-spring-boot-starter</artifactId>
-            <version>${redisson.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>transmittable-thread-local</artifactId>
-            <version>${transmittable.version}</version>
-        </dependency>
-
-        <!--Lombok-->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-net</groupId>
-            <artifactId>commons-net</artifactId>
-            <version>${commons-net.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-core</artifactId>
-            <version>${mybatis-plus-core.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.dreamlu</groupId>
-            <artifactId>mica-auto</artifactId>
-            <version>${mica-auto.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.17.0</version>
-        </dependency>
-
-    </dependencies>
 
 
 
@@ -156,6 +87,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.10.1</version>
+                <configuration>
+                    <additionalJOptions>
+                        <!--忽略所有警告-->
+                        <additionalJOption>-Xdoclint:none</additionalJOption>
+                    </additionalJOptions>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>

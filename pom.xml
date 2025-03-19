@@ -28,7 +28,7 @@
             <email>liuchunchiuse@163.com</email>
         </developer>
     </developers>
-
+    <url>https://github.com/movebrickschi/easy-tool</url>
     <scm>
         <connection>https://github.com/movebrickschi/easy-tool.git</connection>
         <developerConnection>scm:git:ssh://git@github.com:movebrickschi/easy-tool.git</developerConnection>

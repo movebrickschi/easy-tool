@@ -52,7 +52,7 @@
         <commons-lang3.version>3.17.0</commons-lang3.version>
         <spring-boot-starter.version>3.3.6</spring-boot-starter.version>
         <lombok.version>1.18.28</lombok.version>
-        <spring.web.version>6.2.1</spring.web.version>
+        <spring.version>6.1.15</spring.version>
     </properties>
 
     <dependencyManagement>

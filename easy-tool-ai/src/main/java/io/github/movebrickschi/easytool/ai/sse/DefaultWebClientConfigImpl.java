@@ -1,10 +1,6 @@
 package io.github.movebrickschi.easytool.ai.sse;
 
 import io.github.movebrickschi.easytool.core.utils.loadbalance.HttpLoadBalancerClient;
-import io.github.movebrickschi.easytool.core.utils.sse.DefaultSseClient;
-import io.github.movebrickschi.easytool.core.utils.sse.SseClient;
-import io.github.movebrickschi.easytool.core.utils.sse.SseUtil;
-import io.github.movebrickschi.easytool.core.utils.sse.WebClientConfig;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
@@ -99,15 +95,15 @@ public class DefaultWebClientConfigImpl implements io.github.movebrickschi.easyt
     @Override
     @Bean
     @ConditionalOnBean(WebClient.class)
-    public io.github.movebrickschi.easytool.ai.sse.SseUtil sseUtil(WebClient webClient) {
-        return new io.github.movebrickschi.easytool.ai.sse.SseUtil(webClient);
+    public SseUtil sseUtil(WebClient webClient) {
+        return new SseUtil(webClient);
     }
 
     @Override
     @Bean
     @ConditionalOnBean(WebClient.class)
-    public io.github.movebrickschi.easytool.ai.sse.SseClient sseClient(WebClient webClient) {
-        return new io.github.movebrickschi.easytool.ai.sse.DefaultSseClient(webClient);
+    public SseClient sseClient(WebClient webClient) {
+        return new DefaultSseClient(webClient);
     }
 
     @Override

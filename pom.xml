@@ -12,7 +12,7 @@
         <module>easy-tool-mybatis-plus</module>
         <module>easy-tool-ai</module>
     </modules>
-    <version>3.0.0-test</version>
+    <version>3.0.0</version>
 
     <name>${project.artifactId}</name>
     <description>Daily tool integration</description>

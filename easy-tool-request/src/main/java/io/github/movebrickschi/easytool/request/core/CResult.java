@@ -1,4 +1,4 @@
-package io.github.movebrickschi.easytool.request.v1;
+package io.github.movebrickschi.easytool.request.core;
 
 
 import io.github.movebrickschi.easytool.core.constants.LccConstants;

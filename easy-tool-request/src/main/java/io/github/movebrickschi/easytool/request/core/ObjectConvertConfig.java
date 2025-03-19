@@ -1,4 +1,4 @@
-package io.github.movebrickschi.easytool.request.v2;
+package io.github.movebrickschi.easytool.request.core;
 
 import io.github.movebrickschi.easytool.core.constants.NamingStrategyConstants;
 import lombok.AllArgsConstructor;

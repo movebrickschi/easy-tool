@@ -1,6 +1,6 @@
 package io.github.movebrickschi.easytool.request.v2;
 
-import io.github.movebrickschi.easytool.request.v1.CResult;
+import io.github.movebrickschi.easytool.request.core.CResult;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;

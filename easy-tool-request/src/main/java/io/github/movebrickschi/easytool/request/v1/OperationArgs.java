@@ -3,6 +3,7 @@ package io.github.movebrickschi.easytool.request.v1;
 import com.google.common.collect.Maps;
 import io.github.movebrickschi.easytool.core.constants.LccConstants;
 import io.github.movebrickschi.easytool.core.constants.NamingStrategyConstants;
+import io.github.movebrickschi.easytool.request.core.Operation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

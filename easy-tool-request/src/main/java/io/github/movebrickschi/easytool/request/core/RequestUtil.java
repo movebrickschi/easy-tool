@@ -1,4 +1,4 @@
-package io.github.movebrickschi.easytool.request.v1;
+package io.github.movebrickschi.easytool.request.core;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
@@ -7,6 +7,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
+import io.github.movebrickschi.easytool.request.v1.OperationArgs;
 import io.github.movebrickschi.easytool.request.v2.*;
 import io.github.movebrickschi.easytool.request.v2.impl.RequestFormatListHandler;
 import io.github.movebrickschi.easytool.request.v2.impl.RequestFormatMapHandler;

@@ -8,7 +8,7 @@ import io.github.movebrickschi.easytool.core.utils.object.ObjectConvertUtil;
 import io.github.movebrickschi.easytool.request.v2.AbstractGetResult;
 import io.github.movebrickschi.easytool.request.v2.OperationArgsV2;
 import io.github.movebrickschi.easytool.request.v2.RequestFormatApi;
-import io.github.movebrickschi.easytool.request.v1.CResult;
+import io.github.movebrickschi.easytool.request.core.CResult;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;

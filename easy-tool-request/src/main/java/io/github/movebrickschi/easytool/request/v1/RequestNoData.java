@@ -1,7 +1,9 @@
 package io.github.movebrickschi.easytool.request.v1;
 
 import io.github.movebrickschi.easytool.core.constants.LccConstants;
-import io.github.movebrickschi.easytool.request.v2.LogFormatUtil;
+import io.github.movebrickschi.easytool.request.core.CResult;
+import io.github.movebrickschi.easytool.request.core.Operation;
+import io.github.movebrickschi.easytool.request.core.LogFormatUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**

@@ -1,7 +1,10 @@
 package io.github.movebrickschi.easytool.request.v2;
 
 import com.google.common.collect.Maps;
-import io.github.movebrickschi.easytool.request.v1.Operation;
+import io.github.movebrickschi.easytool.request.core.LogConfig;
+import io.github.movebrickschi.easytool.request.core.ObjectConvertConfig;
+import io.github.movebrickschi.easytool.request.core.Operation;
+import io.github.movebrickschi.easytool.request.core.ReturnConfig;
 import lombok.Getter;
 import lombok.Setter;
 

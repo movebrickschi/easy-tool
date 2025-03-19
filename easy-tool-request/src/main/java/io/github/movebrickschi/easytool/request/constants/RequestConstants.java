@@ -1,8 +1,8 @@
-package io.github.movebrickschi.easytool.request.Constants;
+package io.github.movebrickschi.easytool.request.constants;
 
 
 
-import io.github.movebrickschi.easytool.request.v1.Operation;
+import io.github.movebrickschi.easytool.request.core.Operation;
 
 import java.util.Arrays;
 import java.util.List;

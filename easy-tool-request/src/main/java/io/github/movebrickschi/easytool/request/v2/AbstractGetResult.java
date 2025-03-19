@@ -6,9 +6,11 @@ import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import io.github.movebrickschi.easytool.core.utils.object.ObjectConvertUtil;
-import io.github.movebrickschi.easytool.request.Constants.RequestConstants;
-import io.github.movebrickschi.easytool.request.v1.CResult;
-import io.github.movebrickschi.easytool.request.v1.Operation;
+import io.github.movebrickschi.easytool.request.constants.RequestConstants;
+import io.github.movebrickschi.easytool.request.core.CResult;
+import io.github.movebrickschi.easytool.request.core.LogFormatUtil;
+import io.github.movebrickschi.easytool.request.core.Operation;
+import io.github.movebrickschi.easytool.request.core.RequestParams;
 import io.github.movebrickschi.easytool.request.v1.OperationArgs;
 import lombok.extern.slf4j.Slf4j;
 

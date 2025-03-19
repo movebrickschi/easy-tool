@@ -5,7 +5,9 @@ import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
 import io.github.movebrickschi.easytool.core.constants.LccConstants;
-import io.github.movebrickschi.easytool.request.v2.LogFormatUtil;
+import io.github.movebrickschi.easytool.request.core.CResult;
+import io.github.movebrickschi.easytool.request.core.Operation;
+import io.github.movebrickschi.easytool.request.core.LogFormatUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.NumberFormat;

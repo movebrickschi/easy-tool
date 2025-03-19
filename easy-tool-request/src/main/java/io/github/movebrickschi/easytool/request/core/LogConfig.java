@@ -1,4 +1,4 @@
-package io.github.movebrickschi.easytool.request.v2;
+package io.github.movebrickschi.easytool.request.core;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

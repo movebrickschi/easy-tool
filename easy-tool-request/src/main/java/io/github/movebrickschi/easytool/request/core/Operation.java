@@ -1,11 +1,11 @@
-package io.github.movebrickschi.easytool.request.v1;
+package io.github.movebrickschi.easytool.request.core;
 
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Maps;
 import io.github.movebrickschi.easytool.core.constants.LccConstants;
-import io.github.movebrickschi.easytool.request.v2.RequestParams;
+import io.github.movebrickschi.easytool.request.v1.OperationArgs;
 import lombok.Getter;
 
 import java.util.Collections;

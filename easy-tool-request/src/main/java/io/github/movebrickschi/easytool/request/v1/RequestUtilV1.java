@@ -4,7 +4,9 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import io.github.movebrickschi.easytool.request.v2.RequestParams;
+import io.github.movebrickschi.easytool.request.core.CResult;
+import io.github.movebrickschi.easytool.request.core.Operation;
+import io.github.movebrickschi.easytool.request.core.RequestParams;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;

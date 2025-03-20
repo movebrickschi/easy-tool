@@ -23,7 +23,7 @@ import java.util.function.Consumer;
  *
  * @author MoveBricks Chi 
  * @version 1.0
- * @since 2.1.5
+ * @since 3.0.0
  */
 public final class DefaultSseClient implements SseClient {
 

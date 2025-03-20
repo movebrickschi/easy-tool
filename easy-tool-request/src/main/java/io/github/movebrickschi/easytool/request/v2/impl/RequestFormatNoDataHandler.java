@@ -13,7 +13,7 @@ import java.io.Serializable;
  * 请求没有数据
  * @author MoveBricks Chi
  * @version 1.0
- * @since 2.1.0
+ * @since 3.0.0
  */
 @Slf4j
 public class RequestFormatNoDataHandler extends AbstractGetResult implements Serializable, RequestFormatApi {

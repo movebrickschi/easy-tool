@@ -15,7 +15,7 @@ import java.util.Objects;
  * @author MoveBricks Chi
  * @version 1.0
  */
-@Deprecated(since = "2.1.5", forRemoval = true)
+@Deprecated(since = "3.0.0", forRemoval = true)
 @Slf4j
 public final class SseUtil extends AbstractSseHandler {
 

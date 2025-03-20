@@ -12,7 +12,7 @@ import java.io.IOException;
  *
  * @author MoveBricks Chi
  * @version 1.0
- * @since 2.1.13
+ * @since 3.0.0
  */
 public class JSONNullSerializer extends JsonSerializer<JSONNull> {
 

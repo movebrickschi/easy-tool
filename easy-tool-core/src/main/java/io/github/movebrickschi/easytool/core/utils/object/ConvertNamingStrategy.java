@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author MoveBricks Chi
  * @version 1.0
- * @since 2.1.0
+ * @since 3.0.0
  */
 @Slf4j
 public final class ConvertNamingStrategy {

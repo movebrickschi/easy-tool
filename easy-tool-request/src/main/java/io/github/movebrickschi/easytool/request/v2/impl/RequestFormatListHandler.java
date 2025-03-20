@@ -21,7 +21,7 @@ import java.util.Objects;
  *
  * @author MoveBricks Chi
  * @version 1.0
- * @since 2.1.0
+ * @since 3.0.0
  */
 @Slf4j
 public class RequestFormatListHandler extends AbstractGetResult implements Serializable, RequestFormatApi {

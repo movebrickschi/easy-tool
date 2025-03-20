@@ -33,7 +33,7 @@ import java.util.function.Supplier;
  *
  * @author MoveBricks Chi
  * @version 1.0
- * @since 2.1.4
+ * @since 3.0.0
  */
 @Slf4j
 public final class ObjectConvertUtil implements Serializable {
@@ -267,7 +267,7 @@ public final class ObjectConvertUtil implements Serializable {
      * @param isIncludeNull 是否包含值为null的字段
      * @param namingStrategy 命名策略
      * @return 转换后的带有?的query字符串
-     * @since 2.2.1
+     * @since 3.0.0
      */
     public static String convertToQueryString(Object data, Boolean isIncludeNull, String... namingStrategy) {
         Map<String, Object> converted = null;
@@ -289,7 +289,7 @@ public final class ObjectConvertUtil implements Serializable {
      * @param data 待转换对象
      * @param namingStrategy 命名策略
      * @return 转换后的带有?的query字符串
-     * @since 2.1.11
+     * @since 3.0.0
      */
     public static String convertToQueryString(Object data, String... namingStrategy) {
         return convertToQueryString(data, false, namingStrategy);

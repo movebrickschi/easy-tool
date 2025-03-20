@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * jackson配之类
+ * jackson配置类
  *
  * @author MoveBricks Chi
  * @version 1.0

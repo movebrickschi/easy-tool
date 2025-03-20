@@ -18,7 +18,7 @@ import java.util.Map;
  * @author MoveBricks Chi
  * @version 1.0
  */
-@Deprecated(since = "2.1.11")
+@Deprecated(since = "3.0.0")
 @Data
 @Builder
 @AllArgsConstructor
@@ -51,21 +51,21 @@ public class OperationArgs {
     /**
      * Map类型请求参数
      */
-    @Deprecated(since = "2.1.4")
+    @Deprecated(since = "3.0.0")
     @Builder.Default
     private Map<String, Object> params = Collections.emptyMap();
 
     /**
      * json字符串类型请求参数
      */
-    @Deprecated(since = "2.1.4")
+    @Deprecated(since = "3.0.0")
     private String body;
 
     /**
      * 参数对象(可以是json字符串、Map或者对象实体)
      * 如果自动转换为指定格式，配合writePropertyNamingStrategy使用
      * param高于params和body
-     * @since 2.1.0
+     * @since 3.0.0
      */
     private Object param;
 
@@ -145,14 +145,14 @@ public class OperationArgs {
     /**
      * 用于读取数据时，例如将case_id_list字段转换为caseIdList
      * {@link NamingStrategyConstants}
-     * @since 2.1.0
+     * @since 3.0.0
      */
     private String readPropertyNamingStrategy = null;
 
     /**
      * 用于传入参数对象，例如将字段caseIdList转换为case_id_list,
      * {@link NamingStrategyConstants}
-     * @since 2.1.0
+     * @since 3.0.0
      */
     @Builder.Default
     private String writePropertyNamingStrategy = null;
@@ -160,7 +160,7 @@ public class OperationArgs {
     /**
      * 忽略字段，将指定字段排移除
      * 使用此功能，必须在对应实体类上使用@{@link com.fasterxml.jackson.annotation.JsonFilter}
-     * @since 2.1.3
+     * @since 3.0.0
      */
     private String[] ignoreFields = null;
 

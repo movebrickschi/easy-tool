@@ -7,7 +7,7 @@ import java.io.Serializable;
  *
  * @author MoveBricks Chi 
  * @version 1.0
- * @since 1.0
+ * @since 3.0.0
  */
 public class ObjectMapperConvertStrategy implements Serializable {
 

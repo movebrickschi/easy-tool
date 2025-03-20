@@ -15,7 +15,6 @@ import java.util.TimeZone;
  *
  * @author MoveBricks Chi
  * @version 1.0
- * @since 2.2.3
  */
 public class CustomDateDeserializer extends JsonDeserializer<Date> {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

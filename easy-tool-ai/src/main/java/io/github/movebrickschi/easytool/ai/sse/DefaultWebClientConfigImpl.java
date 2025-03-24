@@ -53,14 +53,20 @@ public class DefaultWebClientConfigImpl implements io.github.movebrickschi.easyt
     public WebClient createWebClient(WebClientProperties webClientProperties) {
         // 配置HTTP连接池
         ConnectionProvider provider = ConnectionProvider.builder("custom")
+                //设置连接池中的最大连接数
                 .maxConnections(webClientProperties.getMaxConnections())
+                //设置连接池中连接的最大空闲时间
                 .maxIdleTime(Duration.ofSeconds(webClientProperties.getMaxIdleTime()))
                 .build();
 
         // 配置HTTP客户端
         HttpClient httpClient = HttpClient.create(provider)
+                //设置连接超时时间
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, webClientProperties.getConnectTimeout())
+                //设置响应超时时间，如果服务器在指定时间内未返回任何数据，则会抛出超时异常。
                 .responseTimeout(Duration.ofSeconds(webClientProperties.getResponseTimeout()))
+                //限制客户端向服务器发送数据的时间。如果在指定时间内未能完成数据发送，则会抛出超时异常。
+                //限制客户端等待从服务器读取数据的时间。如果在指定时间内未接收到数据，则会抛出超时异常。
                 .doOnConnected(conn ->
                         conn.addHandlerLast(new ReadTimeoutHandler(webClientProperties.getReadTimeout()))
                                 .addHandlerLast(new WriteTimeoutHandler(webClientProperties.getWriteTimeout())));

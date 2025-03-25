@@ -1,10 +1,10 @@
 package io.github.movebrickschi.easytool.request.v2.impl;
 
 import io.github.movebrickschi.easytool.core.constants.LccConstants;
+import io.github.movebrickschi.easytool.request.core.CResult;
 import io.github.movebrickschi.easytool.request.v2.AbstractGetResult;
 import io.github.movebrickschi.easytool.request.v2.OperationArgsV2;
 import io.github.movebrickschi.easytool.request.v2.RequestFormatApi;
-import io.github.movebrickschi.easytool.request.core.CResult;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -23,7 +23,7 @@ public class RequestFormatNoDataHandler extends AbstractGetResult implements Ser
         if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
             return CResult.failed(cResult.getMessage());
         }
-        log.info("end success\n==>url:{}", operationArgs.getUrl());
+        logRequestEnd(this.getClass().getSimpleName());
         return cResult;
     }
 }

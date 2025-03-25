@@ -38,4 +38,12 @@ public interface GetResult {
      */
     CResult<ComboResult> getResultString(OperationArgsV2 operationArgs);
 
+    /**
+     * 根据returnConfig是否为null,进行不存的处理
+     * @param operationArgs 请求参数
+     * @return 结果
+     * @since 3.0.1
+     */
+    CResult<?> switchResult(OperationArgsV2 operationArgs);
+
 }

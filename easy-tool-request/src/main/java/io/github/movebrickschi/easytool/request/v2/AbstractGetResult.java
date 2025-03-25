@@ -5,6 +5,7 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.google.common.base.Stopwatch;
 import io.github.movebrickschi.easytool.core.constants.LccConstants;
 import io.github.movebrickschi.easytool.core.utils.object.ObjectConvertUtil;
 import io.github.movebrickschi.easytool.request.constants.RequestConstants;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 获取结果抽象类
@@ -135,6 +137,8 @@ public abstract class AbstractGetResult implements GetResult {
                             operationArgsV2.getWriteConvertConfig().getIgnoreFields())));
             bodyForLog = requestParams.getBody();
         }
+        Stopwatch watch = Stopwatch.createStarted();
+        log.info("😰request starting...");
         try {
             resultStr = Operation.ACTION_SUPPLIER.get().get(operationArgsV2.getMethod()).apply(requestParams);
         } catch (Exception e) {
@@ -143,6 +147,9 @@ public abstract class AbstractGetResult implements GetResult {
                             operationArgsV2.getLogConfig().getPrintLength()), e.getMessage());
             return CResult.failed(e.getMessage());
         }
+        watch.stop();
+        int timeCost = (int) watch.elapsed(TimeUnit.MILLISECONDS);
+        log.info("🙂request success,cost time:{}ms", timeCost);
         log.info("\n==>method:{}\n==>url:{}\n==>param:{}\n==>return:{}", operationArgsV2.getMethod(),
                 operationArgsV2.getUrl(), LogFormatUtil.subPre(bodyForLog,
                         operationArgsV2.getLogConfig().getPrintLength()),
@@ -151,9 +158,29 @@ public abstract class AbstractGetResult implements GetResult {
         return CResult.success(ComboResult.builder(bodyForLog, resultStr));
     }
 
-    public void logRequest(OperationArgsV2 operationArgs, String className) {
-        log.info("{} start format...\n==>method:{}\n==>url:{}", className, operationArgs.getMethod(),
-                operationArgs.getUrl());
+    @Override
+    public CResult<?> switchResult(OperationArgsV2 operationArgsV2) {
+        CResult<?> cResult = null;
+        if (Objects.isNull(operationArgsV2.getReturnConfig())) {
+            CResult<ComboResult> resultString = getResultString(operationArgsV2);
+            if (resultString.getCode().intValue() == LccConstants.SUCCESS.intValue()) {
+                cResult = new CResult<>(LccConstants.SUCCESS, null, resultString.getData().getResult());
+            }
+        } else {
+            cResult = getResult(operationArgsV2);
+        }
+        if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
+            return CResult.failed(cResult.getMessage());
+        }
+        return cResult;
+    }
+
+    public void logRequestStartFormat(OperationArgsV2 operationArgs, String className) {
+        log.info("{} start format...", className);
+    }
+
+    public void logRequestEnd(String className) {
+        log.info("{} end format...", className);
     }
 
     public void logEmptyResponse(OperationArgsV2 operationArgs) {

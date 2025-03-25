@@ -28,6 +28,8 @@ public class RequestFormatJsonObjectHandler extends AbstractGetResult implements
         if (LccConstants.FAIL.equals(resultString.getCode())) {
             return CResult.failed(resultString.getMessage());
         }
-        return CResult.success(JSONUtil.parseObj(resultString.getData().getResult()));
+        JSONObject entries = JSONUtil.parseObj(resultString.getData().getResult());
+        logRequestEnd(this.getClass().getSimpleName());
+        return CResult.success(entries);
     }
 }

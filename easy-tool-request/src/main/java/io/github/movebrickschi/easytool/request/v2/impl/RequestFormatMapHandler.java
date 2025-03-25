@@ -8,11 +8,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import io.github.movebrickschi.easytool.core.constants.LccConstants;
 import io.github.movebrickschi.easytool.core.utils.object.ConvertNamingStrategy;
+import io.github.movebrickschi.easytool.request.core.CResult;
+import io.github.movebrickschi.easytool.request.core.Operation;
 import io.github.movebrickschi.easytool.request.v2.AbstractGetResult;
 import io.github.movebrickschi.easytool.request.v2.OperationArgsV2;
 import io.github.movebrickschi.easytool.request.v2.RequestFormatApi;
-import io.github.movebrickschi.easytool.request.core.CResult;
-import io.github.movebrickschi.easytool.request.core.Operation;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -38,7 +38,7 @@ public class RequestFormatMapHandler extends AbstractGetResult implements Serial
         if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
             return CResult.failed(cResult.getMessage());
         }
-        logRequest(operationArgs, this.getClass().getSimpleName());
+        logRequestStartFormat(operationArgs, this.getClass().getSimpleName());
         //返回为空
         if (Objects.isNull(cResult.getData())) {
             logEmptyResponse(operationArgs);
@@ -67,24 +67,29 @@ public class RequestFormatMapHandler extends AbstractGetResult implements Serial
                 }
             }
         }
+        String simpleName = this.getClass().getSimpleName();
         //不是json,直接返回
         if (!JSONUtil.isTypeJSON(resultByLevelKey)) {
             mapResult.put(Operation.RETURN_TYPE_SINGLE, resultByLevelKey);
+            logRequestEnd(simpleName);
             return CResult.success(mapResult);
         }
         if (resultByLevelKey.startsWith("[")) {
             //返回结果为list
             mapResult.put(Operation.RETURN_TYPE_LIST, JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey),
                     tClass));
+            logRequestEnd(simpleName);
             return CResult.success(mapResult);
         }
         //返回map
         if (tClass.equals(Object.class)) {
             mapResult.putAll(JSONUtil.parseObj(resultByLevelKey));
+            logRequestEnd(simpleName);
             return CResult.success(mapResult);
         }
         //返回单对象
         mapResult.put(Operation.RETURN_TYPE_SINGLE, JSONUtil.toBean(resultByLevelKey, tClass));
+        logRequestEnd(simpleName);
         return CResult.success(mapResult);
     }
 

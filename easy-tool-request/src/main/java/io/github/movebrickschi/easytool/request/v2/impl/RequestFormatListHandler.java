@@ -5,10 +5,10 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
 import io.github.movebrickschi.easytool.core.constants.LccConstants;
 import io.github.movebrickschi.easytool.core.utils.object.ObjectConvertUtil;
+import io.github.movebrickschi.easytool.request.core.CResult;
 import io.github.movebrickschi.easytool.request.v2.AbstractGetResult;
 import io.github.movebrickschi.easytool.request.v2.OperationArgsV2;
 import io.github.movebrickschi.easytool.request.v2.RequestFormatApi;
-import io.github.movebrickschi.easytool.request.core.CResult;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -31,7 +31,8 @@ public class RequestFormatListHandler extends AbstractGetResult implements Seria
         if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
             return CResult.failed(cResult.getMessage());
         }
-        logRequest(operationArgs, this.getClass().getSimpleName());
+        String simpleName = this.getClass().getSimpleName();
+        logRequestStartFormat(operationArgs, simpleName);
         //返回为空
         if (Objects.isNull(cResult.getData()) || String.valueOf(cResult.getData()).startsWith("[]")) {
             logEmptyResponse(operationArgs);
@@ -50,10 +51,14 @@ public class RequestFormatListHandler extends AbstractGetResult implements Seria
         }
         //如果需要字段转换
         if (Objects.nonNull(operationArgs.getReadConvertConfig())) {
-            return CResult.success(ObjectConvertUtil.convertListWithNamingStrategy(JSONUtil.toJsonStr(resultByLevelKey), tClass,
-                    operationArgs.getReadConvertConfig().getNamingStrategy()));
+            List<T> result = ObjectConvertUtil.convertListWithNamingStrategy(JSONUtil.toJsonStr(resultByLevelKey),
+                    tClass, operationArgs.getReadConvertConfig().getNamingStrategy());
+            logRequestEnd(simpleName);
+            return CResult.success(result);
         }
-        return CResult.success(JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey), tClass));
+        List<T> list = JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey), tClass);
+        logRequestEnd(simpleName);
+        return CResult.success(list);
     }
 
 }

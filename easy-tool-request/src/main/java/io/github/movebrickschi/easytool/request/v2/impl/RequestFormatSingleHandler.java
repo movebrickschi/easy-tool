@@ -3,13 +3,12 @@ package io.github.movebrickschi.easytool.request.v2.impl;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
-import io.github.movebrickschi.easytool.core.constants.LccConstants;
 import io.github.movebrickschi.easytool.core.utils.object.ObjectConvertUtil;
-import io.github.movebrickschi.easytool.request.v2.AbstractGetResult;
+import io.github.movebrickschi.easytool.request.core.CResult;
 import io.github.movebrickschi.easytool.request.core.LogFormatUtil;
+import io.github.movebrickschi.easytool.request.v2.AbstractGetResult;
 import io.github.movebrickschi.easytool.request.v2.OperationArgsV2;
 import io.github.movebrickschi.easytool.request.v2.RequestFormatApi;
-import io.github.movebrickschi.easytool.request.core.CResult;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -25,16 +24,14 @@ import java.util.Objects;
 @Slf4j
 public class RequestFormatSingleHandler extends AbstractGetResult implements Serializable, RequestFormatApi {
     @Override
-    public <T> CResult<T> toSingle(OperationArgsV2 operationArgs, Class<T> tClass, String key,
+    public <T> CResult<T> toSingle(OperationArgsV2 operationArgsV2, Class<T> tClass, String key,
                                    String... keys) {
-        CResult<Object> cResult = getResult(operationArgs);
-        if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
-            return CResult.failed(cResult.getMessage());
-        }
-        logRequest(operationArgs, this.getClass().getSimpleName());
+        CResult<?> cResult = switchResult(operationArgsV2);
+        String simpleName = this.getClass().getSimpleName();
+        logRequestStartFormat(operationArgsV2, simpleName);
         //返回为空
         if (Objects.isNull(cResult.getData())) {
-            logEmptyResponse(operationArgs);
+            logEmptyResponse(operationArgsV2);
             return CResult.success();
         }
 
@@ -49,7 +46,7 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
             for (String it : keys) {
                 data = JSONUtil.parseObj(cResult.getData()).get(it);
                 if (Objects.isNull(data) || data.toString().startsWith("[]")) {
-                    logEmptyResponse(operationArgs);
+                    logEmptyResponse(operationArgsV2);
                     return CResult.success();
                 }
             }
@@ -59,19 +56,24 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
         //基本数据类型或者string
         if (ObjectConvertUtil.isBasicType(tClass)) {
             log.info("end success,base type single\n==>url:{}\n==>CResult:{}",
-                    operationArgs.getUrl(),
-                    Boolean.TRUE.equals(operationArgs.getLogConfig().getIsPrintResultLog()) ?
+                    operationArgsV2.getUrl(),
+                    Boolean.TRUE.equals(operationArgsV2.getLogConfig().getIsPrintResultLog()) ?
                             LogFormatUtil.subPre(JSONUtil.toJsonStr(cResult.getData()),
-                                    operationArgs.getLogConfig().getPrintLength()) : "");
+                                    operationArgsV2.getLogConfig().getPrintLength()) : "");
             T result = ObjectConvertUtil.convertBasicType(data, tClass);
+            logRequestEnd(simpleName);
             return CResult.success(result);
         }
         //如果需要字段转换
-        if (Objects.nonNull(operationArgs.getReadConvertConfig())) {
-            return CResult.success(ObjectConvertUtil.convertWithNamingStrategy(data, tClass,
-                    operationArgs.getReadConvertConfig().getIsIncludeNull(),
-                    operationArgs.getReadConvertConfig().getNamingStrategy()));
+        if (Objects.nonNull(operationArgsV2.getReadConvertConfig())) {
+            T result = ObjectConvertUtil.convertWithNamingStrategy(data, tClass,
+                    operationArgsV2.getReadConvertConfig().getIsIncludeNull(),
+                    operationArgsV2.getReadConvertConfig().getNamingStrategy());
+            logRequestEnd(simpleName);
+            return CResult.success(result);
         }
-        return CResult.success(JSONUtil.toBean(JSONUtil.toJsonStr(data), tClass));
+        T bean = JSONUtil.toBean(JSONUtil.toJsonStr(data), tClass);
+        logRequestEnd(simpleName);
+        return CResult.success(bean);
     }
 }

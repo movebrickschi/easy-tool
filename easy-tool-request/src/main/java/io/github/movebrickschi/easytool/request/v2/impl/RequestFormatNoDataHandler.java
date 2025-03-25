@@ -23,7 +23,7 @@ public class RequestFormatNoDataHandler extends AbstractGetResult implements Ser
         if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
             return CResult.failed(cResult.getMessage());
         }
-        log.info("end success,v1\n==>url:{}", operationArgs.getUrl());
+        log.info("end success\n==>url:{}", operationArgs.getUrl());
         return cResult;
     }
 }

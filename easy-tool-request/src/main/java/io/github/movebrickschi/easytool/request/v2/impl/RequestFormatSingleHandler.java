@@ -58,7 +58,7 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
 
         //基本数据类型或者string
         if (ObjectConvertUtil.isBasicType(tClass)) {
-            log.info("end success,base type single v1\n==>url:{}\n==>CResult:{}",
+            log.info("end success,base type single\n==>url:{}\n==>CResult:{}",
                     operationArgs.getUrl(),
                     Boolean.TRUE.equals(operationArgs.getLogConfig().getIsPrintResultLog()) ?
                             LogFormatUtil.subPre(JSONUtil.toJsonStr(cResult.getData()),

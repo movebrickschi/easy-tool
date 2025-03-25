@@ -7,6 +7,8 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
+import io.github.movebrickschi.easytool.core.utils.object.ObjectConvertUtil;
+import io.github.movebrickschi.easytool.request.constants.RequestConstants;
 import io.github.movebrickschi.easytool.request.v1.OperationArgs;
 import io.github.movebrickschi.easytool.request.v2.*;
 import io.github.movebrickschi.easytool.request.v2.impl.RequestFormatListHandler;
@@ -20,6 +22,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 工具类
@@ -263,6 +266,26 @@ public final class RequestUtil implements Serializable {
      * @return 原始数据
      */
     public static JSONObject parseJsonObject(OperationArgsV2 operationArgs) {
+        RequestParams requestParams = BeanUtil.copyProperties(operationArgs, RequestParams.class);
+        Object param = operationArgs.getParam();
+        if (RequestConstants.FORM_METHODS.contains(requestParams.getMethod()) && Objects.nonNull(param)) {
+            if (param instanceof Map<?, ?>) {
+                requestParams.setMapParams((Map<String, Object>) param);
+            } else {
+                Map map = ObjectConvertUtil.convertWithNamingStrategy(param, Map.class,
+                        operationArgs.getWriteConvertConfig().getIsIncludeNull(),
+                        operationArgs.getWriteConvertConfig().getNamingStrategy());
+                requestParams.setMapParams((Map<String, Object>) map);
+            }
+        } else {
+            //json type
+            requestParams.setBody(ObjectConvertUtil.customConvertToString(param, () ->
+                    ObjectConvertUtil.writeWithNamingStrategy(param,
+                            operationArgs.getWriteConvertConfig().getNamingStrategy(),
+                            operationArgs.getWriteConvertConfig().getIsIncludeNull(),
+                            operationArgs.getWriteConvertConfig().getIgnoreFields())));
+        }
+
         return JSONUtil.parseObj(Operation.ACTION_SUPPLIER.get()
                 .get(operationArgs.getMethod())
                 .apply(BeanUtil.copyProperties(operationArgs, RequestParams.class)));

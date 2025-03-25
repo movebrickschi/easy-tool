@@ -2,6 +2,7 @@ package io.github.movebrickschi.easytool.request.v2;
 
 
 import io.github.movebrickschi.easytool.request.core.CResult;
+import io.github.movebrickschi.easytool.request.core.ComboResult;
 import io.github.movebrickschi.easytool.request.v1.OperationArgs;
 
 /**
@@ -28,5 +29,13 @@ public interface GetResult {
      * @since 3.0.0
      */
     CResult<Object> getResult(OperationArgsV2 operationArgs);
+
+    /**
+     * 获取字符串结果
+     * @param operationArgs 请求参数
+     * @return 结果对象
+     * @since 3.0.1
+     */
+    CResult<ComboResult> getResultString(OperationArgsV2 operationArgs);
 
 }

@@ -1,5 +1,6 @@
 package io.github.movebrickschi.easytool.request.v2;
 
+import cn.hutool.json.JSONObject;
 import io.github.movebrickschi.easytool.request.core.CResult;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -162,6 +163,15 @@ public interface RequestFormatApi {
      */
     default CResult<?> noData(OperationArgsV2 operationArgs) {
         return CResult.success();
+    }
+
+    /**
+     * 主方法转换为json形式
+     * @param operationArgs 请求方法参数
+     * @return 返回结果
+     */
+    default CResult<JSONObject> toJSONObject(OperationArgsV2 operationArgs) {
+        return CResult.success(new JSONObject());
     }
 
 

@@ -84,6 +84,8 @@ public class OperationArgsV2 {
 
     /**
      * 返回结果配置
+     * 如果为空，则结果不处理直接返回
+     * 反之，则提取对应字段的结果返回
      */
     private ReturnConfig returnConfig = new ReturnConfig();
 

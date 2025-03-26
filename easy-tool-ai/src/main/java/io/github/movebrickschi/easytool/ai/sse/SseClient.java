@@ -4,7 +4,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import reactor.core.publisher.Flux;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 /**
@@ -31,36 +30,39 @@ public interface SseClient {
 
         S accept(MediaType acceptableMediaTypes);
 
+        S contentType(MediaType contentType);
+
         S process(Consumer<ServerSentEvent<String>> consumer);
 
-        S stopBy(BooleanSupplier supplier);
-
         Flux<ServerSentEvent<String>> execute();
-    }
-
-
-    interface RequestBody extends RequestHeaders<RequestBody> {
-        RequestBodyUri contentType(MediaType contentType);
-
-        RequestHeadersUri<?> bodyValue(Object body);
-
-        RequestHeadersUri<?> bodyValue(Object body, boolean toJson);
-
-        RequestHeadersUri<?> bodyValue(Object body, String propertyNamingStrategy, String... ignoreFields);
 
         RequestHeadersUri<?> endEvent(String endEvent);
+    }
 
+    interface RequestBody extends RequestHeaders<RequestBody> {
+
+        RequestHandle bodyValue(Object body);
+
+        RequestHandle bodyValue(Object body, boolean toJson);
+
+        RequestHandle bodyValue(Object body, String propertyNamingStrategy, String... ignoreFields);
+
+    }
+
+    interface RequestHandle extends RequestHeadersUri<RequestBody> {
+        RequestHeaders<RequestBody> contentField(String contentField);
     }
 
 
     interface Response {
+
     }
 
     interface RequestHeadersUri<S extends RequestHeaders<S>> extends Uri<S>, RequestHeaders<S> {
 
     }
 
-    interface RequestBodyUri extends RequestBody, Response, RequestHeadersUri<RequestBody> {
+    interface RequestBodyUri extends RequestBody, RequestHandle, Response, RequestHeadersUri<RequestBody> {
 
     }
 

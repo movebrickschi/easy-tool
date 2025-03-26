@@ -149,12 +149,12 @@ public abstract class AbstractGetResult implements GetResult {
         }
         watch.stop();
         int timeCost = (int) watch.elapsed(TimeUnit.MILLISECONDS);
-        log.info("🙂request success,cost time:{}ms", timeCost);
         log.info("\n==>method:{}\n==>url:{}\n==>param:{}\n==>return:{}", operationArgsV2.getMethod(),
                 operationArgsV2.getUrl(), LogFormatUtil.subPre(bodyForLog,
                         operationArgsV2.getLogConfig().getPrintLength()),
                 LogFormatUtil.printSubPre(operationArgsV2.getLogConfig().getIsPrintResultLog(), resultStr,
                         operationArgsV2.getLogConfig().getPrintLength()));
+        log.info("🙂request success,cost time:{}ms", timeCost);
         return CResult.success(ComboResult.builder(bodyForLog, resultStr));
     }
 

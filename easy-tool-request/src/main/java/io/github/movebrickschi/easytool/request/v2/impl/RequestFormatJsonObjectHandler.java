@@ -29,7 +29,7 @@ public class RequestFormatJsonObjectHandler extends AbstractGetResult implements
             return CResult.failed(resultString.getMessage());
         }
         JSONObject entries = JSONUtil.parseObj(resultString.getData().getResult());
-        logRequestEnd(this.getClass().getSimpleName());
+        logRequestFormatEnd(this.getClass().getSimpleName());
         return CResult.success(entries);
     }
 }

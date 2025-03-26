@@ -61,7 +61,7 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
                             LogFormatUtil.subPre(JSONUtil.toJsonStr(cResult.getData()),
                                     operationArgsV2.getLogConfig().getPrintLength()) : "");
             T result = ObjectConvertUtil.convertBasicType(data, tClass);
-            logRequestEnd(simpleName);
+            logRequestFormatEnd(simpleName);
             return CResult.success(result);
         }
         //如果需要字段转换
@@ -69,11 +69,11 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
             T result = ObjectConvertUtil.convertWithNamingStrategy(data, tClass,
                     operationArgsV2.getReadConvertConfig().getIsIncludeNull(),
                     operationArgsV2.getReadConvertConfig().getNamingStrategy());
-            logRequestEnd(simpleName);
+            logRequestFormatEnd(simpleName);
             return CResult.success(result);
         }
         T bean = JSONUtil.toBean(JSONUtil.toJsonStr(data), tClass);
-        logRequestEnd(simpleName);
+        logRequestFormatEnd(simpleName);
         return CResult.success(bean);
     }
 }

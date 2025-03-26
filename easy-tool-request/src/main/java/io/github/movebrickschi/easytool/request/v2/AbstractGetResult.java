@@ -145,16 +145,12 @@ public abstract class AbstractGetResult implements GetResult {
             log.error("\n==>method:{}\n==>url:{}\nparam:{}\n==>error:{}", operationArgsV2.getMethod(),
                     operationArgsV2.getUrl(), LogFormatUtil.subPre(bodyForLog,
                             operationArgsV2.getLogConfig().getPrintLength()), e.getMessage());
+            logRequestError(operationArgsV2, bodyForLog, e.getMessage());
             return CResult.failed(e.getMessage());
         }
         watch.stop();
         int timeCost = (int) watch.elapsed(TimeUnit.MILLISECONDS);
-        log.info("\n==>method:{}\n==>url:{}\n==>param:{}\n==>return:{}", operationArgsV2.getMethod(),
-                operationArgsV2.getUrl(), LogFormatUtil.subPre(bodyForLog,
-                        operationArgsV2.getLogConfig().getPrintLength()),
-                LogFormatUtil.printSubPre(operationArgsV2.getLogConfig().getIsPrintResultLog(), resultStr,
-                        operationArgsV2.getLogConfig().getPrintLength()));
-        log.info("🙂request success,cost time:{}ms", timeCost);
+        logRequestSuccess(operationArgsV2, bodyForLog, resultStr, timeCost);
         return CResult.success(ComboResult.builder(bodyForLog, resultStr));
     }
 
@@ -175,11 +171,45 @@ public abstract class AbstractGetResult implements GetResult {
         return cResult;
     }
 
+    private void logRequestSuccess(OperationArgsV2 operationArgsV2, String bodyForLog, String resultStr, int timeCost) {
+        if (timeCost < 1000) {
+            log.info(
+                    "\n==>method:{}\n==>url:{}\n==>param:{}\n==>return:{}\n==>cost:{}ms",
+                    operationArgsV2.getMethod(),
+                    operationArgsV2.getUrl(),
+                    LogFormatUtil.subPre(bodyForLog, operationArgsV2.getLogConfig().getPrintLength()),
+                    LogFormatUtil.printSubPre(operationArgsV2.getLogConfig().getIsPrintResultLog(), resultStr,
+                            operationArgsV2.getLogConfig().getPrintLength()),
+                    timeCost
+            );
+        } else {
+            log.warn(
+                    "\n==>method:{}\n==>url:{}\n==>param:{}\n==>return:{}\n==>cost:{}s",
+                    operationArgsV2.getMethod(),
+                    operationArgsV2.getUrl(),
+                    LogFormatUtil.subPre(bodyForLog, operationArgsV2.getLogConfig().getPrintLength()),
+                    LogFormatUtil.printSubPre(operationArgsV2.getLogConfig().getIsPrintResultLog(), resultStr,
+                            operationArgsV2.getLogConfig().getPrintLength()),
+                    timeCost / 1000.0
+            );
+        }
+        log.info("😄request success");
+    }
+
+    private void logRequestError(OperationArgsV2 operationArgsV2, String bodyForLog, String errorMessage) {
+        log.error("\n==>method:{}\n==>url:{}\n==>param:{}\n==>error:{}",
+                operationArgsV2.getMethod(),
+                operationArgsV2.getUrl(),
+                LogFormatUtil.subPre(bodyForLog, operationArgsV2.getLogConfig().getPrintLength()),
+                errorMessage
+        );
+    }
+
     public void logRequestStartFormat(OperationArgsV2 operationArgs, String className) {
         log.info("{} start format...", className);
     }
 
-    public void logRequestEnd(String className) {
+    public void logRequestFormatEnd(String className) {
         log.info("{} end format...", className);
     }
 

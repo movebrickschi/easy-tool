@@ -53,11 +53,11 @@ public class RequestFormatListHandler extends AbstractGetResult implements Seria
         if (Objects.nonNull(operationArgs.getReadConvertConfig())) {
             List<T> result = ObjectConvertUtil.convertListWithNamingStrategy(JSONUtil.toJsonStr(resultByLevelKey),
                     tClass, operationArgs.getReadConvertConfig().getNamingStrategy());
-            logRequestEnd(simpleName);
+            logRequestFormatEnd(simpleName);
             return CResult.success(result);
         }
         List<T> list = JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey), tClass);
-        logRequestEnd(simpleName);
+        logRequestFormatEnd(simpleName);
         return CResult.success(list);
     }
 

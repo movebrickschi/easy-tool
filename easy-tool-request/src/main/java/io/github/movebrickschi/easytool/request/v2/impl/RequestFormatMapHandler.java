@@ -71,25 +71,25 @@ public class RequestFormatMapHandler extends AbstractGetResult implements Serial
         //不是json,直接返回
         if (!JSONUtil.isTypeJSON(resultByLevelKey)) {
             mapResult.put(Operation.RETURN_TYPE_SINGLE, resultByLevelKey);
-            logRequestEnd(simpleName);
+            logRequestFormatEnd(simpleName);
             return CResult.success(mapResult);
         }
         if (resultByLevelKey.startsWith("[")) {
             //返回结果为list
             mapResult.put(Operation.RETURN_TYPE_LIST, JSONUtil.toList(JSONUtil.parseArray(resultByLevelKey),
                     tClass));
-            logRequestEnd(simpleName);
+            logRequestFormatEnd(simpleName);
             return CResult.success(mapResult);
         }
         //返回map
         if (tClass.equals(Object.class)) {
             mapResult.putAll(JSONUtil.parseObj(resultByLevelKey));
-            logRequestEnd(simpleName);
+            logRequestFormatEnd(simpleName);
             return CResult.success(mapResult);
         }
         //返回单对象
         mapResult.put(Operation.RETURN_TYPE_SINGLE, JSONUtil.toBean(resultByLevelKey, tClass));
-        logRequestEnd(simpleName);
+        logRequestFormatEnd(simpleName);
         return CResult.success(mapResult);
     }
 

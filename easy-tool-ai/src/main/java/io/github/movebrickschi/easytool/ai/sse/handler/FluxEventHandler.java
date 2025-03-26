@@ -7,7 +7,6 @@ import reactor.core.publisher.Flux;
  * FluxEventHandler
  *
  * @author MoveBricks Chi
- * @version 1.0
  * @since 3.0.1
  */
 public interface FluxEventHandler {

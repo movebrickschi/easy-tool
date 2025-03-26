@@ -8,9 +8,10 @@ import reactor.core.publisher.Flux;
 import java.util.Objects;
 
 /**
- * AcceptEventHandler
+ * 接收sse带有事件的内容
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi 
+ * @since 3.0.1
  */
 @Slf4j
 public class AcceptEventHandler implements FluxEventHandler {

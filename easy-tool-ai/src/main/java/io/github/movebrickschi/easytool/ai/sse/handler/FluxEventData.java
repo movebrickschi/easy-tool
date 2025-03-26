@@ -8,7 +8,6 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -29,7 +28,13 @@ public class FluxEventData implements Serializable {
      */
     private String contentField;
 
+    /**
+     * 自定义处理
+     */
     private Consumer<ServerSentEvent<String>> consumer;
 
+    /**
+     * 结束时间标识
+     */
     private String endEvent;
 }

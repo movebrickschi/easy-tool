@@ -1,14 +1,13 @@
 package io.github.movebrickschi.easytool.ai.sse.handler;
 
-import cn.hutool.core.collection.CollUtil;
-
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * EventHandlerFactory
+ * sse处理工厂
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
+ * @since 3.0.1
  */
 public final class EventHandlerFactory {
 

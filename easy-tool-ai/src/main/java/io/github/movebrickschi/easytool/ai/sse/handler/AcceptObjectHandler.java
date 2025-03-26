@@ -10,9 +10,10 @@ import reactor.core.publisher.Mono;
 import java.util.Objects;
 
 /**
- * AcceptObjectHandler
+ * 接收大模型返回的原始数据
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
+ * @since 3.0.1
  */
 @Slf4j
 public class AcceptObjectHandler implements FluxEventHandler {

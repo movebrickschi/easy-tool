@@ -26,16 +26,16 @@ import java.util.Objects;
 @Slf4j
 public class RequestFormatListHandler extends AbstractGetResult implements Serializable, RequestFormatApi {
     @Override
-    public <T> CResult<List<T>> toList(OperationArgsV2 operationArgs, Class<T> tClass, String... keys) {
-        CResult<Object> cResult = getResult(operationArgs);
+    public <T> CResult<List<T>> toList(OperationArgsV2 operationArgsV2, Class<T> tClass, String... keys) {
+        CResult<?> cResult = switchResult(operationArgsV2);
         if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
             return CResult.failed(cResult.getMessage());
         }
         String simpleName = this.getClass().getSimpleName();
-        logRequestStartFormat(operationArgs, simpleName);
+        logRequestStartFormat(operationArgsV2, simpleName);
         //返回为空
         if (Objects.isNull(cResult.getData()) || String.valueOf(cResult.getData()).startsWith("[]")) {
-            logEmptyResponse(operationArgs);
+            logEmptyResponse(operationArgsV2);
             return CResult.success(Collections.emptyList());
         }
         String resultByLevelKey = JSONUtil.toJsonStr(cResult.getData());
@@ -44,15 +44,15 @@ public class RequestFormatListHandler extends AbstractGetResult implements Seria
             for (String key : keys) {
                 resultByLevelKey = JSONUtil.parseObj(resultByLevelKey).getStr(key);
                 if (CharSequenceUtil.isBlank(resultByLevelKey) || resultByLevelKey.startsWith("[]")) {
-                    logEmptyResponse(operationArgs);
+                    logEmptyResponse(operationArgsV2);
                     return CResult.success(Collections.emptyList());
                 }
             }
         }
         //如果需要字段转换
-        if (Objects.nonNull(operationArgs.getReadConvertConfig())) {
+        if (Objects.nonNull(operationArgsV2.getReadConvertConfig())) {
             List<T> result = ObjectConvertUtil.convertListWithNamingStrategy(JSONUtil.toJsonStr(resultByLevelKey),
-                    tClass, operationArgs.getReadConvertConfig().getNamingStrategy());
+                    tClass, operationArgsV2.getReadConvertConfig().getNamingStrategy());
             logRequestFormatEnd(simpleName);
             return CResult.success(result);
         }

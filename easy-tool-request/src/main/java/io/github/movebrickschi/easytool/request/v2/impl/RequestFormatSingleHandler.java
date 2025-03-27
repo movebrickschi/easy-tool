@@ -3,6 +3,7 @@ package io.github.movebrickschi.easytool.request.v2.impl;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
+import io.github.movebrickschi.easytool.core.constants.LccConstants;
 import io.github.movebrickschi.easytool.core.utils.object.ObjectConvertUtil;
 import io.github.movebrickschi.easytool.request.core.CResult;
 import io.github.movebrickschi.easytool.request.core.LogFormatUtil;
@@ -27,6 +28,9 @@ public class RequestFormatSingleHandler extends AbstractGetResult implements Ser
     public <T> CResult<T> toSingle(OperationArgsV2 operationArgsV2, Class<T> tClass, String key,
                                    String... keys) {
         CResult<?> cResult = switchResult(operationArgsV2);
+        if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
+            return CResult.failed(cResult.getMessage());
+        }
         String simpleName = this.getClass().getSimpleName();
         logRequestStartFormat(operationArgsV2, simpleName);
         //返回为空

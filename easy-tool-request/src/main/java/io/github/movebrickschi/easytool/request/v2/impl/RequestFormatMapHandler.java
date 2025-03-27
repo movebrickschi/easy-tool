@@ -34,7 +34,7 @@ public class RequestFormatMapHandler extends AbstractGetResult implements Serial
                                                   Class<T> tClass, List<String> siblingKes,
                                                   Boolean siblingKesEnd,
                                                   String... keys) {
-        CResult<Object> cResult = getResult(operationArgs);
+        CResult<?> cResult = switchResult(operationArgs);
         if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
             return CResult.failed(cResult.getMessage());
         }
@@ -50,7 +50,8 @@ public class RequestFormatMapHandler extends AbstractGetResult implements Serial
         //data下同级对应key的字段取出放入map
         if (!siblingKes.isEmpty()) {
             mapResult.putAll(getSiblingValues(resultByLevelKey, siblingKes,
-                    operationArgs.getReadConvertConfig().getNamingStrategy()));
+                    Objects.isNull(operationArgs.getReadConvertConfig()) ? null :
+                            operationArgs.getReadConvertConfig().getNamingStrategy()));
             if (Boolean.TRUE.equals(siblingKesEnd)) {
                 return CResult.success(mapResult);
             }

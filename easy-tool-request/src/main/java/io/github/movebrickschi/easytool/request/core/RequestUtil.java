@@ -71,6 +71,7 @@ public final class RequestUtil implements Serializable {
         ReturnConfig returnConfig = new ReturnConfig(operationArgs.getReturnCodeField(),
                 operationArgs.getReturnDataField(),
                 operationArgs.getReturnMessageField(), operationArgs.getReturnSuccessCode(),
+                false,
                 operationArgs.getBizReturnSuccessCode());
         operationArgsV2.setReturnConfig(returnConfig);
         ObjectConvertConfig writeConvertConfig = ObjectConvertConfig.builder()

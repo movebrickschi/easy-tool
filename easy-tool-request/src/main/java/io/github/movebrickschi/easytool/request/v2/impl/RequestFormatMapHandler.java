@@ -35,8 +35,8 @@ public class RequestFormatMapHandler extends AbstractGetResult implements Serial
                                                   Boolean siblingKesEnd,
                                                   String... keys) {
         CResult<?> cResult = switchResult(operationArgs);
-        if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
-            return CResult.failed(cResult.getMessage());
+        if (cResult.getCode().intValue() != LccConstants.SUCCESS.intValue()) {
+            return CResult.failed(cResult.getCode(), cResult.getMessage());
         }
         logRequestStartFormat(operationArgs, this.getClass().getSimpleName());
         //返回为空

@@ -28,8 +28,8 @@ public class RequestFormatListHandler extends AbstractGetResult implements Seria
     @Override
     public <T> CResult<List<T>> toList(OperationArgsV2 operationArgsV2, Class<T> tClass, String... keys) {
         CResult<?> cResult = switchResult(operationArgsV2);
-        if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
-            return CResult.failed(cResult.getMessage());
+        if (cResult.getCode().intValue() != LccConstants.SUCCESS.intValue()) {
+            return CResult.failed(cResult.getCode(), cResult.getMessage());
         }
         String simpleName = this.getClass().getSimpleName();
         logRequestStartFormat(operationArgsV2, simpleName);

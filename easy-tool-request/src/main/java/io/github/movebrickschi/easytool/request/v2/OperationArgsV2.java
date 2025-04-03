@@ -209,6 +209,16 @@ public class OperationArgsV2 {
             return this;
         }
 
+        public OperationArgsV2Builder returnConfig(int returnSuccessCode, boolean isReturnErrorCode) {
+            this.returnConfig = new ReturnConfig(returnSuccessCode, isReturnErrorCode);
+            return this;
+        }
+
+        public OperationArgsV2Builder returnConfig(boolean isReturnErrorCode) {
+            this.returnConfig = new ReturnConfig(isReturnErrorCode);
+            return this;
+        }
+
         public OperationArgsV2Builder logConfig(LogConfig logConfig) {
             this.logConfig = logConfig;
             return this;

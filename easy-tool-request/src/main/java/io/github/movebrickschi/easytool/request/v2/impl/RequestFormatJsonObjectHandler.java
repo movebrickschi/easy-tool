@@ -25,8 +25,8 @@ public class RequestFormatJsonObjectHandler extends AbstractGetResult implements
     @Override
     public CResult<JSONObject> toJSONObject(OperationArgsV2 operationArgsV2) {
         CResult<ComboResult> resultString = getResultString(operationArgsV2);
-        if (LccConstants.FAIL.equals(resultString.getCode())) {
-            return CResult.failed(resultString.getMessage());
+        if (resultString.getCode().intValue() != LccConstants.SUCCESS.intValue()) {
+            return CResult.failed(resultString.getCode(), resultString.getMessage());
         }
         JSONObject entries = JSONUtil.parseObj(resultString.getData().getResult());
         logRequestFormatEnd(this.getClass().getSimpleName());

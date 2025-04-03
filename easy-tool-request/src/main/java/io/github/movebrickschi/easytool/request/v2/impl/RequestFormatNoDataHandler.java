@@ -20,8 +20,8 @@ public class RequestFormatNoDataHandler extends AbstractGetResult implements Ser
     @Override
     public CResult<?> noData(OperationArgsV2 operationArgs) {
         CResult<?> cResult = getResult(operationArgs);
-        if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
-            return CResult.failed(cResult.getMessage());
+        if (cResult.getCode().intValue() != LccConstants.SUCCESS.intValue()) {
+            return CResult.failed(cResult.getCode(), cResult.getMessage());
         }
         logRequestFormatEnd(this.getClass().getSimpleName());
         return cResult;

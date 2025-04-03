@@ -47,6 +47,12 @@ public class ReturnConfig implements Serializable {
     private int returnSuccessCode = LccConstants.SuccessEnum.SUCCESS_2_HUNDRED.getCode();
 
     /**
+     * 是否返回响应错误码，默认不返回
+     */
+    @Builder.Default
+    private boolean isReturnErrorCode = false;
+
+    /**
      * 业务需要返回的状态码
      */
     @Builder.Default
@@ -54,5 +60,14 @@ public class ReturnConfig implements Serializable {
 
     public ReturnConfig(int returnSuccessCode) {
         this.returnSuccessCode = returnSuccessCode;
+    }
+
+    public ReturnConfig(boolean isReturnErrorCode) {
+        this.isReturnErrorCode = isReturnErrorCode;
+    }
+
+    public ReturnConfig(int returnSuccessCode, boolean isReturnErrorCode) {
+        this.returnSuccessCode = returnSuccessCode;
+        this.isReturnErrorCode = isReturnErrorCode;
     }
 }

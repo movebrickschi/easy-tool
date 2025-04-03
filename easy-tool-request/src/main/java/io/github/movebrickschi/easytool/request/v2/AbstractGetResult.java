@@ -105,6 +105,10 @@ public abstract class AbstractGetResult implements GetResult {
                     operationArgsV2.getUrl(),
                     LogFormatUtil.subPre(bodyForLog, operationArgsV2.getLogConfig().getPrintLength()),
                     CResult.getMessage());
+            //返回自定义错误码
+            if (operationArgsV2.getReturnConfig().isReturnErrorCode()) {
+                return CResult.failed(CResult.getCode(), CResult.getMessage());
+            }
             return CResult.failed(CResult.getMessage());
         }
         CResult.setCode(operationArgsV2.getReturnConfig().getBizReturnSuccessCode());
@@ -164,9 +168,6 @@ public abstract class AbstractGetResult implements GetResult {
             }
         } else {
             cResult = getResult(operationArgsV2);
-        }
-        if (cResult.getCode().intValue() == LccConstants.FAIL.intValue()) {
-            return CResult.failed(cResult.getMessage());
         }
         return cResult;
     }

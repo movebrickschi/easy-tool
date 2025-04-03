@@ -25,17 +25,17 @@ public class ReturnConfig implements Serializable {
     @Serial
     private static final long serialVersionUID = 1816452701159515651L;
     /**
-     * 设置状态码默认返回的字段，默认为code
+     * 设置第三方状态码默认返回的字段，默认为code
      */
     @Builder.Default
     private String returnCodeField = "code";
     /**
-     * 设置返回值默认返回的字段，默认为data
+     * 设置第三方返回值默认返回的字段，默认为data
      */
     @Builder.Default
     private String returnDataField = "data";
     /**
-     * 设置消息默认返回的字段，默认为message
+     * 设置第三方消息默认返回的字段，默认为message
      */
     @Builder.Default
     private String returnMessageField = "message";

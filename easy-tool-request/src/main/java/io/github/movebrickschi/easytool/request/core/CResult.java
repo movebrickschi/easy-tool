@@ -1,8 +1,11 @@
 package io.github.movebrickschi.easytool.request.core;
 
 
+import cn.hutool.core.lang.TypeReference;
+import cn.hutool.json.JSONUtil;
 import io.github.movebrickschi.easytool.core.constants.LccConstants;
 import lombok.Builder;
+import lombok.SneakyThrows;
 
 import java.io.Serializable;
 
@@ -111,6 +114,17 @@ public class CResult<T> implements Serializable {
     public void setData(T data) {
         this.data = data;
     }
+
+    /**
+     * 转成指定类型
+     * 适用于将相同的字段转成为不同类型
+     * @param typeReference 目标类型
+     */
+    @SneakyThrows
+    public <R> R convert(TypeReference<R> typeReference) {
+        return JSONUtil.toBean(JSONUtil.toJsonStr(this), typeReference, false);
+    }
+
 }
 
 

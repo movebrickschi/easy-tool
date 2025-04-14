@@ -125,6 +125,17 @@ public class CResult<T> implements Serializable {
         return JSONUtil.toBean(JSONUtil.toJsonStr(this), typeReference, false);
     }
 
+    /**
+     * 转成指定类型
+     * 适用于将相同的字段转成为不同类型
+     * @param clazz 目标类型
+     */
+    @SneakyThrows
+    public <R> R convert(Class<R> clazz) {
+        return JSONUtil.toBean(JSONUtil.toJsonStr(this), clazz, false);
+    }
+
+
 }
 
 

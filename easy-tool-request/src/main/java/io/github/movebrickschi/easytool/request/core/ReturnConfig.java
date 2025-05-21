@@ -60,14 +60,29 @@ public class ReturnConfig implements Serializable {
 
     public ReturnConfig(int returnSuccessCode) {
         this.returnSuccessCode = returnSuccessCode;
+        this.returnCodeField = "code";
+        this.returnDataField = "data";
+        this.returnMessageField = "message";
+        this.isReturnErrorCode = false;
+        this.bizReturnSuccessCode = LccConstants.SuccessEnum.SUCCESS_ZERO.getCode();
     }
 
     public ReturnConfig(boolean isReturnErrorCode) {
         this.isReturnErrorCode = isReturnErrorCode;
+        this.returnSuccessCode = LccConstants.SuccessEnum.SUCCESS_2_HUNDRED.getCode();
+        this.returnCodeField = "code";
+        this.returnDataField = "data";
+        this.returnMessageField = "message";
+        this.isReturnErrorCode = false;
+        this.bizReturnSuccessCode = LccConstants.SuccessEnum.SUCCESS_ZERO.getCode();
     }
 
     public ReturnConfig(int returnSuccessCode, boolean isReturnErrorCode) {
         this.returnSuccessCode = returnSuccessCode;
         this.isReturnErrorCode = isReturnErrorCode;
+        this.returnCodeField = "code";
+        this.returnDataField = "data";
+        this.returnMessageField = "message";
+        this.bizReturnSuccessCode = LccConstants.SuccessEnum.SUCCESS_ZERO.getCode();
     }
 }

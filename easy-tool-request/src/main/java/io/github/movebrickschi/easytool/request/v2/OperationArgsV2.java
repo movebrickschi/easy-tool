@@ -87,7 +87,7 @@ public class OperationArgsV2 {
      * 如果为空，则结果不处理直接返回
      * 反之，则提取对应字段的结果返回
      */
-    private ReturnConfig returnConfig = new ReturnConfig();
+    private ReturnConfig returnConfig = ReturnConfig.builder().build();
 
     public static OperationArgsV2Builder builder() {
         return new OperationArgsV2Builder();
@@ -205,17 +205,19 @@ public class OperationArgsV2 {
         }
 
         public OperationArgsV2Builder returnConfig(int returnSuccessCode) {
-            this.returnConfig = new ReturnConfig(returnSuccessCode);
+            this.returnConfig = ReturnConfig.builder().returnSuccessCode(returnSuccessCode).build();
             return this;
         }
 
         public OperationArgsV2Builder returnConfig(int returnSuccessCode, boolean isReturnErrorCode) {
-            this.returnConfig = new ReturnConfig(returnSuccessCode, isReturnErrorCode);
+            this.returnConfig = ReturnConfig.builder()
+                    .returnSuccessCode(returnSuccessCode)
+                    .isReturnErrorCode(isReturnErrorCode).build();
             return this;
         }
 
         public OperationArgsV2Builder returnConfig(boolean isReturnErrorCode) {
-            this.returnConfig = new ReturnConfig(isReturnErrorCode);
+            this.returnConfig = ReturnConfig.builder().isReturnErrorCode(isReturnErrorCode).build();
             return this;
         }
 

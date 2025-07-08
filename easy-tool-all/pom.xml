@@ -6,9 +6,9 @@
     <parent>
         <groupId>io.github.movebrickschi</groupId>
         <artifactId>easy-tool</artifactId>
-        <version>3.0.5.1</version>
+        <version>3.0.6</version>
     </parent>
-
+    <name>easy-tool-all</name>
     <artifactId>easy-tool-all</artifactId>
     <packaging>jar</packaging>
 
@@ -21,27 +21,22 @@
         <dependency>
             <groupId>io.github.movebrickschi</groupId>
             <artifactId>easy-tool-ai</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.movebrickschi</groupId>
             <artifactId>easy-tool-core</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.movebrickschi</groupId>
             <artifactId>easy-tool-mybatis-plus</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.movebrickschi</groupId>
             <artifactId>easy-tool-redis-spring-boot-starter</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.movebrickschi</groupId>
             <artifactId>easy-tool-request</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
 
     </dependencies>

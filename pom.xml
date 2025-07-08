@@ -13,9 +13,9 @@
         <module>easy-tool-ai</module>
         <module>easy-tool-all</module>
     </modules>
-    <version>3.0.5.1</version>
+    <version>3.0.6</version>
 
-    <name>${project.artifactId}</name>
+    <name>easy-tool</name>
     <description>Daily tool integration</description>
 
     <licenses>
@@ -54,6 +54,11 @@
         <spring-boot-starter.version>3.3.6</spring-boot-starter.version>
         <lombok.version>1.18.28</lombok.version>
         <spring.version>6.1.15</spring.version>
+        <easy-tool-core.version>3.0.6</easy-tool-core.version>
+        <easy-tool-ai.version>3.0.6</easy-tool-ai.version>
+        <easy-tool-mybatis-plus.version>3.0.6</easy-tool-mybatis-plus.version>
+        <easy-tool-redis-spring-boot-starter.version>3.0.6</easy-tool-redis-spring-boot-starter.version>
+        <easy-tool-request.version>3.0.6</easy-tool-request.version>
     </properties>
 
     <dependencyManagement>
@@ -92,6 +97,36 @@
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.movebrickschi</groupId>
+                <artifactId>easy-tool-core</artifactId>
+                <version>${easy-tool-core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.movebrickschi</groupId>
+                <artifactId>easy-tool-ai</artifactId>
+                <version>${easy-tool-ai.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.movebrickschi</groupId>
+                <artifactId>easy-tool-mybatis-plus</artifactId>
+                <version>${easy-tool-mybatis-plus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.movebrickschi</groupId>
+                <artifactId>easy-tool-redis-spring-boot-starter</artifactId>
+                <version>${easy-tool-redis-spring-boot-starter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.movebrickschi</groupId>
+                <artifactId>easy-tool-request</artifactId>
+                <version>${easy-tool-request.version}</version>
             </dependency>
 
 
@@ -165,7 +200,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 

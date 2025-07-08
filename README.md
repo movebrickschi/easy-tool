@@ -4,7 +4,7 @@ easy-tool是基于Spring Boot、hutool等全栈主流依赖构建的项目,主�
 
 1.x支持Spring boot 2.7以上版本
 
-2.x支持Spring boot 3.0以上版本
+3.x支持Spring boot 3.0以上版本
 
 ## ✨项目特色
 

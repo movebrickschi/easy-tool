@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,6 @@ import java.util.Map;
 public class RequestParams implements Serializable {
 
 
-    @Serial
     private static final long serialVersionUID = 7699295261058876700L;
     /**
      * 请求地址

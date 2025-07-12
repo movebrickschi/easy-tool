@@ -1,7 +1,6 @@
 package io.github.movebrickschi.easytool.request.v2;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -10,7 +9,6 @@ import io.github.movebrickschi.easytool.core.constants.LccConstants;
 import io.github.movebrickschi.easytool.core.utils.object.ObjectConvertUtil;
 import io.github.movebrickschi.easytool.request.constants.RequestConstants;
 import io.github.movebrickschi.easytool.request.core.*;
-import io.github.movebrickschi.easytool.request.v1.OperationArgs;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -26,57 +24,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public abstract class AbstractGetResult implements GetResult {
-    @Override
-    public CResult<Object> getResult(OperationArgs operationArgs) {
-        String resultStr = null;
-        Object param = operationArgs.getParam();
-        //param优先级最高
-        if (Objects.nonNull(param)) {
-            operationArgs.setBody(ObjectConvertUtil.customConvertToString(param,
-                    () -> ObjectConvertUtil.writeWithNamingStrategy(param,
-                            operationArgs.getWritePropertyNamingStrategy(),
-                            operationArgs.getIgnoreFields())));
-        } else if (MapUtil.isNotEmpty(operationArgs.getParams())) {
-            operationArgs.setBody(JSONUtil.toJsonStr(operationArgs.getParams()));
-        }
-        try {
-            RequestParams requestParams = BeanUtil.copyProperties(operationArgs, RequestParams.class);
-            resultStr = Operation.ACTION_SUPPLIER.get().get(operationArgs.getMethod()).apply(requestParams);
-        } catch (Exception e) {
-            log.error("url:{},error:{}", operationArgs.getUrl(), e.getMessage());
-            return CResult.failed(e.getMessage());
-        }
-        log.info("\n==>method:{}\n==>url:{}\n==>param:{}\n==>return:{}", operationArgs.getMethod(),
-                operationArgs.getUrl(), LogFormatUtil.subPre(operationArgs.getBody(),
-                        operationArgs.getPrintLength()),
-                LogFormatUtil.printSubPre(operationArgs.getIsPrintResultLog(), resultStr,
-                        operationArgs.getPrintLength()));
-        if (CharSequenceUtil.isBlank(resultStr)) {
-            log.info("end \n==>url:{}\n==>param:{}\n==>return null", operationArgs.getUrl(),
-                    LogFormatUtil.subPre(operationArgs.getBody(),
-                            operationArgs.getPrintLength()));
-            return CResult.failed("v1 resultStr is null");
-        }
-        JSONObject jsonObject = JSONUtil.parseObj(resultStr);
-        CResult<Object> CResult = new CResult<>();
-        //防止出现字符串"null"
-        CResult.setData(jsonObject.isNull(operationArgs.getReturnDataField()) ? null :
-                jsonObject.get(operationArgs.getReturnDataField()));
-        CResult.setCode(jsonObject.getInt(operationArgs.getReturnCodeField()));
-        CResult.setMessage(jsonObject.getStr(operationArgs.getReturnMessageField()));
-        if (operationArgs.getReturnSuccessCode().intValue() != CResult.getCode().intValue()) {
-            log.error("end \n==>url:{}\n==>param:{}\n==>error:{}", operationArgs.getUrl(),
-                    operationArgs.getParams().isEmpty() ? LogFormatUtil.subPre(operationArgs.getBody(),
-                            operationArgs.getPrintLength()) :
-                            LogFormatUtil.subPre(JSONUtil.toJsonStr(operationArgs.getParams()),
-                                    operationArgs.getPrintLength()),
-                    CResult.getMessage());
-            return CResult.failed(CResult.getMessage());
-        }
-        CResult.setCode(operationArgs.getBizReturnSuccessCode());
-        return CResult;
-    }
-
 
     @Override
     public CResult<Object> getResult(OperationArgsV2 operationArgsV2) {

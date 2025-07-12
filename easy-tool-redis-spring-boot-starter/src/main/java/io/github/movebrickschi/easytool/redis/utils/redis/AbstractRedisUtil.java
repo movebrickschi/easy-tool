@@ -3,7 +3,7 @@ package io.github.movebrickschi.easytool.redis.utils.redis;
 import cn.hutool.core.lang.TypeReference;
 import com.google.common.collect.Lists;
 import io.github.movebrickschi.easytool.redis.constants.LuaScript;
-import jakarta.annotation.Resource;
+import javax.annotation.Resource;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

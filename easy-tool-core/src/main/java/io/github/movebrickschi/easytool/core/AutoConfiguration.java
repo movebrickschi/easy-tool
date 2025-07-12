@@ -1,6 +1,7 @@
 package io.github.movebrickschi.easytool.core;
 
 import io.github.movebrickschi.easytool.core.utils.loadbalance.HttpLoadBalancerClient;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 public class AutoConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean
     public HttpLoadBalancerClient httpLoadBalancerClient() {
         return new HttpLoadBalancerClient();
     }

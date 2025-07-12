@@ -1,6 +1,5 @@
 package io.github.movebrickschi.easytool.redis.utils.lock;
 
-import jakarta.annotation.Resource;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -8,6 +7,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 

@@ -1,7 +1,7 @@
 package io.github.movebrickschi.easytool.core.utils.domain;
 
 
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * ip获取工具类

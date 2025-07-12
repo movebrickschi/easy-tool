@@ -61,7 +61,7 @@ public class HttpLoadBalancerClient implements HttpLoadBalancer {
 
     @Override
     public String chooseDynamic(List<String> urls) {
-        return loadBalance(urls.toArray(String[]::new));
+        return loadBalance(urls.toArray(new String[0]));
     }
 
     @Override

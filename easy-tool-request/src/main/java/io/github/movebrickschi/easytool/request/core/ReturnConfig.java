@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,7 +21,6 @@ import java.io.Serializable;
 @Builder
 public class ReturnConfig implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 1816452701159515651L;
     /**
      * 设置第三方状态码默认返回的字段，默认为code

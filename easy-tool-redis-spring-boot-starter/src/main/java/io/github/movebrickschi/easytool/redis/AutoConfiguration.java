@@ -55,8 +55,8 @@ public class AutoConfiguration {
                 ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
 
         //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（默认使用JDK的序列化方式）
-        Jackson2JsonRedisSerializer<Object> jacksonSeial = new Jackson2JsonRedisSerializer<>(objectMapper,
-                Object.class);
+        Jackson2JsonRedisSerializer<Object> jacksonSeial = new Jackson2JsonRedisSerializer<>(Object.class);
+        jacksonSeial.setObjectMapper(objectMapper);
 
         // 值采用json序列化
         template.setValueSerializer(jacksonSeial);

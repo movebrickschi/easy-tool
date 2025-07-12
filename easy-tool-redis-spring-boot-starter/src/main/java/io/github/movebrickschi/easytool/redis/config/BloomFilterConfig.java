@@ -1,7 +1,7 @@
 package io.github.movebrickschi.easytool.redis.config;
 
 import io.github.movebrickschi.easytool.redis.utils.redis.RedisUtil;
-import jakarta.annotation.Resource;
+import javax.annotation.Resource;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;

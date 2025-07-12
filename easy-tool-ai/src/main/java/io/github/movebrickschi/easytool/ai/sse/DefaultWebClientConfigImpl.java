@@ -4,7 +4,6 @@ import io.github.movebrickschi.easytool.core.utils.loadbalance.HttpLoadBalancerC
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -21,6 +20,7 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
 
+import javax.annotation.Resource;
 import java.time.Duration;
 
 /**
@@ -97,13 +97,6 @@ public class DefaultWebClientConfigImpl implements io.github.movebrickschi.easyt
                 .build();
     }
 
-
-    @Override
-    @Bean
-    @ConditionalOnBean(WebClient.class)
-    public SseUtil sseUtil(WebClient webClient) {
-        return new SseUtil(webClient);
-    }
 
     @Override
     @Bean

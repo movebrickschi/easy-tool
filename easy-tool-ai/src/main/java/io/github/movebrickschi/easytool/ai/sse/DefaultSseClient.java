@@ -170,12 +170,13 @@ public final class DefaultSseClient implements SseClient {
         @Override
         public Flux<ServerSentEvent<String>> execute() {
             logger.info("request starting...");
-            logger.info("""
-                            ==>uri:{}
-                            ==>acceptType:{}
-                            ==>contentType:{}
-                            ==>body:{}""",
-                    this.uri, this.acceptType, this.contentType, this.body);
+            logger.info(
+                    "==>uri:{}\n" +
+                            "==>acceptType:{}\n" +
+                            "==>contentType:{}\n" +
+                            "==>body:{}",
+                    this.uri, this.acceptType, this.contentType, this.body
+            );
             return EventHandlerFactory.apply(String.valueOf(CharSequenceUtil.isBlank(this.contentField)))
                     .handle(FluxEventData.builder()
                             .consumer(this.consumer)

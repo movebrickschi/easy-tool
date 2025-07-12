@@ -1,6 +1,5 @@
 package io.github.movebrickschi.easytool.core.constants;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -57,6 +56,5 @@ public final class NamingStrategyConstants implements Serializable {
     public static final String LOWER_DOT_CASE = "LOWER_DOT_CASE";
 
 
-    @Serial
     private static final long serialVersionUID = 7870836474119420271L;
 }

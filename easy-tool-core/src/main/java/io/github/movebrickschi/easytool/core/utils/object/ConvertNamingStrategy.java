@@ -24,16 +24,24 @@ public final class ConvertNamingStrategy {
             log.info("not set naming strategy");
             return null;
         }
-        return switch (currentNamingStrategy) {
-            case NamingStrategyConstants.LOWER_CAMEL_CASE -> PropertyNamingStrategies.LOWER_CAMEL_CASE;
-            case NamingStrategyConstants.UPPER_CAMEL_CASE -> PropertyNamingStrategies.UPPER_CAMEL_CASE;
-            case NamingStrategyConstants.SNAKE_CASE -> PropertyNamingStrategies.SNAKE_CASE;
-            case NamingStrategyConstants.UPPER_SNAKE_CASE -> PropertyNamingStrategies.UPPER_SNAKE_CASE;
-            case NamingStrategyConstants.LOWER_CASE -> PropertyNamingStrategies.LOWER_CASE;
-            case NamingStrategyConstants.KEBAB_CASE -> PropertyNamingStrategies.KEBAB_CASE;
-            case NamingStrategyConstants.LOWER_DOT_CASE -> PropertyNamingStrategies.LOWER_DOT_CASE;
-            default -> throw new IllegalStateException("Unexpected naming strategy: " + currentNamingStrategy);
-        };
+        switch (currentNamingStrategy) {
+            case NamingStrategyConstants.LOWER_CAMEL_CASE:
+                return PropertyNamingStrategies.LOWER_CAMEL_CASE;
+            case NamingStrategyConstants.UPPER_CAMEL_CASE:
+                return PropertyNamingStrategies.UPPER_CAMEL_CASE;
+            case NamingStrategyConstants.SNAKE_CASE:
+                return PropertyNamingStrategies.SNAKE_CASE;
+            case NamingStrategyConstants.UPPER_SNAKE_CASE:
+                return PropertyNamingStrategies.UPPER_SNAKE_CASE;
+            case NamingStrategyConstants.LOWER_CASE:
+                return PropertyNamingStrategies.LOWER_CASE;
+            case NamingStrategyConstants.KEBAB_CASE:
+                return PropertyNamingStrategies.KEBAB_CASE;
+            case NamingStrategyConstants.LOWER_DOT_CASE:
+                return PropertyNamingStrategies.LOWER_DOT_CASE;
+            default:
+                throw new IllegalStateException("Unexpected naming strategy: " + currentNamingStrategy);
+        }
 
     }
 

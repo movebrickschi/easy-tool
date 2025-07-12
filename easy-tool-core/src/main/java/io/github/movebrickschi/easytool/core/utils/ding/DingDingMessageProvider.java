@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -62,7 +63,7 @@ public class DingDingMessageProvider {
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
             byte[] signData = mac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
-            String sign = URLEncoder.encode(new String(Base64.encodeBase64(signData)), StandardCharsets.UTF_8);
+            String sign = URLEncoder.encode(new String(Base64.encodeBase64(signData)), StandardCharsets.UTF_8.name());
             logger.info("sign: {}", sign);
             //sign字段和timestamp字段必须拼接到请求URL上，否则会出现 310000 的错误信息
             DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/robot/send?sign=" + sign +
@@ -87,6 +88,8 @@ public class DingDingMessageProvider {
             logger.info("钉钉发送消息结果：{}", rsp.getBody());
         } catch (ApiException | NoSuchAlgorithmException | InvalidKeyException e) {
             logger.error(e.getMessage(), e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 

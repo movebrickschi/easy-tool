@@ -8,10 +8,6 @@ public interface WebClientConfig {
 
     WebClient createWebClient(WebClientProperties webClientProperties);
 
-    default SseUtil sseUtil(WebClient webClient) {
-        return new SseUtil(webClient);
-    }
-
     default SseClient sseClient(WebClient webClient) {
         return new DefaultSseClient(webClient);
     }

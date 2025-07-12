@@ -18,7 +18,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.rmi.NotBoundException;
 import java.text.NumberFormat;
@@ -45,7 +44,7 @@ public final class ObjectConvertUtil implements Serializable {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper;
     });
-    @Serial
+
     private static final long serialVersionUID = -8576822600806112042L;
 
     /**
@@ -89,7 +88,7 @@ public final class ObjectConvertUtil implements Serializable {
     /**
      * 对象转换为json字符串，包含null字段
      * @param data 数据待转换对象
-     * @param propertyNamingStrategy 属性命名策略 {@link io.github.move.bricks.chi.constants.NamingStrategyConstants}
+     * @param propertyNamingStrategy 属性命名策略 {@link io.github.movebrickschi.easytool.core.constants.NamingStrategyConstants}
      * @param ignoreFields 忽略字段
      * @return 转换后的字符串
      */
@@ -109,7 +108,8 @@ public final class ObjectConvertUtil implements Serializable {
         ObjectMapper objectMapper = OBJECT_MAPPER_THREAD_LOCAL.get();
         setPropertyNamingStrategy(objectMapper, propertyNamingStrategy);
         try {
-            if (object instanceof String json) {
+            if (object instanceof String) {
+                String json = (String) object;
                 return objectMapper.readValue(json,
                         objectMapper.getTypeFactory().constructCollectionType(List.class, tClass));
             }
@@ -158,7 +158,8 @@ public final class ObjectConvertUtil implements Serializable {
         setPropertyNamingStrategy(objectMapper, propertyNamingStrategy);
         configIncludeNullField(objectMapper, isIncludeNull);
         try {
-            if (data instanceof String json) {
+            if (data instanceof String) {
+                String json = (String) data;
                 return objectMapper.readValue(json, tClass);
             }
             return objectMapper.convertValue(data, tClass);
@@ -178,8 +179,8 @@ public final class ObjectConvertUtil implements Serializable {
      * @return 转换后的字符串
      */
     public static String customConvertToString(Object object, Supplier<String> convertSupplier) {
-        if (object instanceof String result) {
-            return result;
+        if (object instanceof String) {
+            return String.valueOf(object);
         } else if (object instanceof Map<?, ?>) {
             return JSONUtil.toJsonStr(object);
         } else {
@@ -195,12 +196,12 @@ public final class ObjectConvertUtil implements Serializable {
      */
     public static <T> T convertNumber(Object data, Class<T> tClass) {
         Number number;
-        if (data instanceof Number number1) {
-            number = number1;
-        } else if (data instanceof String string) {
+        if (data instanceof Number) {
+            number = (Number) data;
+        } else if (data instanceof String) {
             // Try to parse the String to a Number
             try {
-                number = NumberFormat.getInstance().parse(string);
+                number = NumberFormat.getInstance().parse(String.valueOf(data));
             } catch (ParseException e) {
                 log.error("Failed to parse String to Number: {}", data, e);
                 return null;

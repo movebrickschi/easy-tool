@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 public class AutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "httpLoadBalancerClient")
     public HttpLoadBalancerClient httpLoadBalancerClient() {
         return new HttpLoadBalancerClient();
     }

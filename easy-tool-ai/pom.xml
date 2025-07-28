@@ -10,7 +10,8 @@
     </parent>
     <name>easy-tool-ai</name>
     <artifactId>easy-tool-ai</artifactId>
-    <version>2.5.2</version>
+    <version>${easy-tool-ai.version}</version>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

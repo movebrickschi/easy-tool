@@ -10,6 +10,7 @@
     </parent>
     <name>easy-tool-all</name>
     <artifactId>easy-tool-all</artifactId>
+    <version>${easy-tool-all.version}</version>
     <packaging>jar</packaging>
 
     <properties>

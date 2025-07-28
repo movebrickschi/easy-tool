@@ -8,9 +8,9 @@
         <artifactId>easy-tool</artifactId>
         <version>2.5.2</version>
     </parent>
-    <version>2.5.2</version>
     <name>easy-tool-core</name>
     <artifactId>easy-tool-core</artifactId>
+    <version>${easy-tool-core.version}</version>
     <packaging>jar</packaging>
 
     <dependencyManagement>

@@ -4,6 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.movebrickschi</groupId>
     <artifactId>easy-tool</artifactId>
+    <version>${easy-tool.version}</version>
     <packaging>pom</packaging>
     <modules>
         <module>easy-tool-core</module>
@@ -13,7 +14,6 @@
         <module>easy-tool-ai</module>
         <module>easy-tool-all</module>
     </modules>
-    <version>2.5.2</version>
 
     <name>easy-tool</name>
     <description>Daily tool integration</description>
@@ -27,8 +27,8 @@
 
     <developers>
         <developer>
-            <name>LiuChunChi</name>
-            <email>liuchunchiuse@163.com</email>
+            <name>MoveBricksChi</name>
+            <email>598061643@qq.com</email>
         </developer>
     </developers>
     <url>https://github.com/movebrickschi/easy-tool</url>
@@ -54,11 +54,13 @@
         <spring-boot-starter.version>2.7.12</spring-boot-starter.version>
         <lombok.version>1.18.28</lombok.version>
         <spring.version>5.3.30</spring.version>
-        <easy-tool-core.version>2.5.2</easy-tool-core.version>
-        <easy-tool-ai.version>2.5.2</easy-tool-ai.version>
-        <easy-tool-mybatis-plus.version>2.5.2</easy-tool-mybatis-plus.version>
-        <easy-tool-redis-spring-boot-starter.version>2.5.2</easy-tool-redis-spring-boot-starter.version>
-        <easy-tool-request.version>2.5.2</easy-tool-request.version>
+        <easy-tool.version>2.5.3</easy-tool.version>
+        <easy-tool-ai.version>2.5.3</easy-tool-ai.version>
+        <easy-tool-all.version>2.5.3</easy-tool-all.version>
+        <easy-tool-core.version>2.5.3</easy-tool-core.version>
+        <easy-tool-mybatis-plus.version>2.5.3</easy-tool-mybatis-plus.version>
+        <easy-tool-redis-spring-boot-starter.version>2.5.3</easy-tool-redis-spring-boot-starter.version>
+        <easy-tool-request.version>2.5.3</easy-tool-request.version>
     </properties>
 
     <dependencyManagement>
@@ -105,6 +107,11 @@
                 <version>${easy-tool-core.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>io.github.movebrickschi</groupId>
+                <artifactId>easy-tool-all</artifactId>
+                <version>${easy-tool-all.version}</version>
+            </dependency>
             <dependency>
                 <groupId>io.github.movebrickschi</groupId>
                 <artifactId>easy-tool-ai</artifactId>

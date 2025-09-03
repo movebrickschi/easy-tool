@@ -196,6 +196,26 @@ public class RedisUtil extends AbstractRedisUtil {
         }
     }
 
+    @Override
+    @SneakyThrows
+    public <R> R executeForValue(String key, Class<R> beanClass, TimeUnit unit, SupplierThrowWithTimeout<R> supplier,
+                                 Boolean... bloomFilterEnable) {
+        if (ArrayUtil.isNotEmpty(bloomFilterEnable) && bloomFilterEnable[0] && agentBloomFilter.contains(key)) {
+            throw new RuntimeException(NOT_FIND_RESOURCE);
+        }
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
+            return JSONUtil.toBean(JSONUtil.toJsonStr(redisTemplate.opsForValue().get(key)), beanClass);
+        } else {
+            SupplierResult<R> result = supplier.get();
+            if (result == null || Objects.isNull(result.getValue())) {
+                agentBloomFilter.add(key);
+                throw new RuntimeException(NOT_FIND_RESOURCE);
+            }
+            redisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(result.getValue()), result.getTimeout(), unit);
+            return result.getValue();
+        }
+    }
+
 
     /**
      * function形式

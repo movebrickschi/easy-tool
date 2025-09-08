@@ -6,13 +6,12 @@
     <parent>
         <groupId>io.github.movebrickschi</groupId>
         <artifactId>easy-tool</artifactId>
-        <version>2.5.3</version>
+        <version>2.5.4</version>
     </parent>
 
     <name>easy-tool-request</name>
     <artifactId>easy-tool-request</artifactId>
     <packaging>jar</packaging>
-    <version>${easy-tool-request.version}</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

@@ -10,18 +10,30 @@ import io.github.movebrickschi.easytool.core.utils.ssl.SslUtil;
 import io.github.movebrickschi.easytool.core.utils.string.StringUtil;
 import io.github.movebrickschi.easytool.core.utils.url.UrlUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.common.ImageMetadata;
+import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
+import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
+import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
+import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageOutputStream;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.Base64;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -97,6 +109,177 @@ public final class WatermarkUtil {
         } catch (IOException e) {
             throw new IOException("图片水印处理图片时发生错误", e);
         }
+    }
+
+    /**
+     * 为图片添加文字水印（保留原图元数据）
+     * @param file 图片文件
+     * @param watermarkParameters 水印参数
+     * @return 处理后的图片Base64编码
+     * @throws IOException 读取图片或处理图片时发生错误
+     */
+    public static String forImageKeepMetadata(File file, WatermarkParameters watermarkParameters) throws IOException,
+            ImageReadException {
+        log.info("开始为图片添加文字水印并保留元数据，水印参数为：{}", JSONUtil.toJsonStr(watermarkParameters));
+
+        if (CharSequenceUtil.isBlank(watermarkParameters.getText())) {
+            throw new NullException("水印内容不能为空！");
+        }
+
+        // 读取原始图片及其元数据
+        byte[] originalImageBytes = Files.readAllBytes(file.toPath());
+        BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(originalImageBytes));
+        ImageMetadata originalMetadata = Imaging.getMetadata(originalImageBytes);
+
+        // 添加水印
+        BufferedImage watermarkedImage = watermarkToImage(
+                originalImage,
+                watermarkParameters.getText(),
+                watermarkParameters.getPosition(),
+                watermarkParameters.getAlpha(),
+                watermarkParameters.getSize());
+
+        // 将添加水印后的图片写入字节数组，并保留原始元数据
+        String suffix = SUFFIX_MAP.getOrDefault(InputStreamToFileUtil.extension(file.getName()), ImagePool.PNG);
+        byte[] watermarkedImageBytes = writeImageWithMetadata(watermarkedImage, suffix, originalMetadata);
+
+        // 将图片转换为Base64编码
+        return Base64.getEncoder().encodeToString(watermarkedImageBytes);
+    }
+
+    /**
+     * 为图片添加文字水印（保留原图元数据）
+     * @param imageUrl 图片URL
+     * @param watermarkParameters 水印参数
+     * @return 处理后的图片Base64编码
+     * @throws IOException 读取图片或处理图片时发生错误
+     */
+    public static String forImageKeepMetadata(String imageUrl, WatermarkParameters watermarkParameters) throws IOException, ImageReadException {
+        log.info("开始为图片添加文字水印并保留元数据，图片为：{}，水印参数为：{}", imageUrl, JSONUtil.toJsonStr(watermarkParameters));
+
+        if (CharSequenceUtil.isBlank(watermarkParameters.getText())) {
+            throw new NullException("水印内容不能为空！");
+        }
+
+        // 从URL读取图片
+        URL url = new URL(imageUrl);
+        byte[] originalImageBytes;
+        try (InputStream inputStream = url.openStream()) {
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            int nRead;
+            byte[] data = new byte[1024];
+            while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+            buffer.flush();
+            originalImageBytes = buffer.toByteArray();
+        }
+        BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(originalImageBytes));
+        ImageMetadata originalMetadata = Imaging.getMetadata(originalImageBytes);
+
+        // 添加水印
+        BufferedImage watermarkedImage = watermarkToImage(
+                originalImage,
+                watermarkParameters.getText(),
+                watermarkParameters.getPosition(),
+                watermarkParameters.getAlpha(),
+                watermarkParameters.getSize());
+
+        // 将添加水印后的图片写入字节数组，并保留原始元数据
+        String suffix = SUFFIX_MAP.getOrDefault(UrlUtil.extractFileName(imageUrl), ImagePool.PNG);
+        byte[] watermarkedImageBytes = writeImageWithMetadata(watermarkedImage, suffix, originalMetadata);
+
+        // 将图片转换为Base64编码
+        return Base64.getEncoder().encodeToString(watermarkedImageBytes);
+    }
+
+    /**
+     * 将BufferedImage写入字节数组，并保留原始元数据
+     * @param image 图片
+     * @param format 图片格式
+     * @param originalMetadata 原始元数据
+     * @return 图片字节数组
+     * @throws IOException 写入图片时发生错误
+     */
+    private static byte[] writeImageWithMetadata(BufferedImage image, String format, ImageMetadata originalMetadata) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        // 如果是JPEG格式且有原始元数据，则保留元数据
+        if ((ImagePool.JPEG.equalsIgnoreCase(format) || ImagePool.JPG.equalsIgnoreCase(format)) && originalMetadata != null) {
+            try {
+                // 先将水印图片写入字节数组
+                ByteArrayOutputStream tempBaos = new ByteArrayOutputStream();
+                ImageIO.write(image, format, tempBaos);
+                byte[] watermarkedImageBytes = tempBaos.toByteArray();
+
+                // 尝试保留原始元数据
+                TiffOutputSet outputSet = getTiffOutputSet(originalMetadata);
+                if (outputSet != null) {
+                    new ExifRewriter().updateExifMetadataLossless(watermarkedImageBytes, baos, outputSet);
+                    return baos.toByteArray();
+                }
+            } catch (Exception e) {
+                log.warn("保留JPEG元数据时出错: {}", e.getMessage());
+            }
+        }
+        // 如果是PNG格式，使用PNG元数据保留方法
+        else if (ImagePool.PNG.equalsIgnoreCase(format)) {
+            try {
+                return writePNGWithMetadata(image);
+            } catch (Exception e) {
+                log.warn("保留PNG元数据时出错: {}", e.getMessage());
+            }
+        }
+
+        // 如果保留元数据失败，使用普通方式写入
+        ImageIO.write(image, format, baos);
+        return baos.toByteArray();
+    }
+
+    /**
+     * 获取TiffOutputSet用于JPEG元数据保留
+     */
+    private static TiffOutputSet getTiffOutputSet(ImageMetadata metadata) throws Exception {
+        TiffOutputSet outputSet = null;
+        if (metadata instanceof JpegImageMetadata) {
+            JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
+            TiffImageMetadata exif = jpegMetadata.getExif();
+            if (exif != null) {
+                outputSet = exif.getOutputSet();
+            }
+        }
+        return outputSet;
+    }
+
+    /**
+     * 写入PNG图片并保留元数据
+     */
+    private static byte[] writePNGWithMetadata(BufferedImage image) throws IOException {
+        // 获取PNG ImageWriter
+        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("png");
+        if (!writers.hasNext()) {
+            throw new IOException("未找到PNG格式的ImageWriter");
+        }
+
+        ImageWriter writer = writers.next();
+        ImageWriteParam writeParam = writer.getDefaultWriteParam();
+
+        // 获取默认的元数据
+        IIOMetadata metadata = writer.getDefaultImageMetadata(
+                ImageTypeSpecifier.createFromBufferedImageType(image.getType()),
+                writeParam
+        );
+
+        // 将图片和元数据写入输出流
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ImageOutputStream output = new MemoryCacheImageOutputStream(baos)) {
+            writer.setOutput(output);
+            writer.write(null, new javax.imageio.IIOImage(image, null, metadata), writeParam);
+        } finally {
+            writer.dispose();
+        }
+
+        return baos.toByteArray();
     }
 
     /**

@@ -8,14 +8,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Maps;
 import io.github.movebrickschi.easytool.core.constants.ImagePool;
 import io.github.movebrickschi.easytool.core.dto.ImplicitMetadata;
-import io.github.movebrickschi.easytool.core.dto.WatermarkParameters;
 import io.github.movebrickschi.easytool.core.exception.NullException;
-import io.github.movebrickschi.easytool.core.utils.base64.Base64Util;
-import io.github.movebrickschi.easytool.core.utils.bytes.ByteUtil;
 import io.github.movebrickschi.easytool.core.utils.file.InputStreamToFileUtil;
 import io.github.movebrickschi.easytool.core.utils.ssl.SslUtil;
 import io.github.movebrickschi.easytool.core.utils.url.UrlUtil;
-import io.github.movebrickschi.easytool.core.utils.watermark.WatermarkUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -474,38 +470,38 @@ public final class MetadataUtil {
         private String content;
     }
 
-    public static void main(String[] args) {
-        File file = new File("C:\\Users\\Administrator\\Downloads\\1757424037728huizhi_F8560F8F-31CA-4DD6-B401" +
-                "-CF98CB29065D.mp4");
-        ImplicitMetadata aigc = ImplicitMetadata.builder()
-                .producerInfo(ImplicitMetadata.ProducerInfo.builder()
-                        .subjectCode("91320115MA236KWQ79")
-                        .build())
-                .key("AIGC")
-                .produceId("2343242")
-                .propagateId("2343242")
-                .build();
-        try {
+//    public static void main(String[] args) {
+//        File file = new File("C:\\Users\\Administrator\\Downloads\\1757424037728huizhi_F8560F8F-31CA-4DD6-B401" +
+//                "-CF98CB29065D.mp4");
+//        ImplicitMetadata aigc = ImplicitMetadata.builder()
+//                .producerInfo(ImplicitMetadata.ProducerInfo.builder()
+//                        .subjectCode("91320115MA236KWQ79")
+//                        .build())
+//                .key("AIGC")
+//                .produceId("2343242")
+//                .propagateId("2343242")
+//                .build();
+//        try {
 //            byte[] bytes = writeToVideo(file, aigc);
 //
 //            File out = new File("C:\\Users\\Administrator\\Downloads\\1757424037728huizhi_F8560F8F-31CA-4DD6-B401" +
 //                    "-123.mp4");
 //            ByteUtil.toFile(bytes, out.getAbsolutePath());
-            File outImage = new File("C:\\Users\\Administrator\\Downloads\\33333.jpg");
-            File file1 = new File("C:\\Users\\Administrator\\Downloads\\writemetada.jpg");
-            byte[] bytes = writeToImage(file1, aigc);
-            ByteUtil.toFile(bytes, outImage.getAbsolutePath());
-
-
-            String base64 = WatermarkUtil.forImage(outImage, WatermarkParameters.builder()
-                    .text("AI生成")
-                    .build());
-            File outWaterImage = new File("C:\\Users\\Administrator\\Downloads\\555555555.jpg");
-            Base64Util.toFile(base64, outWaterImage.getAbsolutePath());
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-    }
+//            File outImage = new File("C:\\Users\\Administrator\\Downloads\\33333.jpg");
+//            File file1 = new File("C:\\Users\\Administrator\\Downloads\\writemetada.jpg");
+//            byte[] bytes = writeToImage(file1, aigc);
+//            ByteUtil.toFile(bytes, outImage.getAbsolutePath());
+//
+//
+//            String base64 = WatermarkUtil.forImageKeepMetadata(outImage, WatermarkParameters.builder()
+//                    .text("AI生成")
+//                    .build());
+//            File outWaterImage = new File("C:\\Users\\Administrator\\Downloads\\555555555.jpg");
+//            Base64Util.toFile(base64, outWaterImage.getAbsolutePath());
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//    }
 }

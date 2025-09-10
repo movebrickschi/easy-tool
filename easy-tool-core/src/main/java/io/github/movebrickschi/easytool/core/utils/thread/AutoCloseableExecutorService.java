@@ -8,6 +8,7 @@ import java.util.concurrent.*;
 
 /**
  * ry-with-resources 语句中自动关闭线程池
+ * 必须等待所有任务执行完毕才会去自动关闭，如下示例必须等待CompletableFuture执行完毕
  * 使用示例：
  * <code>
  *     try (AutoCloseableExecutorService namedExecutor = new AutoCloseableExecutorService(

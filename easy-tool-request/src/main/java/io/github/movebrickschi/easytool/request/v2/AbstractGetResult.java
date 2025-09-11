@@ -147,9 +147,6 @@ public abstract class AbstractGetResult implements GetResult {
         try {
             resultStr = Operation.ACTION_SUPPLIER.get().get(operationArgsV2.getMethod()).apply(requestParams);
         } catch (Exception e) {
-            log.error("\n==>method:{}\n==>url:{}\nparam:{}\n==>error:{}", operationArgsV2.getMethod(),
-                    operationArgsV2.getUrl(), LogFormatUtil.subPre(bodyForLog,
-                            operationArgsV2.getLogConfig().getPrintLength()), e.getMessage());
             logRequestError(operationArgsV2, bodyForLog, e.getMessage());
             return CResult.failed(e.getMessage());
         }
@@ -174,30 +171,34 @@ public abstract class AbstractGetResult implements GetResult {
     }
 
     private void logRequestSuccess(OperationArgsV2 operationArgsV2, String bodyForLog, String resultStr, int timeCost) {
+        StringBuilder logMessage = logBuilder(operationArgsV2, bodyForLog);
+        String returnStr = LogFormatUtil.printSubPre(operationArgsV2.getLogConfig().getIsPrintResultLog(),
+                resultStr,
+                operationArgsV2.getLogConfig().getPrintLength());
+        logMessage.append("==>return:").append(returnStr).append("\n");
         if (timeCost < 1000) {
-            log.info(
-                    "\n==>method:{}\n==>url:{}\n==>header:{}\n==>param:{}\n==>return:{}\n==>cost:{}ms",
-                    operationArgsV2.getMethod(),
-                    operationArgsV2.getUrl(),
-                    JSONUtil.toJsonStr(getHeaders(operationArgsV2)),
-                    LogFormatUtil.subPre(bodyForLog, operationArgsV2.getLogConfig().getPrintLength()),
-                    LogFormatUtil.printSubPre(operationArgsV2.getLogConfig().getIsPrintResultLog(), resultStr,
-                            operationArgsV2.getLogConfig().getPrintLength()),
-                    timeCost
-            );
+            logMessage.append("==>cost:").append(timeCost).append("ms");
+            log.info(logMessage.toString());
         } else {
-            log.warn(
-                    "\n==>method:{}\n==>url:{}\n==>header:{}\n==>param:{}\n==>return:{}\n==>cost:{}s",
-                    operationArgsV2.getMethod(),
-                    operationArgsV2.getUrl(),
-                    JSONUtil.toJsonStr(getHeaders(operationArgsV2)),
-                    LogFormatUtil.subPre(bodyForLog, operationArgsV2.getLogConfig().getPrintLength()),
-                    LogFormatUtil.printSubPre(operationArgsV2.getLogConfig().getIsPrintResultLog(), resultStr,
-                            operationArgsV2.getLogConfig().getPrintLength()),
-                    timeCost / 1000.0
-            );
+            logMessage.append("==>cost:").append(timeCost / 1000.0).append("s");
+            log.warn(logMessage.toString());
         }
         log.info("😄request success");
+    }
+
+    private StringBuilder logBuilder(OperationArgsV2 operationArgsV2, String bodyForLog) {
+        StringBuilder logMessage = new StringBuilder("\n");
+        logMessage.append("==>method:").append(operationArgsV2.getMethod()).append("\n");
+        logMessage.append("==>url:").append(operationArgsV2.getUrl()).append("\n");
+        Map<String, ?> headers = getHeaders(operationArgsV2);
+        if (MapUtil.isNotEmpty(headers)) {
+            logMessage.append("==>header:").append(JSONUtil.toJsonStr(headers)).append("\n");
+        }
+        if (CharSequenceUtil.isNotBlank(bodyForLog)) {
+            String paramStr = LogFormatUtil.subPre(bodyForLog, operationArgsV2.getLogConfig().getPrintLength());
+            logMessage.append("==>param:").append(paramStr).append("\n");
+        }
+        return logMessage;
     }
 
     private Map<String, ?> getHeaders(OperationArgsV2 operationArgsV2) {
@@ -212,13 +213,9 @@ public abstract class AbstractGetResult implements GetResult {
     }
 
     private void logRequestError(OperationArgsV2 operationArgsV2, String bodyForLog, String errorMessage) {
-        log.error("\n==>method:{}\n==>url:{}\n==>param:{}\n==>param:{}\n==>error:{}",
-                operationArgsV2.getMethod(),
-                operationArgsV2.getUrl(),
-                JSONUtil.toJsonStr(getHeaders(operationArgsV2)),
-                LogFormatUtil.subPre(bodyForLog, operationArgsV2.getLogConfig().getPrintLength()),
-                errorMessage
-        );
+        StringBuilder logMessage = logBuilder(operationArgsV2, bodyForLog);
+        logMessage.append("==>error:").append(errorMessage);
+        log.error(logMessage.toString());
     }
 
     public void logRequestStartFormat(OperationArgsV2 operationArgs, String className) {

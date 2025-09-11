@@ -59,6 +59,9 @@ public final class ObjectConvertUtil implements Serializable {
     @SneakyThrows
     public static String writeWithNamingStrategy(Object data, String propertyNamingStrategy, Boolean isIncludeNull,
                                                  String... ignoreFields) {
+        if (Objects.isNull(data)) {
+            return null;
+        }
         ObjectMapper objectMapper = OBJECT_MAPPER_THREAD_LOCAL.get();
         objectMapper.setPropertyNamingStrategy(ConvertNamingStrategy.of(propertyNamingStrategy));
         configIncludeNullField(objectMapper, isIncludeNull);

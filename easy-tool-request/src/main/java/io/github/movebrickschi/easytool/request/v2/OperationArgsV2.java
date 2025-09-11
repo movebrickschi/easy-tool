@@ -171,6 +171,8 @@ public class OperationArgsV2 {
 
         public OperationArgsV2Builder timeout(int timeout) {
             this.timeout = timeout;
+            this.readTimeout = timeout;
+            this.connectionTimeout = timeout;
             return this;
         }
 
@@ -279,6 +281,8 @@ public class OperationArgsV2 {
             operationArgsV2.setReadConvertConfig(readConvertConfig);
             operationArgsV2.setLogConfig(logConfig);
             operationArgsV2.setReturnConfig(returnConfig);
+            operationArgsV2.setReadTimeout(readTimeout);
+            operationArgsV2.setConnectionTimeout(connectionTimeout);
             return operationArgsV2;
         }
 

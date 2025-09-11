@@ -6,6 +6,7 @@ import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Maps;
 import io.github.movebrickschi.easytool.core.constants.LccConstants;
 import io.github.movebrickschi.easytool.core.utils.object.ObjectConvertUtil;
 import io.github.movebrickschi.easytool.request.constants.RequestConstants;
@@ -175,9 +176,10 @@ public abstract class AbstractGetResult implements GetResult {
     private void logRequestSuccess(OperationArgsV2 operationArgsV2, String bodyForLog, String resultStr, int timeCost) {
         if (timeCost < 1000) {
             log.info(
-                    "\n==>method:{}\n==>url:{}\n==>param:{}\n==>return:{}\n==>cost:{}ms",
+                    "\n==>method:{}\n==>url:{}\n==>header:{}\n==>param:{}\n==>return:{}\n==>cost:{}ms",
                     operationArgsV2.getMethod(),
                     operationArgsV2.getUrl(),
+                    JSONUtil.toJsonStr(getHeaders(operationArgsV2)),
                     LogFormatUtil.subPre(bodyForLog, operationArgsV2.getLogConfig().getPrintLength()),
                     LogFormatUtil.printSubPre(operationArgsV2.getLogConfig().getIsPrintResultLog(), resultStr,
                             operationArgsV2.getLogConfig().getPrintLength()),
@@ -185,9 +187,10 @@ public abstract class AbstractGetResult implements GetResult {
             );
         } else {
             log.warn(
-                    "\n==>method:{}\n==>url:{}\n==>param:{}\n==>return:{}\n==>cost:{}s",
+                    "\n==>method:{}\n==>url:{}\n==>header:{}\n==>param:{}\n==>return:{}\n==>cost:{}s",
                     operationArgsV2.getMethod(),
                     operationArgsV2.getUrl(),
+                    JSONUtil.toJsonStr(getHeaders(operationArgsV2)),
                     LogFormatUtil.subPre(bodyForLog, operationArgsV2.getLogConfig().getPrintLength()),
                     LogFormatUtil.printSubPre(operationArgsV2.getLogConfig().getIsPrintResultLog(), resultStr,
                             operationArgsV2.getLogConfig().getPrintLength()),
@@ -197,10 +200,22 @@ public abstract class AbstractGetResult implements GetResult {
         log.info("😄request success");
     }
 
+    private Map<String, ?> getHeaders(OperationArgsV2 operationArgsV2) {
+        Map<String, ?> header = Maps.newHashMap();
+        if (MapUtil.isNotEmpty(operationArgsV2.getHeadersMap())) {
+            header = operationArgsV2.getHeadersMap();
+        }
+        if (MapUtil.isNotEmpty(operationArgsV2.getHeaders())) {
+            header = operationArgsV2.getHeaders();
+        }
+        return header;
+    }
+
     private void logRequestError(OperationArgsV2 operationArgsV2, String bodyForLog, String errorMessage) {
-        log.error("\n==>method:{}\n==>url:{}\n==>param:{}\n==>error:{}",
+        log.error("\n==>method:{}\n==>url:{}\n==>param:{}\n==>param:{}\n==>error:{}",
                 operationArgsV2.getMethod(),
                 operationArgsV2.getUrl(),
+                JSONUtil.toJsonStr(getHeaders(operationArgsV2)),
                 LogFormatUtil.subPre(bodyForLog, operationArgsV2.getLogConfig().getPrintLength()),
                 errorMessage
         );

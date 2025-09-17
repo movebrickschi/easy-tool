@@ -102,6 +102,12 @@
             <artifactId>commons-imaging</artifactId>
             <version>1.0-alpha3</version>
         </dependency>
+
+        <dependency>
+            <groupId>ar.com.hjg</groupId>
+            <artifactId>pngj</artifactId>
+            <version>2.1.0</version>
+        </dependency>
         <!--图片水印和写入元数据依赖-->
 
     </dependencies>

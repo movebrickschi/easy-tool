@@ -1,5 +1,6 @@
 package io.github.movebrickschi.easytool.core.utils.watermark;
 
+import ar.com.hjg.pngj.chunks.PngChunkTextVar;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.json.JSONUtil;
 import io.github.movebrickschi.easytool.core.constants.ImagePool;
@@ -20,12 +21,6 @@ import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.ImageOutputStream;
-import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -33,12 +28,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.Base64;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 水印工具类
+ * 使用前提对应服务器要有支持中文的字体，否则
+ * 中文不能正常显示
  *
  * @author MoveBricks Chi
  * @since 1.0
@@ -140,8 +137,9 @@ public final class WatermarkUtil {
                 watermarkParameters.getSize());
 
         // 将添加水印后的图片写入字节数组，并保留原始元数据
-        String suffix = SUFFIX_MAP.getOrDefault(InputStreamToFileUtil.extension(file.getName()), ImagePool.PNG);
-        byte[] watermarkedImageBytes = writeImageWithMetadata(watermarkedImage, suffix, originalMetadata);
+        String suffix = SUFFIX_MAP.getOrDefault(UrlUtil.suffix(file.getName()), ImagePool.PNG);
+        byte[] watermarkedImageBytes = writeImageWithMetadata(watermarkedImage, suffix, originalMetadata,
+                originalImageBytes);
 
         // 将图片转换为Base64编码
         return Base64.getEncoder().encodeToString(watermarkedImageBytes);
@@ -187,7 +185,8 @@ public final class WatermarkUtil {
 
         // 将添加水印后的图片写入字节数组，并保留原始元数据
         String suffix = SUFFIX_MAP.getOrDefault(UrlUtil.extractFileName(imageUrl), ImagePool.PNG);
-        byte[] watermarkedImageBytes = writeImageWithMetadata(watermarkedImage, suffix, originalMetadata);
+        byte[] watermarkedImageBytes = writeImageWithMetadata(watermarkedImage, suffix, originalMetadata,
+                originalImageBytes);
 
         // 将图片转换为Base64编码
         return Base64.getEncoder().encodeToString(watermarkedImageBytes);
@@ -201,7 +200,8 @@ public final class WatermarkUtil {
      * @return 图片字节数组
      * @throws IOException 写入图片时发生错误
      */
-    private static byte[] writeImageWithMetadata(BufferedImage image, String format, ImageMetadata originalMetadata) throws IOException {
+    private static byte[] writeImageWithMetadata(BufferedImage image, String format, ImageMetadata originalMetadata,
+                                                 byte[] pngBytes) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         // 如果是JPEG格式且有原始元数据，则保留元数据
@@ -225,7 +225,8 @@ public final class WatermarkUtil {
         // 如果是PNG格式，使用PNG元数据保留方法
         else if (ImagePool.PNG.equalsIgnoreCase(format)) {
             try {
-                return writePNGWithMetadata(image);
+                List<PngChunkTextVar> textChunks = PngProcessor.readTextChunks(pngBytes);
+                return PngProcessor.writePngWithWatermarkAndText(pngBytes, image, textChunks);
             } catch (Exception e) {
                 log.warn("保留PNG元数据时出错: {}", e.getMessage());
             }
@@ -251,36 +252,7 @@ public final class WatermarkUtil {
         return outputSet;
     }
 
-    /**
-     * 写入PNG图片并保留元数据
-     */
-    private static byte[] writePNGWithMetadata(BufferedImage image) throws IOException {
-        // 获取PNG ImageWriter
-        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("png");
-        if (!writers.hasNext()) {
-            throw new IOException("未找到PNG格式的ImageWriter");
-        }
 
-        ImageWriter writer = writers.next();
-        ImageWriteParam writeParam = writer.getDefaultWriteParam();
-
-        // 获取默认的元数据
-        IIOMetadata metadata = writer.getDefaultImageMetadata(
-                ImageTypeSpecifier.createFromBufferedImageType(image.getType()),
-                writeParam
-        );
-
-        // 将图片和元数据写入输出流
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ImageOutputStream output = new MemoryCacheImageOutputStream(baos)) {
-            writer.setOutput(output);
-            writer.write(null, new javax.imageio.IIOImage(image, null, metadata), writeParam);
-        } finally {
-            writer.dispose();
-        }
-
-        return baos.toByteArray();
-    }
 
     /**
      * 执行图片处理
@@ -417,7 +389,7 @@ public final class WatermarkUtil {
                 "SansSerif"
         };
 
-        String testString = "测试123";
+        String testString = "测试字体是否支持";
 
         for (String fontName : fontNames) {
             try {
@@ -427,10 +399,10 @@ public final class WatermarkUtil {
                     log.info("使用字体: {} (大小: {})", fontName, size);
                     return font;
                 } else {
-                    log.debug("字体 {} 不能完全显示测试文本", fontName);
+                    log.warn("字体 {} 不能完全显示测试文本", fontName);
                 }
             } catch (Exception e) {
-                log.debug("字体 {} 不可用: {}", fontName, e.getMessage());
+                log.error("字体 {} 不可用: {}", fontName, e.getMessage());
             }
         }
 

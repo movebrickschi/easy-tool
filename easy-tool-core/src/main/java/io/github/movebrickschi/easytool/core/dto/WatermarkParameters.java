@@ -31,6 +31,10 @@ public class WatermarkParameters implements Serializable {
     /*水印文字大小*/
     @Builder.Default
     private Integer size = 40;
+    /**
+     * 字体名称,不传则从系统支持的字体中选择
+     */
+    private String fontName;
 
     public Integer getAlpha() {
         if (alpha < 0 || alpha > 255) {

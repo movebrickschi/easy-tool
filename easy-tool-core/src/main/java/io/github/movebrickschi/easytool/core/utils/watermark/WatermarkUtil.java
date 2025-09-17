@@ -3,6 +3,7 @@ package io.github.movebrickschi.easytool.core.utils.watermark;
 import ar.com.hjg.pngj.chunks.PngChunkTextVar;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.json.JSONUtil;
+import com.google.common.collect.Lists;
 import io.github.movebrickschi.easytool.core.constants.ImagePool;
 import io.github.movebrickschi.easytool.core.dto.WatermarkParameters;
 import io.github.movebrickschi.easytool.core.exception.NullException;
@@ -27,6 +28,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -129,12 +131,7 @@ public final class WatermarkUtil {
         ImageMetadata originalMetadata = Imaging.getMetadata(originalImageBytes);
 
         // 添加水印
-        BufferedImage watermarkedImage = watermarkToImage(
-                originalImage,
-                watermarkParameters.getText(),
-                watermarkParameters.getPosition(),
-                watermarkParameters.getAlpha(),
-                watermarkParameters.getSize());
+        BufferedImage watermarkedImage = watermarkToImage(originalImage, watermarkParameters);
 
         // 将添加水印后的图片写入字节数组，并保留原始元数据
         String suffix = SUFFIX_MAP.getOrDefault(UrlUtil.suffix(file.getName()), ImagePool.PNG);
@@ -176,12 +173,7 @@ public final class WatermarkUtil {
         ImageMetadata originalMetadata = Imaging.getMetadata(originalImageBytes);
 
         // 添加水印
-        BufferedImage watermarkedImage = watermarkToImage(
-                originalImage,
-                watermarkParameters.getText(),
-                watermarkParameters.getPosition(),
-                watermarkParameters.getAlpha(),
-                watermarkParameters.getSize());
+        BufferedImage watermarkedImage = watermarkToImage(originalImage, watermarkParameters);
 
         // 将添加水印后的图片写入字节数组，并保留原始元数据
         String suffix = SUFFIX_MAP.getOrDefault(UrlUtil.extractFileName(imageUrl), ImagePool.PNG);
@@ -265,8 +257,7 @@ public final class WatermarkUtil {
     private static String execute(String originalFilename, WatermarkParameters watermarkParameters,
                                   BufferedImage processedImage) throws IOException {
         // 添加文字水印
-        processedImage = watermarkToImage(processedImage, watermarkParameters.getText(),
-                watermarkParameters.getPosition(), watermarkParameters.getAlpha(), watermarkParameters.getSize());
+        processedImage = watermarkToImage(processedImage, watermarkParameters);
 
         // 获取原始文件的格式
         String suffix = ImagePool.PNG;
@@ -284,10 +275,11 @@ public final class WatermarkUtil {
     /**
      * 添加文字水印
      */
-    private static BufferedImage watermarkToImage(BufferedImage originalImage, String text, String position,
-                                                  Integer alpha, Integer size) {
+    private static BufferedImage watermarkToImage(BufferedImage originalImage,
+                                                  WatermarkParameters watermarkParameters) {
         int imgWidth = originalImage.getWidth();
         int imgHeight = originalImage.getHeight();
+        Integer size = watermarkParameters.getSize();
 
         // 如果使用默认大小，可以根据图片大小进行动态调整
         if (size == 40) {
@@ -301,19 +293,20 @@ public final class WatermarkUtil {
         graphics.drawImage(originalImage, 0, 0, imgWidth, imgHeight, null);
 
         // 设置支持中文的字体
-        Font font = getSupportedFont(size);
+        Font font = getSupportedFont(watermarkParameters.getFontName(), size);
 //        graphics.setColor(new Color(0, 0, 0, alpha));
 //        graphics.setFont(font);
 
 
         FontMetrics fontMetrics = graphics.getFontMetrics();
-        int textWidth = StringUtil.width(text, size);
+        int textWidth = StringUtil.width(watermarkParameters.getText(), size);
         int textHeight = fontMetrics.getHeight();
 
         // 根据位置参数计算水印坐标
         int x = 0;
         int y = 0;
-
+        String position = watermarkParameters.getPosition();
+        String text = watermarkParameters.getText();
         log.info("处理水印位置: {}", position);
         switch (position.toLowerCase()) {
             case POSITION_CENTER:
@@ -342,7 +335,7 @@ public final class WatermarkUtil {
                 x = (imgWidth - textWidth) / 2;
                 y = imgHeight / 2 + textHeight / 4;
         }
-        drawTextWithOutline(graphics, text, x, y, alpha, font);
+        drawTextWithOutline(graphics, text, x, y, watermarkParameters.getAlpha(), font);
         // 启用抗锯齿渲染，提高中文显示质量
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -357,10 +350,11 @@ public final class WatermarkUtil {
     /**
      * 获取支持中文的字体
      *
+     * @param specifiedFontName 指定字体名称
      * @param size 字体大小
      * @return 支持中文的字体
      */
-    private static Font getSupportedFont(int size) {
+    private static Font getSupportedFont(String specifiedFontName, int size) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         log.info("系统可用字体数量: {}", ge.getAvailableFontFamilyNames().length);
         // 按优先级排序的字体列表（增加Linux友好的字体）
@@ -391,7 +385,13 @@ public final class WatermarkUtil {
 
         String testString = "测试字体是否支持";
 
-        for (String fontName : fontNames) {
+        ArrayList<String> fontNamesList = Lists.newArrayList(fontNames);
+
+        if (CharSequenceUtil.isNotBlank(specifiedFontName)) {
+            fontNamesList.add(0, specifiedFontName);
+        }
+
+        for (String fontName : fontNamesList) {
             try {
                 Font font = new Font(fontName, Font.BOLD, size);
                 // 检查字体是否能正确显示中文

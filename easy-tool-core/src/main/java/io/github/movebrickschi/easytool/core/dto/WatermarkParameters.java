@@ -37,6 +37,19 @@ public class WatermarkParameters implements Serializable {
      */
     private String fontName;
 
+    /**
+     * 旋转角度，仅适用于pdf水印
+     * 默认是30度
+     */
+    @Builder.Default
+    private float rotation = 30f;
+
+    /**
+     * 水印间隔字体的倍数,默认是字体的6倍
+     */
+    @Builder.Default
+    private float multiplier = 6.0f;
+
     public Integer getAlpha() {
         if (alpha < 0 || alpha > 255) {
             // 超出范围时使用默认值

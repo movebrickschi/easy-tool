@@ -5,15 +5,12 @@ import cn.hutool.core.text.CharSequenceUtil;
 import com.google.common.collect.Lists;
 import io.github.movebrickschi.easytool.core.constants.FileTypeConstants;
 import io.github.movebrickschi.easytool.core.dto.WatermarkParameters;
-import io.github.movebrickschi.easytool.core.enums.PositionEnum;
-import io.github.movebrickschi.easytool.core.utils.base64.Base64Util;
 import io.github.movebrickschi.easytool.core.utils.watermark.factory.WatermarkProcessorFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
@@ -252,15 +249,32 @@ public final class WatermarkUtil {
     }
 
 
-    public static void main(String[] args) throws IOException {
-        String path = "F:\\lcc\\workSpace\\WaterMarkDemo\\src\\main\\resources\\视频.mp4";
-        String base64 = WatermarkUtil.addWaterMark(new File(path), WatermarkParameters.builder()
-                .text("AI生成")
-                .size(20)
-                .position(PositionEnum.TOP_RIGHT.getPosition())
-                .build());
-        Base64Util.toFile(base64, "F:\\lcc\\workSpace\\WaterMarkDemo\\src\\main\\resources\\水印.mp4");
-    }
+//    public static void main(String[] args) throws IOException {
+//        String path = "F:\\lcc\\workSpace\\WaterMarkDemo\\src\\main\\resources\\视频.mp4";
+//        String base64 = WatermarkUtil.addWaterMark(new File(path), WatermarkParameters.builder()
+//                .text("AI生成")
+//                .size(20)
+//                .position(PositionEnum.TOP_RIGHT.getPosition())
+//                .build());
+//        Base64Util.toFile(base64, "F:\\lcc\\workSpace\\WaterMarkDemo\\src\\main\\resources\\水印.mp4");
+
+
+//        String url = "https://file-editing.oss-cn-shanghai.aliyuncs.com/AIOralVideo/2025/9/19/1758253859218huizhi_D26A6446-72AE-407F-B915-4957E36A6061.mp4";
+//        String base64 = WatermarkUtil.addWaterMark(url, WatermarkParameters.builder()
+//                .text("AI生成")
+//                .size(50)
+//                .position(PositionEnum.BOTTOM_RIGHT.getPosition())
+//                .build());
+//        Base64Util.toFile(base64, "F:\\lcc\\workSpace\\WaterMarkDemo\\src\\main\\resources\\水印.mp4");
+
+//        String path = "F:\\lcc\\workSpace\\WaterMarkDemo\\src\\main\\resources\\PDF.pdf";
+//        String base64 = WatermarkUtil.addWaterMark(new File(path), WatermarkParameters.builder()
+//                .text("AI生成")
+//                .size(50)
+//                .rotation(60f)
+//                .build());
+//        Base64Util.toFile(base64, "F:\\lcc\\workSpace\\WaterMarkDemo\\src\\main\\resources\\水印.pdf");
+//    }
 
 
 }

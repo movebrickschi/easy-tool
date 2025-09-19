@@ -3,6 +3,7 @@ package io.github.movebrickschi.easytool.core.utils.watermark;
 import cn.hutool.core.util.IdUtil;
 import io.github.movebrickschi.easytool.core.dto.WatermarkParameters;
 import io.github.movebrickschi.easytool.core.enums.PositionEnum;
+import io.github.movebrickschi.easytool.core.utils.file.FileUtil;
 import org.bytedeco.ffmpeg.global.avcodec;
 import org.bytedeco.ffmpeg.global.avutil;
 import org.bytedeco.javacv.FFmpegFrameFilter;
@@ -13,6 +14,8 @@ import org.bytedeco.javacv.Frame;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.file.Files;
+import java.util.Base64;
 
 /**
  * 视频加水印处理类
@@ -27,17 +30,22 @@ public class VideoWatermarkProcessor extends WatermarkProcessor {
         //使用javacv实现
         //临时目标文件
         File tempFileTarget = new File("watermarked-video" + IdUtil.getSnowflakeNextId() + ".mp4");
-        //水印图片
-        BufferedImage watermarkImage = WatermarkUtil.createWaterMarkImage(watermarkParameters.getText(),
-                watermarkParameters.getSize());
-        File tempFileWatermark = new File(IdUtil.getSnowflakeNextId() + ".png");
-        ImageIO.write(watermarkImage, "png", tempFileWatermark);
 
         try {
             FFmpegFrameGrabber frameGrabber = new FFmpegFrameGrabber(file);
             frameGrabber.start();
             int width = frameGrabber.getImageWidth();
             int height = frameGrabber.getImageHeight();
+
+            // 根据视频分辨率动态调整水印大小
+            int adjustedFontSize = calculateFontSize(width, height, watermarkParameters.getSize());
+
+            //水印图片
+            BufferedImage watermarkImage = WatermarkUtil.createWaterMarkImage(watermarkParameters.getText(),
+                    adjustedFontSize);
+            File tempFileWatermark = new File(IdUtil.getSnowflakeNextId() + ".png");
+            ImageIO.write(watermarkImage, "png", tempFileWatermark);
+
             int channels = frameGrabber.getAudioChannels();
             FFmpegFrameRecorder frameRecorder = new FFmpegFrameRecorder(tempFileTarget, width, height, channels);
             int frameRate = (int) frameGrabber.getFrameRate();
@@ -106,24 +114,30 @@ public class VideoWatermarkProcessor extends WatermarkProcessor {
             frameFilter.release();
             frameGrabber.stop();
             frameGrabber.release();
+
+            // 读取处理后的视频文件并转换为Base64字符串
+            byte[] videoBytes = Files.readAllBytes(tempFileTarget.toPath());
+            String base64String = Base64.getEncoder().encodeToString(videoBytes);
+
+            tempFileTarget.deleteOnExit();
+            tempFileWatermark.deleteOnExit();
+
+            return base64String;
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
-        } finally {
-            // 读取处理后的视频文件并转换为Base64字符串
-            byte[] videoBytes = java.nio.file.Files.readAllBytes(tempFileTarget.toPath());
-            String base64String = java.util.Base64.getEncoder().encodeToString(videoBytes);
-
-            tempFileTarget.delete();
-            tempFileWatermark.delete();
-
-            return base64String;
         }
     }
 
     @Override
     public String addWatermark(String url, WatermarkParameters watermarkParameters) throws Exception {
-        return "";
+        File file = new File("watermarked-video" + IdUtil.getSnowflakeNextId() + ".mp4");
+        try {
+            FileUtil.downloadFile(url, file);
+            return addWatermark(file, watermarkParameters);
+        } finally {
+            file.deleteOnExit();
+        }
     }
 
     @Override
@@ -136,6 +150,28 @@ public class VideoWatermarkProcessor extends WatermarkProcessor {
         return "";
     }
 
+
+    /**
+     * 根据视频分辨率计算合适的字体大小
+     *
+     * @param videoWidth  视频宽度
+     * @param videoHeight 视频高度
+     * @param baseFontSize 基础字体大小
+     * @return 调整后的字体大小
+     */
+    private int calculateFontSize(int videoWidth, int videoHeight, int baseFontSize) {
+        // 以1920x1080为基准分辨率
+        int baseWidth = 1920;
+        int baseHeight = 1080;
+
+        // 计算缩放因子，取宽高中较小的缩放比例
+        double scale = Math.min((double) videoWidth / baseWidth, (double) videoHeight / baseHeight);
+
+        // 确保字体大小至少为原始大小，最多为原始大小的4倍
+        scale = Math.max(1.0, Math.min(scale, 4.0));
+
+        return (int) (baseFontSize * scale);
+    }
 
     private static String getAvailableWaterMarkPath(String sourcePath) {
         sourcePath = sourcePath.replace("\\", "/");

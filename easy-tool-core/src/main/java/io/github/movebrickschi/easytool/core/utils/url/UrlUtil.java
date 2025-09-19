@@ -36,7 +36,7 @@ public final class UrlUtil {
             log.warn("从URL提取文件名失败: {}", e.getMessage());
         }
         // 默认文件名
-        return "image";
+        return FileTypeConstants.IMAGE;
     }
 
     /**

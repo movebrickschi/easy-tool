@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * DefaultObjectMapperResultClient
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  */
 public class DefaultObjectMapperResultClient implements ObjectMapperRequestClient {
 

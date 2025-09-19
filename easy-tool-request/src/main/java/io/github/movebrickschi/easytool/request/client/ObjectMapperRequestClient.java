@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * ObjectMapperRequestClient
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  */
 public interface ObjectMapperRequestClient {
 

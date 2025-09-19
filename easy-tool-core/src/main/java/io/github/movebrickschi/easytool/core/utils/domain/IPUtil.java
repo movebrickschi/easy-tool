@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 /**
  * ip获取工具类
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  */
 public class IPUtil {
 

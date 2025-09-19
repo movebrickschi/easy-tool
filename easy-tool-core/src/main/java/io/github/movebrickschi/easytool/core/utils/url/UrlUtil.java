@@ -1,6 +1,7 @@
 package io.github.movebrickschi.easytool.core.utils.url;
 
 import cn.hutool.core.text.StrPool;
+import io.github.movebrickschi.easytool.core.constants.FileTypeConstants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;

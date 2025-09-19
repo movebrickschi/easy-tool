@@ -22,9 +22,9 @@ import java.nio.file.StandardCopyOption;
  * @since 1.0
  */
 @Slf4j
-public final class InputStreamToFileUtil {
+public final class FileUtil {
 
-    private InputStreamToFileUtil() {
+    private FileUtil() {
     }
 
     /**

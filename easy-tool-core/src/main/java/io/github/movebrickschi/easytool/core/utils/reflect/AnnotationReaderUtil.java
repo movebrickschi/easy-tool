@@ -19,7 +19,7 @@ import java.util.List;
  *         }
  * <p>
  * }
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  */
 public final class AnnotationReaderUtil {
 

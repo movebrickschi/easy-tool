@@ -6,10 +6,10 @@ import cn.hutool.core.util.ArrayUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Maps;
-import io.github.movebrickschi.easytool.core.constants.ImagePool;
+import io.github.movebrickschi.easytool.core.constants.FileTypeConstants;
 import io.github.movebrickschi.easytool.core.dto.ImplicitMetadata;
 import io.github.movebrickschi.easytool.core.exception.NullException;
-import io.github.movebrickschi.easytool.core.utils.file.InputStreamToFileUtil;
+import io.github.movebrickschi.easytool.core.utils.file.FileUtil;
 import io.github.movebrickschi.easytool.core.utils.ssl.SslUtil;
 import io.github.movebrickschi.easytool.core.utils.url.UrlUtil;
 import lombok.AllArgsConstructor;
@@ -62,14 +62,14 @@ public final class MetadataUtil {
     }
 
     // 支持的图片格式映射
-    private static final Map<String, String> SUFFIX_MAP = new ConcurrentHashMap<>();
+    private static final Map<String, FileTypeConstants.ImagePool> SUFFIX_MAP = new ConcurrentHashMap<>();
 
     static {
-        SUFFIX_MAP.put(ImagePool.JPG, ImagePool.JPEG);
-        SUFFIX_MAP.put(ImagePool.JPEG, ImagePool.JPEG);
-        SUFFIX_MAP.put(ImagePool.PNG, ImagePool.PNG);
-        SUFFIX_MAP.put(ImagePool.BMP, ImagePool.BMP);
-        SUFFIX_MAP.put(ImagePool.GIF, ImagePool.GIF);
+        SUFFIX_MAP.put(FileTypeConstants.ImagePool.JPG.getType(), FileTypeConstants.ImagePool.JPEG);
+        SUFFIX_MAP.put(FileTypeConstants.ImagePool.JPEG.getType(), FileTypeConstants.ImagePool.JPEG);
+        SUFFIX_MAP.put(FileTypeConstants.ImagePool.PNG.getType(), FileTypeConstants.ImagePool.PNG);
+        SUFFIX_MAP.put(FileTypeConstants.ImagePool.BMP.getType(), FileTypeConstants.ImagePool.BMP);
+        SUFFIX_MAP.put(FileTypeConstants.ImagePool.GIF.getType(), FileTypeConstants.ImagePool.GIF);
 
         // 强制禁用SSL证书验证
         SslUtil.disableSSLCertificateValidation();
@@ -87,7 +87,8 @@ public final class MetadataUtil {
         BufferedImage originalImage = ImageIO.read(Files.newInputStream(file.toPath()));
         String implicitMetadataContent = getImplicitMetadata(implicitMetadata);
         log.info("开始写入元数据到图片，key: {},metadata:{}", implicitMetadata.getKey(), implicitMetadataContent);
-        String suffix = SUFFIX_MAP.getOrDefault(InputStreamToFileUtil.extension(file.getName()), ImagePool.PNG);
+        String suffix =
+                SUFFIX_MAP.getOrDefault(FileUtil.extension(file.getName()), FileTypeConstants.ImagePool.PNG).getType();
         return Optional.ofNullable(IMAGE_TRANSFER_FUNCTION.get().get(suffix))
                 .orElseThrow(() -> new UnsupportedOperationException("暂不支持"))
                 .apply(ImageTransfer.builder()
@@ -111,7 +112,7 @@ public final class MetadataUtil {
         BufferedImage originalImage = ImageIO.read(url);
         String implicitMetadataContent = getImplicitMetadata(implicitMetadata);
         log.info("开始写入元数据到图片，key: {},metadata:{}", implicitMetadata.getKey(), implicitMetadataContent);
-        String suffix = SUFFIX_MAP.getOrDefault(UrlUtil.suffix(imageUrl), ImagePool.PNG);
+        String suffix = SUFFIX_MAP.getOrDefault(UrlUtil.suffix(imageUrl), FileTypeConstants.ImagePool.PNG).getType();
         return Optional.ofNullable(IMAGE_TRANSFER_FUNCTION.get().get(suffix))
                 .orElseThrow(() -> new UnsupportedOperationException("暂不支持"))
                 .apply(ImageTransfer.builder()
@@ -166,9 +167,9 @@ public final class MetadataUtil {
 
     static Supplier<Map<String, Function<ImageTransfer, byte[]>>> IMAGE_TRANSFER_FUNCTION = () -> {
         Map<String, Function<ImageTransfer, byte[]>> map = Maps.newHashMap();
-        map.put(ImagePool.JPG, jpg);
-        map.put(ImagePool.JPEG, jpg);
-        map.put(ImagePool.PNG, png);
+        map.put(FileTypeConstants.ImagePool.JPG.getType(), jpg);
+        map.put(FileTypeConstants.ImagePool.JPEG.getType(), jpg);
+        map.put(FileTypeConstants.ImagePool.PNG.getType(), png);
         return map;
     };
 
@@ -237,7 +238,7 @@ public final class MetadataUtil {
         Snowflake snowflake = new Snowflake();
         try {
             inputTempFile = new File(snowflake.nextIdStr() + ".mp4");
-            InputStreamToFileUtil.downloadFile(videoUrl, inputTempFile);
+            FileUtil.downloadFile(videoUrl, inputTempFile);
             return writeToVideo(inputTempFile, implicitMetadata, ffmpegPath);
         } catch (Exception e) {
             throw new RuntimeException(e);

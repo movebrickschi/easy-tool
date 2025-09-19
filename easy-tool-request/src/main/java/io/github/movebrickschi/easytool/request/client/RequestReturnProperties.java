@@ -11,7 +11,7 @@ import java.io.Serializable;
 /**
  * RequestReturnProperties
  *
- * @author Liu Chunchi
+ * @author MoveBricks Chi
  */
 @AllArgsConstructor
 @NoArgsConstructor

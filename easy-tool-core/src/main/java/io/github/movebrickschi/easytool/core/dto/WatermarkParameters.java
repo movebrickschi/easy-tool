@@ -1,5 +1,6 @@
 package io.github.movebrickschi.easytool.core.dto;
 
+import io.github.movebrickschi.easytool.core.enums.PositionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +25,7 @@ public class WatermarkParameters implements Serializable {
     private String text;
     /*水印位置*/
     @Builder.Default
-    private String position = "bottom-right";
+    private String position = PositionEnum.BOTTOM_RIGHT.getPosition();
     /*水印透明度*/
     @Builder.Default
     private Integer alpha = 128;

@@ -21,31 +21,35 @@ public class WatermarkProcessorFactory {
     }
 
     public static WatermarkProcessor getProcessor(String fileType) {
-        return switch (fileType.toLowerCase()) {
-            case FileTypeConstants.IMAGE -> new ImageWatermarkProcessor();
-            case FileTypeConstants.VIDEO -> new VideoWatermarkProcessor();
-            case FileTypeConstants.PDF -> new PdfWatermarkProcessor();
-            default -> new WatermarkProcessor() {
-                @Override
-                public String addWatermark(File file, WatermarkParameters watermarkParameters) throws Exception {
-                    return "";
-                }
+        switch (fileType.toLowerCase()) {
+            case FileTypeConstants.IMAGE:
+                return new ImageWatermarkProcessor();
+            case FileTypeConstants.VIDEO:
+                return new VideoWatermarkProcessor();
+            case FileTypeConstants.PDF:
+                return new PdfWatermarkProcessor();
+            default:
+                return new WatermarkProcessor() {
+                    @Override
+                    public String addWatermark(File file, WatermarkParameters watermarkParameters) throws Exception {
+                        return "";
+                    }
 
-                @Override
-                public String addWatermark(String url, WatermarkParameters watermarkParameters) throws Exception {
-                    return "";
-                }
+                    @Override
+                    public String addWatermark(String url, WatermarkParameters watermarkParameters) throws Exception {
+                        return "";
+                    }
 
-                @Override
-                public String addWatermarkKeepMetadata(File file, WatermarkParameters watermarkParameters) throws Exception {
-                    return "";
-                }
+                    @Override
+                    public String addWatermarkKeepMetadata(File file, WatermarkParameters watermarkParameters) throws Exception {
+                        return "";
+                    }
 
-                @Override
-                public String addWatermarkKeepMetadata(String url, WatermarkParameters watermarkParameters) throws Exception {
-                    return "";
-                }
-            };
-        };
+                    @Override
+                    public String addWatermarkKeepMetadata(String url, WatermarkParameters watermarkParameters) throws Exception {
+                        return "";
+                    }
+                };
+        }
     }
 }

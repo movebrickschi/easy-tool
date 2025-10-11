@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.movebrickschi</groupId>
         <artifactId>easy-tool</artifactId>
-        <version>3.0.6</version>
+        <version>3.0.6.1</version>
     </parent>
     <name>easy-tool-all</name>
     <artifactId>easy-tool-all</artifactId>

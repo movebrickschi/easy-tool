@@ -6,12 +6,12 @@
     <parent>
         <groupId>io.github.movebrickschi</groupId>
         <artifactId>easy-tool</artifactId>
-        <version>3.0.6</version>
+        <version>3.0.6.1</version>
     </parent>
 
     <name>easy-tool-redis-spring-boot-starter</name>
     <artifactId>easy-tool-redis-spring-boot-starter</artifactId>
-    <version>3.0.6</version>
+    <version>3.0.6.1</version>
     <packaging>jar</packaging>
 
     <dependencyManagement>

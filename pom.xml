@@ -27,8 +27,8 @@
 
     <developers>
         <developer>
-            <name>LiuChunChi</name>
-            <email>liuchunchiuse@163.com</email>
+            <name>MoveBricksChi</name>
+            <email>598061643@qq.com</email>
         </developer>
     </developers>
     <url>https://github.com/movebrickschi/easy-tool</url>
@@ -144,7 +144,7 @@
                 <version>0.4.0</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <publishingServerId>liuchunchi</publishingServerId>
+                    <publishingServerId>movebrickschi</publishingServerId>
                     <tokenAuth>true</tokenAuth>
                 </configuration>
             </plugin>
@@ -185,11 +185,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <executable>D:\Program Files (x86)\GnuPG\bin\gpg.exe</executable>
-                    <keyname>io.github.liuchunchiuse</keyname>
-                </configuration>
+                <version>3.2.4</version>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>

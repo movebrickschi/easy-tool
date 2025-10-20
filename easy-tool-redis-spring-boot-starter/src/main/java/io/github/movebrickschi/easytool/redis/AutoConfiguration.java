@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
 import io.github.movebrickschi.easytool.redis.config.RedisProperties;
 import io.github.movebrickschi.easytool.redis.utils.redis.RedisUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -27,20 +27,26 @@ public class AutoConfiguration {
 
 
     @Bean
-    @ConditionalOnProperty(prefix = "spring.data.redis", name = "host")
+    @ConditionalOnExpression(
+            "#{environment.containsProperty('spring.data.redis.host') || environment.containsProperty('spring.redis.host')}"
+    )
     public RedisUtil redisUtil() {
         return new RedisUtil();
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "spring.data.redis", name = "host")
+    @ConditionalOnExpression(
+            "#{environment.containsProperty('spring.data.redis.host') || environment.containsProperty('spring.redis.host')}"
+    )
     public RedisProperties constructBootRedisConfig() {
         return new RedisProperties();
     }
 
     @Bean("redisTemplateByJacksonSerializer")
     @ConditionalOnClass(RedisProperties.class)
-    @ConditionalOnProperty(prefix = "spring.data.redis", name = "host")
+    @ConditionalOnExpression(
+            "#{environment.containsProperty('spring.data.redis.host') || environment.containsProperty('spring.redis.host')}"
+    )
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
 
         RedisTemplate<String, Object> template = new RedisTemplate<>();

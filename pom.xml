@@ -13,7 +13,7 @@
         <module>easy-tool-ai</module>
         <module>easy-tool-all</module>
     </modules>
-    <version>3.0.6.2</version>
+    <version>3.0.6.3</version>
 
     <name>easy-tool</name>
     <description>Daily tool integration</description>
@@ -54,11 +54,11 @@
         <spring-boot-starter.version>3.3.6</spring-boot-starter.version>
         <lombok.version>1.18.28</lombok.version>
         <spring.version>6.1.15</spring.version>
-        <easy-tool-core.version>3.0.6.2</easy-tool-core.version>
-        <easy-tool-ai.version>3.0.6.2</easy-tool-ai.version>
-        <easy-tool-mybatis-plus.version>3.0.6.2</easy-tool-mybatis-plus.version>
-        <easy-tool-redis-spring-boot-starter.version>3.0.6.2</easy-tool-redis-spring-boot-starter.version>
-        <easy-tool-request.version>3.0.6.2</easy-tool-request.version>
+        <easy-tool-core.version>3.0.6.3</easy-tool-core.version>
+        <easy-tool-ai.version>3.0.6.3</easy-tool-ai.version>
+        <easy-tool-mybatis-plus.version>3.0.6.3</easy-tool-mybatis-plus.version>
+        <easy-tool-redis-spring-boot-starter.version>3.0.6.3</easy-tool-redis-spring-boot-starter.version>
+        <easy-tool-request.version>3.0.6.3</easy-tool-request.version>
     </properties>
 
     <dependencyManagement>

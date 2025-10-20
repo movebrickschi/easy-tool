@@ -92,7 +92,8 @@ public final class ObjectConvertUtil implements Serializable {
     /**
      * 对象转换为json字符串，包含null字段
      * @param data 数据待转换对象
-     * @param propertyNamingStrategy 属性命名策略 {@link io.github.move.bricks.chi.constants.NamingStrategyConstants}
+     * @param propertyNamingStrategy 属性命名策略
+     * {@link io.github.movebrickschi.easytool.core.constants.NamingStrategyConstants}
      * @param ignoreFields 忽略字段
      * @return 转换后的字符串
      */
@@ -188,6 +189,26 @@ public final class ObjectConvertUtil implements Serializable {
         } else {
             return convertSupplier.get();
         }
+    }
+
+    /**
+     * 将一个对象转换成json字符串
+     * @param object 待转换对象
+     * @return json字符串
+     */
+    @SneakyThrows
+    public static String toJsonString(Object object) {
+        ObjectMapper objectMapper = OBJECT_MAPPER_THREAD_LOCAL.get();
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (Exception e) {
+            log.error("toJsonString error:{}", e.getMessage());
+            throw new RuntimeException(e);
+        } finally {
+            OBJECT_MAPPER_THREAD_LOCAL.remove();
+        }
+
+
     }
 
     /**

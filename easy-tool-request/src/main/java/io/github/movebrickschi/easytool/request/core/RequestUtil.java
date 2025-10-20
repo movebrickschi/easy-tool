@@ -27,7 +27,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 @Slf4j
-public final class RequestUtil implements Serializable {
+public class RequestUtil implements Serializable {
     private static final RequestFormatApi REQUEST_SINGLE;
     private static final RequestFormatApi REQUEST_LIST;
     private static final RequestFormatApi REQUEST_MAP;
@@ -197,6 +197,7 @@ public final class RequestUtil implements Serializable {
     public static <T> CResult<T> parseObj(OperationArgsV2 operationArgsV2, Class<T> tClass) {
         return REQUEST_SINGLE.toSingle(operationArgsV2, tClass);
     }
+
 
     /**
      * 单例形式,根据内嵌key获取到最底层数据，直接返回对应数据类型

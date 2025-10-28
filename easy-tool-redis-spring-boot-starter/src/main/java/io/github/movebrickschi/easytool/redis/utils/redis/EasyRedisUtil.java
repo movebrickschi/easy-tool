@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @author MoveBricks Chi
  * @version 1.0
  */
-public class RedisUtil extends AbstractRedisUtil {
+public class EasyRedisUtil extends AbstractRedisUtil {
     /**
      * 根据前缀移除
      * @param pre 前缀

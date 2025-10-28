@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 @Component
 @Slf4j
 @ConditionalOnBean(RedissonClient.class)
-public class LockService {
+public class DistributedLock {
 
     @Resource
     private RedissonClient redissonClient;

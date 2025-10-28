@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import io.github.movebrickschi.easytool.redis.config.RedisProperties;
-import io.github.movebrickschi.easytool.redis.utils.redis.RedisUtil;
+import io.github.movebrickschi.easytool.redis.utils.redis.EasyRedisUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,12 +27,11 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class AutoConfiguration {
 
 
-    @Bean("easyRedisUtil")
     @ConditionalOnExpression(
             "#{environment.containsProperty('spring.data.redis.host') || environment.containsProperty('spring.redis.host')}"
     )
-    public RedisUtil redisUtil() {
-        return new RedisUtil();
+    public EasyRedisUtil easyRedisUtil() {
+        return new EasyRedisUtil();
     }
 
     @Bean

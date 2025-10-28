@@ -1,6 +1,6 @@
 package io.github.movebrickschi.easytool.redis.config;
 
-import io.github.movebrickschi.easytool.redis.utils.redis.RedisUtil;
+import io.github.movebrickschi.easytool.redis.utils.redis.EasyRedisUtil;
 import jakarta.annotation.Resource;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * @version 1.0
  */
 @Configuration
-@AutoConfigureBefore(RedisUtil.class)
+@AutoConfigureBefore(EasyRedisUtil.class)
 public class BloomFilterConfig {
     @Resource
     private RedissonClient redissonClient;

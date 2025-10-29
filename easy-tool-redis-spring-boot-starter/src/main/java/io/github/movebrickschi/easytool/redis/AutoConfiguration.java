@@ -27,6 +27,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class AutoConfiguration {
 
 
+    @Bean
     @ConditionalOnExpression(
             "#{environment.containsProperty('spring.data.redis.host') || environment.containsProperty('spring.redis.host')}"
     )

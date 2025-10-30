@@ -1,7 +1,9 @@
 package io.github.movebrickschi.easytool.redis.utils.redis;
 
 import cn.hutool.core.lang.TypeReference;
+import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
+import io.github.movebrickschi.easytool.core.utils.object.ObjectConvertUtil;
 import io.github.movebrickschi.easytool.redis.constants.LuaScript;
 import jakarta.annotation.Resource;
 import lombok.AllArgsConstructor;
@@ -15,10 +17,7 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -139,6 +138,23 @@ public abstract class AbstractRedisUtil {
      */
     protected abstract <R> R executeForValue(String key, Class<R> beanClass, long timeout, TimeUnit unit,
                                              SupplierThrow<R> supplier);
+
+    /**
+     * 适用于查询一定存在的数据,不确定的数据不能用此方法
+     * 使用布隆过滤器过滤结果为空的key
+     * 使用内部结果返回的过期时间
+     * @param key key
+     * @param beanClass 返回类型
+     * @param unit 时间单位
+     * @param supplier 获取数据和过期时间的方法
+     * @param bloomFilterEnable 是否启用布隆过滤器
+     * @return 返回值
+     * @param <R> 返回的类型
+     */
+    protected abstract <R> R executeForValue(String key, Class<R> beanClass, TimeUnit unit,
+                                             SupplierThrowWithTimeout<R> supplier,
+                                             Boolean... bloomFilterEnable);
+
 
 
     /**
@@ -399,6 +415,41 @@ public abstract class AbstractRedisUtil {
         return redisTemplate.execute(script, Lists.newArrayList(key), list.toArray());
     }
 
+    /**
+     * 从Redis获取值并转换为目标类型,适用于opsForValue
+     * @param key key
+     * @param beanClass 目标类型Class
+     * @return 转换后的值
+     * @param <R> 返回类型
+     */
+    protected <R> R convertValue(String key, Class<R> beanClass) {
+        Object result = redisTemplate.opsForValue().get(key);
+        if (Objects.isNull(result)) {
+            return null;
+        }
+        if (ObjectConvertUtil.isBasicType(result.getClass())) {
+            return ObjectConvertUtil.convertBasicType(result, beanClass);
+        }
+        return JSONUtil.toBean(JSONUtil.toJsonStr(result), beanClass);
+    }
+
+    /**
+     * 从Redis获取值并转换为目标类型
+     * @param key key
+     * @param beanClass 目标类型Class
+     * @return 转换后的值
+     * @param <R> 返回类型
+     */
+    protected <R> R setValue(String key, R value, long timeout, TimeUnit unit, Class<R> beanClass) {
+        if (ObjectConvertUtil.isBasicType(value.getClass())) {
+            value = ObjectConvertUtil.convertBasicType(value, beanClass);
+            redisTemplate.opsForValue().set(key, value, timeout, unit);
+        } else {
+            redisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(value), timeout, unit);
+        }
+        return value;
+    }
+
 
     @FunctionalInterface
     public interface FunctionThrow<T, R> {
@@ -417,6 +468,20 @@ public abstract class AbstractRedisUtil {
         protected LocalDateTime commonExpirationDate;
 
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SupplierResult<T> {
+        private T value;
+        private long timeout;
+    }
+
+    @FunctionalInterface
+    public interface SupplierThrowWithTimeout<R> {
+        SupplierResult<R> get() throws Throwable;
+    }
+
 
     @Data
     @Builder

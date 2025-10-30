@@ -182,17 +182,36 @@ public class EasyRedisUtil extends AbstractRedisUtil {
         if (agentBloomFilter.contains(key)) {
             throw new RuntimeException(NOT_FIND_RESOURCE);
         }
-        Boolean b = redisTemplate.hasKey(key);
-        if (Boolean.TRUE.equals(b)) {
-            return JSONUtil.toBean(JSONUtil.toJsonStr(redisTemplate.opsForValue().get(key)), beanClass);
+        if (redisTemplate.hasKey(key)) {
+            return convertValue(key, beanClass);
         } else {
             R r = supplier.get();
             if (Objects.isNull(r)) {
                 agentBloomFilter.add(key);
                 throw new RuntimeException(NOT_FIND_RESOURCE);
             }
-            redisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(r), timeout, unit);
-            return r;
+            return setValue(key, r, timeout, unit, beanClass);
+        }
+    }
+
+    @Override
+    @SneakyThrows
+    public <R> R executeForValue(String key, Class<R> beanClass, TimeUnit unit, SupplierThrowWithTimeout<R> supplier,
+                                 Boolean... bloomFilterEnable) {
+        boolean enableBloomFilter = ArrayUtil.isNotEmpty(bloomFilterEnable) && bloomFilterEnable[0];
+        if (enableBloomFilter && agentBloomFilter.contains(key)) {
+            throw new RuntimeException(NOT_FIND_RESOURCE);
+        }
+        if (redisTemplate.hasKey(key)) {
+            return convertValue(key, beanClass);
+        } else {
+            SupplierResult<R> result = supplier.get();
+            if (enableBloomFilter && (result == null || Objects.isNull(result.getValue()))) {
+                agentBloomFilter.add(key);
+                throw new RuntimeException(NOT_FIND_RESOURCE);
+            }
+            R value = result.getValue();
+            return setValue(key, value, result.getTimeout(), unit, beanClass);
         }
     }
 
@@ -217,17 +236,15 @@ public class EasyRedisUtil extends AbstractRedisUtil {
         if (agentBloomFilter.contains(key)) {
             throw new RuntimeException(NOT_FIND_RESOURCE);
         }
-        Boolean b = redisTemplate.hasKey(key);
-        if (Boolean.TRUE.equals(b)) {
-            return JSONUtil.toBean(JSONUtil.toJsonStr(redisTemplate.opsForValue().get(key)), beanClass);
+        if (redisTemplate.hasKey(key)) {
+            return convertValue(key, beanClass);
         } else {
             R r = function.apply(t);
             if (Objects.isNull(r)) {
                 agentBloomFilter.add(key);
                 throw new RuntimeException(NOT_FIND_RESOURCE);
             }
-            redisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(r), timeout, unit);
-            return r;
+            return setValue(key, r, timeout, unit, beanClass);
         }
     }
 
@@ -245,18 +262,14 @@ public class EasyRedisUtil extends AbstractRedisUtil {
     @SneakyThrows
     public <R> R executeForValueContainNull(String key, Class<R> beanClass, long timeout, TimeUnit unit,
                                             SupplierThrow<R> supplier) {
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
-            Object result = redisTemplate.opsForValue().get(key);
-            if (Objects.isNull(result)) {
-                return null;
-            }
-            return JSONUtil.toBean(JSONUtil.toJsonStr(redisTemplate.opsForValue().get(key)), beanClass);
+        if (redisTemplate.hasKey(key)) {
+            return convertValue(key, beanClass);
         } else {
             R r = supplier.get();
-            redisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(r), timeout, unit);
-            return r;
+            return setValue(key, r, timeout, unit, beanClass);
         }
     }
+
 
     /**
      * 存放数字类型

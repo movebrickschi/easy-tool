@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.movebrickschi</groupId>
         <artifactId>easy-tool</artifactId>
-        <version>2.5.5</version>
+        <version>2.5.5.1</version>
     </parent>
     <name>easy-tool-core</name>
     <artifactId>easy-tool-core</artifactId>
@@ -129,12 +129,12 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.49</version>
+            <version>1.70</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.49</version>
+            <version>1.70</version>
         </dependency>
         <dependency>
             <groupId> com.itextpdf</groupId >

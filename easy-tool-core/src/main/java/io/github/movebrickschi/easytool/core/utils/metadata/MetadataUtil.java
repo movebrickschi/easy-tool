@@ -8,17 +8,21 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Maps;
 import io.github.movebrickschi.easytool.core.constants.FileTypeConstants;
 import io.github.movebrickschi.easytool.core.dto.ImplicitMetadata;
+import io.github.movebrickschi.easytool.core.dto.WatermarkParameters;
 import io.github.movebrickschi.easytool.core.exception.NullException;
+import io.github.movebrickschi.easytool.core.utils.base64.Base64Util;
+import io.github.movebrickschi.easytool.core.utils.bytes.ByteUtil;
 import io.github.movebrickschi.easytool.core.utils.file.FileUtil;
 import io.github.movebrickschi.easytool.core.utils.ssl.SslUtil;
 import io.github.movebrickschi.easytool.core.utils.url.UrlUtil;
+import io.github.movebrickschi.easytool.core.utils.watermark.WatermarkUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.imaging.ImageWriteException;
 import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.ImagingException;
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
 import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
@@ -485,7 +489,7 @@ public final class MetadataUtil {
     }
 
 
-    private static TiffOutputSet getTiffOutputSet(ImageMetadata metadata) throws ImageWriteException {
+    private static TiffOutputSet getTiffOutputSet(ImageMetadata metadata) throws ImagingException {
         TiffOutputSet outputSet = null;
         if (metadata instanceof JpegImageMetadata) {
             JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
@@ -542,7 +546,7 @@ public final class MetadataUtil {
 //            ByteUtil.toFile(bytes, outImage.getAbsolutePath());
 //
 //
-//            String base64 = WatermarkUtil.forImageKeepMetadata(outImage, WatermarkParameters.builder()
+//            String base64 = WatermarkUtil.addWaterMarkKeepMetadata(outImage, WatermarkParameters.builder()
 //                    .text("AI生成")
 //                    .build());
 //            File outWaterImage = new File("C:\\Users\\Administrator\\Downloads\\url-after.jpg");

@@ -13,13 +13,21 @@
     <packaging>jar</packaging>
 
     <properties>
-        <javacv.version>1.5.8</javacv.version>
-        <javacv.ffmpeg.version>5.1.2-1.5.8</javacv.ffmpeg.version>
+        <javacv.version>1.5.10</javacv.version>
+        <javacv.ffmpeg.version>6.1.1-1.5.10</javacv.ffmpeg.version>
         <javacpp.platform.macosx-x86_64>macosx-x86_64</javacpp.platform.macosx-x86_64>
         <javacpp.platform.linux-x86>linux-x86</javacpp.platform.linux-x86>
         <javacpp.platform.linux-x86_64>linux-x86_64</javacpp.platform.linux-x86_64>
         <javacpp.platform.windows-x86>windows-x86</javacpp.platform.windows-x86>
         <javacpp.platform.windows-x86_64>windows-x86_64</javacpp.platform.windows-x86_64>
+        <alibaba-dingtalk-service-sdk.version>2.0.0</alibaba-dingtalk-service-sdk.version>
+        <commons-codec.version>1.16.1</commons-codec.version>
+        <imageio.version>3.12.0</imageio.version>
+        <commons-imaging.version>1.0.0-alpha5</commons-imaging.version>
+        <pngj.version>2.1.0</pngj.version>
+        <itextpdf.version>5.5.13.4</itextpdf.version>
+        <bcp.version>1.79</bcp.version>
+        <itext-asian.version>5.2.0</itext-asian.version>
     </properties>
 
     <dependencyManagement>
@@ -42,13 +50,13 @@
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>alibaba-dingtalk-service-sdk</artifactId>
-            <version>2.0.0</version>
+            <version>${alibaba-dingtalk-service-sdk.version}</version>
         </dependency>
 
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.11</version>
+            <version>${commons-codec.version}</version>
         </dependency>
 
         <dependency>
@@ -99,24 +107,24 @@
         <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio-jpeg</artifactId>
-            <version>3.9.4</version>
+            <version>${imageio.version}</version>
         </dependency>
         <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio-core</artifactId>
-            <version>3.9.4</version>
+            <version>${imageio.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-imaging</artifactId>
-            <version>1.0-alpha3</version>
+            <version>${commons-imaging.version}</version>
         </dependency>
 
         <dependency>
             <groupId>ar.com.hjg</groupId>
             <artifactId>pngj</artifactId>
-            <version>2.1.0</version>
+            <version>${pngj.version}</version>
         </dependency>
         <!--图片水印和写入元数据依赖-->
 
@@ -124,22 +132,22 @@
         <dependency>
             <groupId> com.itextpdf</groupId >
             <artifactId>itextpdf</artifactId >
-            <version>5.5.9</version>
+            <version>${itextpdf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.49</version>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>${bcp.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.49</version>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>${bcp.version}</version>
         </dependency>
         <dependency>
             <groupId> com.itextpdf</groupId >
             <artifactId>itext-asian</artifactId>
-            <version>5.2.0</version>
+            <version>${itext-asian.version}</version>
         </dependency>
         <!--javacv截取视频帧-->
         <dependency>

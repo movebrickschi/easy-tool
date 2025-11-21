@@ -249,6 +249,9 @@ public final class ObjectConvertUtil implements Serializable {
      * @return 转换后的基本类型
      */
     public static <T> T convertBasicType(Object data, Class<T> tClass) {
+        if (data instanceof Character) {
+            return (T) data;
+        }
         if (String.class.equals(tClass)) {
             return (T) data.toString();
         }

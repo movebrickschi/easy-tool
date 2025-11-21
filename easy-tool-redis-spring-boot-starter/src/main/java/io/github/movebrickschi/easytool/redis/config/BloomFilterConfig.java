@@ -1,13 +1,15 @@
 package io.github.movebrickschi.easytool.redis.config;
 
-import io.github.movebrickschi.easytool.redis.utils.redis.RedisUtil;
-import javax.annotation.Resource;
+import io.github.movebrickschi.easytool.redis.utils.redis.EasyRedisUtil;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Resource;
 
 /**
  * 配置布隆过滤器
@@ -16,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * @version 1.0
  */
 @Configuration
-@AutoConfigureBefore(RedisUtil.class)
+@AutoConfigureBefore(EasyRedisUtil.class)
 public class BloomFilterConfig {
     @Resource
     private RedissonClient redissonClient;
@@ -25,7 +27,10 @@ public class BloomFilterConfig {
      * null数字员工为空布隆过滤器
      */
     @Bean
-    @ConditionalOnProperty(prefix = "spring.data.redis", name = "host")
+    @ConditionalOnExpression(
+            "#{environment.containsProperty('spring.data.redis.host') || environment.containsProperty('spring.redis.host')}"
+    )
+    @ConditionalOnMissingBean
     public RBloomFilter<String> agentBloomFilter() {
         String filterName = "nullBloomFilter";
         long expectedInsertions = 10000L;

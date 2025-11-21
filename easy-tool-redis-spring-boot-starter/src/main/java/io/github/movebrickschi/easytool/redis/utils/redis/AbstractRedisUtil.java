@@ -1,7 +1,9 @@
 package io.github.movebrickschi.easytool.redis.utils.redis;
 
 import cn.hutool.core.lang.TypeReference;
+import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
+import io.github.movebrickschi.easytool.core.utils.object.ObjectConvertUtil;
 import io.github.movebrickschi.easytool.redis.constants.LuaScript;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,10 +17,7 @@ import org.springframework.data.redis.core.script.RedisScript;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -413,6 +412,41 @@ public abstract class AbstractRedisUtil {
         Collections.addAll(list, timeoutInSeconds);
         // 执行Lua脚本
         return redisTemplate.execute(script, Lists.newArrayList(key), list.toArray());
+    }
+
+    /**
+     * 从Redis获取值并转换为目标类型,适用于opsForValue
+     * @param key key
+     * @param beanClass 目标类型Class
+     * @return 转换后的值
+     * @param <R> 返回类型
+     */
+    protected <R> R convertValue(String key, Class<R> beanClass) {
+        Object result = redisTemplate.opsForValue().get(key);
+        if (Objects.isNull(result)) {
+            return null;
+        }
+        if (ObjectConvertUtil.isBasicType(result.getClass())) {
+            return ObjectConvertUtil.convertBasicType(result, beanClass);
+        }
+        return JSONUtil.toBean(JSONUtil.toJsonStr(result), beanClass);
+    }
+
+    /**
+     * 从Redis获取值并转换为目标类型
+     * @param key key
+     * @param beanClass 目标类型Class
+     * @return 转换后的值
+     * @param <R> 返回类型
+     */
+    protected <R> R setValue(String key, R value, long timeout, TimeUnit unit, Class<R> beanClass) {
+        if (ObjectConvertUtil.isBasicType(value.getClass())) {
+            value = ObjectConvertUtil.convertBasicType(value, beanClass);
+            redisTemplate.opsForValue().set(key, value, timeout, unit);
+        } else {
+            redisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(value), timeout, unit);
+        }
+        return value;
     }
 
 

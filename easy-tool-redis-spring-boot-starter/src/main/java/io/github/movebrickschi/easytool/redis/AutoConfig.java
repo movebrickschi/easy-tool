@@ -6,11 +6,14 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import io.github.movebrickschi.easytool.redis.config.RedisProperties;
-import io.github.movebrickschi.easytool.redis.utils.redis.RedisUtil;
+import io.github.movebrickschi.easytool.redis.utils.redis.EasyRedisUtil;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -22,25 +25,36 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * @author MoveBricks Chi
  * @version 1.0
  */
-@Configuration
-public class AutoConfiguration {
+@Configuration(proxyBeanMethods = false)
+@AutoConfiguration
+public class AutoConfig {
 
 
     @Bean
-    @ConditionalOnProperty(prefix = "spring.data.redis", name = "host")
-    public RedisUtil redisUtil() {
-        return new RedisUtil();
+    public EasyRedisUtil easyRedisUtil() {
+        return new EasyRedisUtil();
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "spring.data.redis", name = "host")
-    public RedisProperties constructBootRedisConfig() {
-        return new RedisProperties();
+    public RedisProperties constructBootRedisConfig(Environment environment) {
+        Binder binder = Binder.get(environment);
+
+        // 先尝试绑定 spring.data.redis
+        RedisProperties properties = binder.bind("spring.data.redis", RedisProperties.class)
+                .orElse(null);
+
+        // 如果 spring.data.redis 没有配置，尝试 spring.redis
+        if (properties == null || properties.getHost() == null) {
+            properties = binder.bind("spring.redis", RedisProperties.class)
+                    .orElse(new RedisProperties());
+        }
+
+        return properties;
     }
 
     @Bean("redisTemplateByJacksonSerializer")
     @ConditionalOnClass(RedisProperties.class)
-    @ConditionalOnProperty(prefix = "spring.data.redis", name = "host")
+    @ConditionalOnMissingBean(name = "redisTemplateByJacksonSerializer")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
 
         RedisTemplate<String, Object> template = new RedisTemplate<>();

@@ -8,8 +8,8 @@ package io.github.movebrickschi.easytool.redis.config;
  */
 public class RedisProperties {
     private RedisPoolConfig pool = new RedisPoolConfig();
-    private String host;
     private String password;
+    private String host;
     private String timeout;
     private String database;
     private String port;

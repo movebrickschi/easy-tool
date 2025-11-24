@@ -17,8 +17,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.imaging.ImageWriteException;
 import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.ImagingException;
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
 import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
@@ -485,7 +485,7 @@ public final class MetadataUtil {
     }
 
 
-    private static TiffOutputSet getTiffOutputSet(ImageMetadata metadata) throws ImageWriteException {
+    private static TiffOutputSet getTiffOutputSet(ImageMetadata metadata) throws ImagingException {
         TiffOutputSet outputSet = null;
         if (metadata instanceof JpegImageMetadata) {
             JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;

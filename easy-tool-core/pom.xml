@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.movebrickschi</groupId>
         <artifactId>easy-tool</artifactId>
-        <version>2.5.5.2</version>
+        <version>2.5.5.3</version>
     </parent>
     <name>easy-tool-core</name>
     <artifactId>easy-tool-core</artifactId>
@@ -26,7 +26,7 @@
         <commons-imaging.version>1.0.0-alpha5</commons-imaging.version>
         <pngj.version>2.1.0</pngj.version>
         <itextpdf.version>5.5.13.3</itextpdf.version>
-        <bcp.version>1.70</bcp.version>
+        <bcp.version>1.69</bcp.version>
         <itext-asian.version>5.2.0</itext-asian.version>
     </properties>
 
@@ -135,6 +135,11 @@
             <version>${itextpdf.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itext-asian</artifactId>
+            <version>${itext-asian.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
             <version>${bcp.version}</version>
@@ -144,16 +149,28 @@
             <artifactId>bcpkix-jdk15on</artifactId>
             <version>${bcp.version}</version>
         </dependency>
-        <dependency>
-            <groupId> com.itextpdf</groupId >
-            <artifactId>itext-asian</artifactId>
-            <version>${itext-asian.version}</version>
-        </dependency>
+
         <!--javacv截取视频帧-->
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacv</artifactId>
             <version>${javacv.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacpp</artifactId>
+            <version>${javacv.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>ffmpeg</artifactId>
+            <version>${javacv.ffmpeg.version}</version>
         </dependency>
         <!--MacOS平台-->
         <dependency>

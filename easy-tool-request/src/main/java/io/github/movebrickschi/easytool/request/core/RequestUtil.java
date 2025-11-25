@@ -188,6 +188,16 @@ public final class RequestUtil implements Serializable {
     /*=========================================================V2==========================================*/
 
     /**
+     * 创建请求构建器，支持流式API调用
+     * @param operationArgsV2 请求方法参数
+     * @return RequestBuilder
+     * @param <T> 参数类型
+     */
+    public static <T> RequestBuilder<T> builder(OperationArgsV2 operationArgsV2) {
+        return new RequestBuilder<>(operationArgsV2);
+    }
+
+    /**
      * 单例形式,直接返回对应数据类型
      * @param operationArgsV2 请求方法参数
      * @param tClass 返回类型

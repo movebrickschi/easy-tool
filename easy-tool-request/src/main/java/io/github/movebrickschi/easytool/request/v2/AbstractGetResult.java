@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * 获取结果抽象类
@@ -127,6 +128,7 @@ public abstract class AbstractGetResult implements GetResult {
             if (param instanceof Map<?, ?>) {
                 requestParams.setMapParams((Map<String, Object>) param);
             } else {
+                //将一个对象或者json字符串转换转为Map
                 Map map = ObjectConvertUtil.convertWithNamingStrategy(param, Map.class,
                         operationArgsV2.getWriteConvertConfig().getIsIncludeNull(),
                         operationArgsV2.getWriteConvertConfig().getNamingStrategy());
@@ -145,7 +147,7 @@ public abstract class AbstractGetResult implements GetResult {
         Stopwatch watch = Stopwatch.createStarted();
         log.info("😰request starting...");
         try {
-            resultStr = Operation.ACTION_SUPPLIER.get().get(operationArgsV2.getMethod()).apply(requestParams);
+            resultStr = getRequestFunction(operationArgsV2).apply(requestParams);
         } catch (Exception e) {
             logRequestError(operationArgsV2, bodyForLog, e.getMessage());
             return CResult.failed(e.getMessage());
@@ -154,6 +156,28 @@ public abstract class AbstractGetResult implements GetResult {
         int timeCost = (int) watch.elapsed(TimeUnit.MILLISECONDS);
         logRequestSuccess(operationArgsV2, bodyForLog, resultStr, timeCost);
         return CResult.success(ComboResult.builder(bodyForLog, resultStr));
+    }
+
+    /**
+     * 根据请求参数和请求方法再次确定真正的请求方法
+     * 比如使用的post请求，但是传了header参数，则最终请求方法使用的是POST_WITH_HEADERS方法
+     */
+    private Function<RequestParams, String> getRequestFunction(OperationArgsV2 operationArgsV2) {
+        if (MapUtil.isNotEmpty(operationArgsV2.getHeadersMap())) {
+            if (Operation.Method.POST_BODY.equals(operationArgsV2.getMethod())) {
+                return Operation.POST_BODY_HEADERS;
+            }
+            if (Operation.Method.PUT.equals(operationArgsV2.getMethod())) {
+                return Operation.PUT_HEADERS;
+            }
+            if (Operation.Method.GET.equals(operationArgsV2.getMethod())) {
+                return Operation.GET_HEADERS;
+            }
+            if (Operation.Method.DELETE.equals(operationArgsV2.getMethod())) {
+                return Operation.DELETE_HEADERS;
+            }
+        }
+        return Operation.ACTION_SUPPLIER.get().get(operationArgsV2.getMethod());
     }
 
     @Override

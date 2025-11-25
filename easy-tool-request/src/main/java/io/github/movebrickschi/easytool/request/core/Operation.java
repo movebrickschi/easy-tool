@@ -79,13 +79,6 @@ public interface Operation {
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
 
-    Function<RequestParams, String> POST_MULTIPLE_DIFFERENT_HEADERS = param -> HttpRequest.post(param.getUrl())
-            .headerMap(param.getHeadersMap(), true)
-            .body(param.getBody())
-            .setConnectionTimeout(param.getConnectionTimeout())
-            .setReadTimeout(param.getReadTimeout())
-            .execute().body();
-
     Function<RequestParams, String> POST_FORM = param -> HttpRequest.post(param.getUrl())
             .form(param.getMapParams())
             .setConnectionTimeout(param.getConnectionTimeout())
@@ -104,6 +97,7 @@ public interface Operation {
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
+
     Function<RequestParams, String> GET_HEADERS = param -> HttpRequest.get(param.getUrl())
             .headerMap(param.getHeadersMap(), true)
             .form(param.getMapParams())
@@ -117,6 +111,7 @@ public interface Operation {
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
+
     Function<RequestParams, String> PUT_HEADERS = param -> HttpRequest.put(param.getUrl())
             .headerMap(param.getHeadersMap(), true)
             .body(param.getBody())
@@ -137,6 +132,7 @@ public interface Operation {
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
             .execute().body();
+
     Function<RequestParams, String> DELETE_NO_PARAM = param -> HttpRequest.delete(param.getUrl())
             .setConnectionTimeout(param.getConnectionTimeout())
             .setReadTimeout(param.getReadTimeout())
@@ -149,7 +145,6 @@ public interface Operation {
         map.put(Method.POST_FORM, POST_FORM);
         map.put(Method.POST_FORM_WITH_HEADERS, POST_FORM_WITH_HEADERS);
         map.put(Method.POST_MULTIPLE_HEADERS, POST_MULTIPLE_HEADERS);
-        map.put(Method.POST_MULTIPLE_DIFFERENT_HEADERS, POST_MULTIPLE_DIFFERENT_HEADERS);
         map.put(Method.GET, GET);
         map.put(Method.GET_HEADERS, GET_HEADERS);
         map.put(Method.PUT, PUT);

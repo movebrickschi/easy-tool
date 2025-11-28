@@ -10,7 +10,7 @@ import io.github.movebrickschi.easytool.request.v1.OperationArgs;
  *
  * @author MoveBricks Chi
  * @version 1.0
- * @since 3.0.0
+ * @since 4.0.0
  */
 public interface GetResult {
 
@@ -26,7 +26,7 @@ public interface GetResult {
      * 获取结果V2
      * @param operationArgs 参数对象
      * @return 结果对象
-     * @since 3.0.0
+     * @since 4.0.0
      */
     CResult<Object> getResult(OperationArgsV2 operationArgs);
 

@@ -2,10 +2,10 @@ package io.github.movebrickschi.easytool.core.utils.object.serial;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.json.JSONNull;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.PackageVersion;
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.datatype.jsr310.deser.*;
 import com.fasterxml.jackson.datatype.jsr310.ser.*;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import java.io.Serial;
 import java.time.*;
@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
  *
  * @author MoveBricks Chi
  * @version 1.0
- * @since 3.0.0
+ * @since 4.0.0
  */
 public class CustomModule extends SimpleModule {
 
@@ -27,7 +27,7 @@ public class CustomModule extends SimpleModule {
      * 指定序列化\反序列化规则
      */
     public CustomModule() {
-        super(PackageVersion.VERSION);
+        super(Version.unknownVersion());
         // JSONNull 类型序列化
         this.addSerializer(JSONNull.class, new JSONNullSerializer());
         //----------------------time---------------------------------

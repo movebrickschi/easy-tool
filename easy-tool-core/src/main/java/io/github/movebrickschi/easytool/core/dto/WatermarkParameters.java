@@ -1,0 +1,51 @@
+package io.github.movebrickschi.easytool.core.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+
+/**
+ * 水印参数
+ *
+ * @author MoveBricks Chi
+ * @since 1.0
+ */
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Data
+public class WatermarkParameters implements Serializable {
+    private static final long serialVersionUID = 440804206374041656L;
+
+    /*水印文字*/
+    private String text;
+    /*水印位置*/
+    @Builder.Default
+    private String position = "bottom-right";
+    /*水印透明度*/
+    @Builder.Default
+    private Integer alpha = 128;
+    /*水印文字大小*/
+    @Builder.Default
+    private Integer size = 40;
+
+    public Integer getAlpha() {
+        if (alpha < 0 || alpha > 255) {
+            // 超出范围时使用默认值
+            alpha = 128;
+        }
+        return alpha;
+    }
+
+    public Integer getSize() {
+        // 验证文字大小范围
+        if (size < 10 || size > 200) {
+            // 超出范围时使用默认值
+            size = 40;
+        }
+        return size;
+    }
+}

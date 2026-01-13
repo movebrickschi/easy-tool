@@ -27,6 +27,14 @@ public class TransactionUtils {
         void run();
     }
 
+    /**
+     * 带返回值的事务任务接口
+     */
+    @FunctionalInterface
+    public interface TransactionalTaskWithReturn<T> {
+        T run();
+    }
+
     //PlatformTransactionManager是Spring框架中用于管理事务的接口。它提供了开启、提交、回滚和验证事务状态等方法
     @Resource
     private final PlatformTransactionManager transactionManager;
@@ -43,6 +51,27 @@ public class TransactionUtils {
         try {
             task.run();
             transactionManager.commit(status);
+        } catch (Exception e) {
+            transactionManager.rollback(status);
+            throw e;
+        }
+    }
+
+    /**
+     * 带返回值的事务执行方法
+     * 适用于异步线程中需要事务控制且需要返回结果的场景
+     *
+     * @param task 带返回值的事务任务
+     * @param <T>  返回值类型
+     * @return 任务执行结果
+     */
+    public <T> T runInTransactionWithReturn(TransactionalTaskWithReturn<T> task) {
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        TransactionStatus status = transactionManager.getTransaction(def);
+        try {
+            T result = task.run();
+            transactionManager.commit(status);
+            return result;
         } catch (Exception e) {
             transactionManager.rollback(status);
             throw e;

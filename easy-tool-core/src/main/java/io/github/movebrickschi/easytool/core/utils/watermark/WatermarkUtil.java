@@ -1,32 +1,25 @@
 package io.github.movebrickschi.easytool.core.utils.watermark;
 
+import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.json.JSONUtil;
-import io.github.movebrickschi.easytool.core.constants.ImagePool;
+import com.google.common.collect.Lists;
+import io.github.movebrickschi.easytool.core.constants.FileTypeConstants;
 import io.github.movebrickschi.easytool.core.dto.WatermarkParameters;
-import io.github.movebrickschi.easytool.core.exception.NullException;
-import io.github.movebrickschi.easytool.core.utils.file.InputStreamToFileUtil;
-import io.github.movebrickschi.easytool.core.utils.ssl.SslUtil;
-import io.github.movebrickschi.easytool.core.utils.string.StringUtil;
-import io.github.movebrickschi.easytool.core.utils.url.UrlUtil;
+import io.github.movebrickschi.easytool.core.utils.watermark.factory.WatermarkProcessorFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.Base64;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
 
 /**
  * 水印工具类
+ * 使用前提对应服务器要有支持中文的字体，否则
+ * 中文不能正常显示
  *
  * @author MoveBricks Chi
  * @since 1.0
@@ -34,178 +27,108 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public final class WatermarkUtil {
 
-    // 定义水印位置常量
-    private static final String POSITION_CENTER = "center";
-    private static final String POSITION_BOTTOM_LEFT = "bottom-left";
-    private static final String POSITION_BOTTOM_RIGHT = "bottom-right";
-
-    // 支持的图片格式映射
-    private static final Map<String, String> SUFFIX_MAP = new ConcurrentHashMap<>();
-
-    static {
-        SUFFIX_MAP.put(ImagePool.JPG, ImagePool.JPEG);
-        SUFFIX_MAP.put(ImagePool.JPEG, ImagePool.JPEG);
-        SUFFIX_MAP.put(ImagePool.PNG, ImagePool.PNG);
-        SUFFIX_MAP.put(ImagePool.BMP, ImagePool.BMP);
-        SUFFIX_MAP.put(ImagePool.GIF, ImagePool.GIF);
-
-        // 强制禁用SSL证书验证
-        SslUtil.disableSSLCertificateValidation();
-    }
-
-    private WatermarkUtil() {
+    /**
+     * 给文件添加水印
+     * @param file  文件
+     * @param watermarkParameters 水印参数
+     * @return 加完水印文件base64
+     */
+    public static String addWaterMark(File file, WatermarkParameters watermarkParameters) {
+        try {
+            String fileType = getSourceType(Files.newInputStream(file.toPath()));
+            WatermarkProcessor processor = WatermarkProcessorFactory.getProcessor(fileType);
+            return processor.addWatermark(file, watermarkParameters);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
-     * 为图片添加文字水印
-     * @param imageUrl 图片URL
+     * 给网络地址文件添加水印
+     * @param url 文件地址
      * @param watermarkParameters 水印参数
-     * @return 处理后的图片Base64编码
-     * @throws IOException 读取图片或处理图片时发生错误
+     * @return 加完水印文件base64
      */
-    public static String forImage(String imageUrl, WatermarkParameters watermarkParameters) throws IOException {
-        log.info("开始为图片添加文字水印，图片为：{}，水印参数为：{}", imageUrl, JSONUtil.toJsonStr(watermarkParameters));
-        if (CharSequenceUtil.isBlank(watermarkParameters.getText())) {
-            throw new NullException("水印内容不能为空！");
+    public static String addWaterMark(String url, WatermarkParameters watermarkParameters) {
+        try {
+            String fileType = getSourceType(new URL(url).openStream());
+            WatermarkProcessor processor = WatermarkProcessorFactory.getProcessor(fileType);
+            return processor.addWatermark(url, watermarkParameters);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * 给文件添加水印,保留元数据
+     * @param file  文件
+     * @param watermarkParameters 水印参数
+     * @return 加完水印文件base64
+     */
+    public static String addWaterMarkKeepMetadata(File file, WatermarkParameters watermarkParameters) {
+        try {
+            String fileType = getSourceType(Files.newInputStream(file.toPath()));
+            WatermarkProcessor processor = WatermarkProcessorFactory.getProcessor(fileType);
+            return processor.addWatermarkKeepMetadata(file, watermarkParameters);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 给网络地址文件添加水印，保留元数据
+     * @param url 文件地址
+     * @param watermarkParameters 水印参数
+     * @return 加完水印文件base64
+     */
+    public static String addWaterMarkKeepMetadata(String url, WatermarkParameters watermarkParameters) {
+        try {
+            String fileType = getSourceType(new URL(url).openStream());
+            WatermarkProcessor processor = WatermarkProcessorFactory.getProcessor(fileType);
+            return processor.addWatermarkKeepMetadata(url, watermarkParameters);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * 获取文件类型
+     * @param inputStream 文件输入流
+     * @return 文件类型
+     */
+    private static String getSourceType(InputStream inputStream) {
+        String fileType = FileTypeUtil.getType(inputStream);
+
+        try {
+            FileTypeConstants.ImagePool.getImagePool(fileType);
+            return FileTypeConstants.IMAGE;
+        } catch (Exception e) {
+            // 不是图片类型
         }
         try {
-            // 从URL读取图片
-            URL url = new URL(imageUrl);
-            BufferedImage processedImage = ImageIO.read(url);
-            return execute(UrlUtil.extractFileName(imageUrl), watermarkParameters, processedImage);
-        } catch (MalformedURLException e) {
-            throw new MalformedURLException("url格式错误");
-        } catch (IOException e) {
-            throw new IOException("图片水印处理图片时发生错误", e);
+            FileTypeConstants.VideoPool.getVideoPool(fileType);
+            return FileTypeConstants.VIDEO;
+        } catch (Exception e) {
+            // 不是视频类型
         }
+
+        if (fileType.equalsIgnoreCase(FileTypeConstants.PDF)) {
+            return FileTypeConstants.PDF;
+        }
+        return FileTypeConstants.UNKNOWN;
     }
 
-    /**
-     * 为图片添加文字水印
-     * @param file 图片文件
-     * @param watermarkParameters 水印参数
-     * @return 处理后的图片Base64编码
-     * @throws IOException 读取图片或处理图片时发生错误
-     */
-    public static String forImage(File file, WatermarkParameters watermarkParameters) throws IOException {
-        log.info("开始为图片添加文字水印，水印参数为：{}", JSONUtil.toJsonStr(watermarkParameters));
-        // 将上传的文件转换为Image对象
-        BufferedImage processedImage = null;
-        try {
-            processedImage = ImageIO.read(Files.newInputStream(file.toPath()));
-            return execute(file.getName(), watermarkParameters, processedImage);
-        } catch (IOException e) {
-            throw new IOException("图片水印处理图片时发生错误", e);
-        }
-    }
-
-    /**
-     * 执行图片处理
-     * @param originalFilename 原始文件名
-     * @param watermarkParameters 水印参数
-     * @param processedImage 处理的图片
-     * @return  处理后的图片Base64编码
-     * @throws IOException 图片处理时发生错误
-     */
-    private static String execute(String originalFilename, WatermarkParameters watermarkParameters,
-                                  BufferedImage processedImage) throws IOException {
-        // 添加文字水印
-        processedImage = watermarkToImage(processedImage, watermarkParameters.getText(),
-                watermarkParameters.getPosition(), watermarkParameters.getAlpha(), watermarkParameters.getSize());
-
-        // 获取原始文件的格式
-        String suffix = ImagePool.PNG;
-        if (StringUtils.isNotBlank(originalFilename)) {
-            suffix = SUFFIX_MAP.getOrDefault(InputStreamToFileUtil.extension(originalFilename), ImagePool.PNG);
-        }
-        // 直接转换图片为字节数组
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(processedImage, suffix, baos);
-        byte[] imageBytes = baos.toByteArray();
-        // 将图片转换为Base64编码
-        return Base64.getEncoder().encodeToString(imageBytes);
-    }
-
-    /**
-     * 添加文字水印
-     */
-    private static BufferedImage watermarkToImage(BufferedImage originalImage, String text, String position,
-                                                  Integer alpha, Integer size) {
-        int imgWidth = originalImage.getWidth();
-        int imgHeight = originalImage.getHeight();
-
-        // 如果使用默认大小，可以根据图片大小进行动态调整
-        if (size == 40) {
-            int minDimension = Math.min(imgWidth, imgHeight);
-            // 根据图片大小调整文字大小，确保在小图上不会太大，在大图上不会太小
-            size = Math.max(20, Math.min(80, minDimension / 20));
-        }
-        BufferedImage bufImg = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_RGB);
-
-        Graphics2D graphics = bufImg.createGraphics();
-        graphics.drawImage(originalImage, 0, 0, imgWidth, imgHeight, null);
-
-        // 设置支持中文的字体
-        Font font = getSupportedFont(size);
-//        graphics.setColor(new Color(0, 0, 0, alpha));
-//        graphics.setFont(font);
-
-
-        FontMetrics fontMetrics = graphics.getFontMetrics();
-        int textWidth = StringUtil.width(text, size);
-        int textHeight = fontMetrics.getHeight();
-
-        // 根据位置参数计算水印坐标
-        int x = 0;
-        int y = 0;
-
-        log.info("处理水印位置: {}", position);
-        switch (position.toLowerCase()) {
-            case POSITION_CENTER:
-                log.info("设置水印位置为居中");
-                x = (imgWidth - textWidth) / 2;
-                // 垂直居中调整
-                y = imgHeight / 2 + textHeight / 4;
-                break;
-            case POSITION_BOTTOM_LEFT:
-                log.info("设置水印位置为左下角");
-                // 左边距
-                x = 10;
-                // 下边距
-                y = imgHeight - 10;
-                break;
-            case POSITION_BOTTOM_RIGHT:
-                log.info("设置水印位置为右下角");
-                // 右边距
-                x = imgWidth - textWidth - 10;
-                // 下边距
-                y = imgHeight - 10;
-                break;
-            default:
-                log.warn("未知的位置参数: {}, 使用默认居中位置", position);
-                // 默认居中
-                x = (imgWidth - textWidth) / 2;
-                y = imgHeight / 2 + textHeight / 4;
-        }
-        drawTextWithOutline(graphics, text, x, y, alpha, font);
-        // 启用抗锯齿渲染，提高中文显示质量
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        // 添加坐标调试日志
-        log.info("水印坐标 - X: {}, Y: {}", x, y);
-        graphics.drawString(text, x, y);
-        graphics.dispose();
-
-        return bufImg;
-    }
 
     /**
      * 获取支持中文的字体
      *
+     * @param specifiedFontName 指定字体名称
      * @param size 字体大小
      * @return 支持中文的字体
      */
-    private static Font getSupportedFont(int size) {
+    public static Font getSupportedFont(String specifiedFontName, int size) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         log.info("系统可用字体数量: {}", ge.getAvailableFontFamilyNames().length);
         // 按优先级排序的字体列表（增加Linux友好的字体）
@@ -234,9 +157,15 @@ public final class WatermarkUtil {
                 "SansSerif"
         };
 
-        String testString = "测试123";
+        String testString = "测试字体是否支持";
 
-        for (String fontName : fontNames) {
+        ArrayList<String> fontNamesList = Lists.newArrayList(fontNames);
+
+        if (CharSequenceUtil.isNotBlank(specifiedFontName)) {
+            fontNamesList.add(0, specifiedFontName);
+        }
+
+        for (String fontName : fontNamesList) {
             try {
                 Font font = new Font(fontName, Font.BOLD, size);
                 // 检查字体是否能正确显示中文
@@ -244,10 +173,10 @@ public final class WatermarkUtil {
                     log.info("使用字体: {} (大小: {})", fontName, size);
                     return font;
                 } else {
-                    log.debug("字体 {} 不能完全显示测试文本", fontName);
+                    log.warn("字体 {} 不能完全显示测试文本", fontName);
                 }
             } catch (Exception e) {
-                log.debug("字体 {} 不可用: {}", fontName, e.getMessage());
+                log.error("字体 {} 不可用: {}", fontName, e.getMessage());
             }
         }
 
@@ -256,34 +185,96 @@ public final class WatermarkUtil {
         return new Font(Font.DIALOG, Font.BOLD, size);
     }
 
-    /**
-     * 绘制带轮廓的文字水印，确保在各种背景上都可见
-     *
-     * @param graphics Graphics2D对象
-     * @param text     水印文字
-     * @param x        X坐标
-     * @param y        Y坐标
-     * @param alpha    透明度
-     * @param font     字体
-     */
-    private static void drawTextWithOutline(Graphics2D graphics, String text, int x, int y, int alpha, Font font) {
-        // 设置字体
-        graphics.setFont(font);
 
-        // 绘制黑色轮廓（半透明）
-        graphics.setColor(new Color(0, 0, 0, alpha / 2));
-        for (int i = -2; i <= 2; i++) {
-            for (int j = -2; j <= 2; j++) {
-                // 创建圆形轮廓效果
-                if (Math.abs(i) + Math.abs(j) <= 2) {
-                    graphics.drawString(text, x + i, y + j);
-                }
+    /**
+     * 创建一个透明水印图片
+     * @param text 水印文字
+     * @param fontSize 字体大小
+     * @return 水印图片
+     */
+    public static BufferedImage createWaterMarkImage(String text, int fontSize) {
+        try {
+            BufferedImage tempImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D tempG2D = tempImage.createGraphics();
+            InputStream fontStream = WatermarkUtil.class.getClassLoader().getResourceAsStream("Alibaba-PuHuiTi" +
+                    "-Regular.ttf");
+            if (fontStream == null) {
+                throw new RuntimeException("Font file not found in resources");
             }
+            Font font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.BOLD, fontSize);
+            fontStream.close();
+            // 使用支持中文的字体
+            tempG2D.setFont(font);
+            FontMetrics fontMetrics = tempG2D.getFontMetrics();
+            int textWidth = fontMetrics.stringWidth(text);
+            int textHeight = fontMetrics.getHeight();
+            tempG2D.dispose();
+
+            // 计算图片的宽度和高度
+            // 边距
+            int padding = 20;
+            int width = textWidth + 2 * padding;
+            int height = textHeight + 2 * padding;
+
+            // 创建一个透明的BufferedImage
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = image.createGraphics();
+
+            // 设置背景为透明
+            g2d.setComposite(AlphaComposite.Clear);
+            g2d.fillRect(0, 0, width, height);
+
+            // 设置文字样式
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            // 设置透明度
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+            // 文字颜色
+            g2d.setColor(Color.WHITE);
+            // 使用支持中文的字体
+            g2d.setFont(font);
+
+            // 计算文字的位置
+            int textX = padding;
+            int textY = (height + textHeight) / 2 - fontMetrics.getDescent();
+            // 绘制文字
+            g2d.drawString(text, textX, textY);
+
+            // 释放资源
+            g2d.dispose();
+
+            return image;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        // 绘制白色主文字（半透明）
-        graphics.setColor(new Color(255, 255, 255, alpha));
-        graphics.drawString(text, x, y);
     }
+
+
+//    public static void main(String[] args) throws IOException {
+//        String path = "F:\\lcc\\workSpace\\WaterMarkDemo\\src\\main\\resources\\视频.mp4";
+//        String base64 = WatermarkUtil.addWaterMark(new File(path), WatermarkParameters.builder()
+//                .text("AI生成")
+//                .size(20)
+//                .position(PositionEnum.TOP_RIGHT.getPosition())
+//                .build());
+//        Base64Util.toFile(base64, "F:\\lcc\\workSpace\\WaterMarkDemo\\src\\main\\resources\\水印.mp4");
+
+
+//        String url = "https://file-editing.oss-cn-shanghai.aliyuncs.com/AIOralVideo/2025/9/19/1758253859218huizhi_D26A6446-72AE-407F-B915-4957E36A6061.mp4";
+//        String base64 = WatermarkUtil.addWaterMark(url, WatermarkParameters.builder()
+//                .text("AI生成")
+//                .size(50)
+//                .position(PositionEnum.BOTTOM_RIGHT.getPosition())
+//                .build());
+//        Base64Util.toFile(base64, "F:\\lcc\\workSpace\\WaterMarkDemo\\src\\main\\resources\\水印.mp4");
+
+//        String path = "F:\\lcc\\workSpace\\WaterMarkDemo\\src\\main\\resources\\PDF.pdf";
+//        String base64 = WatermarkUtil.addWaterMark(new File(path), WatermarkParameters.builder()
+//                .text("AI生成")
+//                .size(50)
+//                .rotation(60f)
+//                .build());
+//        Base64Util.toFile(base64, "F:\\lcc\\workSpace\\WaterMarkDemo\\src\\main\\resources\\水印.pdf");
+//    }
 
 
 }

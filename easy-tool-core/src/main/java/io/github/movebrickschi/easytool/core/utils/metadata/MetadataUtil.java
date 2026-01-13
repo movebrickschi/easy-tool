@@ -6,23 +6,19 @@ import cn.hutool.core.util.ArrayUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Maps;
-import io.github.movebrickschi.easytool.core.constants.ImagePool;
+import io.github.movebrickschi.easytool.core.constants.FileTypeConstants;
 import io.github.movebrickschi.easytool.core.dto.ImplicitMetadata;
-import io.github.movebrickschi.easytool.core.dto.WatermarkParameters;
 import io.github.movebrickschi.easytool.core.exception.NullException;
-import io.github.movebrickschi.easytool.core.utils.base64.Base64Util;
-import io.github.movebrickschi.easytool.core.utils.bytes.ByteUtil;
-import io.github.movebrickschi.easytool.core.utils.file.InputStreamToFileUtil;
+import io.github.movebrickschi.easytool.core.utils.file.FileUtil;
 import io.github.movebrickschi.easytool.core.utils.ssl.SslUtil;
 import io.github.movebrickschi.easytool.core.utils.url.UrlUtil;
-import io.github.movebrickschi.easytool.core.utils.watermark.WatermarkUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.imaging.ImageWriteException;
 import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.ImagingException;
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
 import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
@@ -33,15 +29,14 @@ import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
+import javax.imageio.*;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -62,15 +57,18 @@ import java.util.function.Supplier;
 @Slf4j
 public final class MetadataUtil {
 
+    private MetadataUtil() {
+    }
+
     // 支持的图片格式映射
-    private static final Map<String, String> SUFFIX_MAP = new ConcurrentHashMap<>();
+    private static final Map<String, FileTypeConstants.ImagePool> SUFFIX_MAP = new ConcurrentHashMap<>();
 
     static {
-        SUFFIX_MAP.put(ImagePool.JPG, ImagePool.JPEG);
-        SUFFIX_MAP.put(ImagePool.JPEG, ImagePool.JPEG);
-        SUFFIX_MAP.put(ImagePool.PNG, ImagePool.PNG);
-        SUFFIX_MAP.put(ImagePool.BMP, ImagePool.BMP);
-        SUFFIX_MAP.put(ImagePool.GIF, ImagePool.GIF);
+        SUFFIX_MAP.put(FileTypeConstants.ImagePool.JPG.getType(), FileTypeConstants.ImagePool.JPEG);
+        SUFFIX_MAP.put(FileTypeConstants.ImagePool.JPEG.getType(), FileTypeConstants.ImagePool.JPEG);
+        SUFFIX_MAP.put(FileTypeConstants.ImagePool.PNG.getType(), FileTypeConstants.ImagePool.PNG);
+        SUFFIX_MAP.put(FileTypeConstants.ImagePool.BMP.getType(), FileTypeConstants.ImagePool.BMP);
+        SUFFIX_MAP.put(FileTypeConstants.ImagePool.GIF.getType(), FileTypeConstants.ImagePool.GIF);
 
         // 强制禁用SSL证书验证
         SslUtil.disableSSLCertificateValidation();
@@ -88,7 +86,8 @@ public final class MetadataUtil {
         BufferedImage originalImage = ImageIO.read(Files.newInputStream(file.toPath()));
         String implicitMetadataContent = getImplicitMetadata(implicitMetadata);
         log.info("开始写入元数据到图片，key: {},metadata:{}", implicitMetadata.getKey(), implicitMetadataContent);
-        String suffix = SUFFIX_MAP.getOrDefault(InputStreamToFileUtil.extension(file.getName()), ImagePool.PNG);
+        String suffix =
+                SUFFIX_MAP.getOrDefault(FileUtil.extension(file.getName()), FileTypeConstants.ImagePool.PNG).getType();
         return Optional.ofNullable(IMAGE_TRANSFER_FUNCTION.get().get(suffix))
                 .orElseThrow(() -> new UnsupportedOperationException("暂不支持"))
                 .apply(ImageTransfer.builder()
@@ -112,7 +111,7 @@ public final class MetadataUtil {
         BufferedImage originalImage = ImageIO.read(url);
         String implicitMetadataContent = getImplicitMetadata(implicitMetadata);
         log.info("开始写入元数据到图片，key: {},metadata:{}", implicitMetadata.getKey(), implicitMetadataContent);
-        String suffix = SUFFIX_MAP.getOrDefault(UrlUtil.extractFileName(imageUrl), ImagePool.PNG);
+        String suffix = SUFFIX_MAP.getOrDefault(UrlUtil.suffix(imageUrl), FileTypeConstants.ImagePool.PNG).getType();
         return Optional.ofNullable(IMAGE_TRANSFER_FUNCTION.get().get(suffix))
                 .orElseThrow(() -> new UnsupportedOperationException("暂不支持"))
                 .apply(ImageTransfer.builder()
@@ -144,38 +143,21 @@ public final class MetadataUtil {
 
     static Function<ImageTransfer, byte[]> png = imageTransfer -> {
         try {
-            // 获取PNG ImageWriter
-            Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("png");
-            if (!writers.hasNext()) {
-                throw new RuntimeException("未找到PNG格式的ImageWriter");
-            }
+            ByteArrayOutputStream imageBaos = new ByteArrayOutputStream();
+            ImageIO.write(imageTransfer.getBufferedImage(), imageTransfer.getSuffix(), imageBaos);
+            byte[] imageBytes = imageBaos.toByteArray();
 
-            ImageWriter writer = writers.next();
-            ImageWriteParam writeParam = writer.getDefaultWriteParam();
-
-            // 获取默认的元数据
-            IIOMetadata metadata = writer.getDefaultImageMetadata(
-                    ImageTypeSpecifier.createFromBufferedImageType(imageTransfer.getBufferedImage().getType()),
-                    writeParam
+            // 直接使用ImageIO方式处理PNG元数据
+            byte[] processedBytes = updatePNGMetadataWithImageIO(
+                    imageBytes,
+                    imageTransfer.getKey(),
+                    imageTransfer.getContent()
             );
 
-            // 更新PNG元数据
-            if (metadata != null) {
-                updatePNGMetadata(metadata, imageTransfer.getKey(), imageTransfer.getContent());
+            if (processedBytes != null) {
+                log.info("成功处理PNG元数据");
+                return processedBytes;
             }
-
-            // 将图片和元数据写入输出流
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            try (ImageOutputStream output = new MemoryCacheImageOutputStream(baos)) {
-                writer.setOutput(output);
-                writer.write(null, new javax.imageio.IIOImage(imageTransfer.getBufferedImage(), null, metadata),
-                        writeParam);
-            } finally {
-                writer.dispose();
-            }
-
-            log.info("PNG元数据写入完成");
-            return baos.toByteArray();
         } catch (Exception e) {
             log.warn("处理PNG元数据时出错: {}", e.getMessage());
         }
@@ -184,9 +166,9 @@ public final class MetadataUtil {
 
     static Supplier<Map<String, Function<ImageTransfer, byte[]>>> IMAGE_TRANSFER_FUNCTION = () -> {
         Map<String, Function<ImageTransfer, byte[]>> map = Maps.newHashMap();
-        map.put(ImagePool.JPG, jpg);
-        map.put(ImagePool.JPEG, jpg);
-        map.put(ImagePool.PNG, png);
+        map.put(FileTypeConstants.ImagePool.JPG.getType(), jpg);
+        map.put(FileTypeConstants.ImagePool.JPEG.getType(), jpg);
+        map.put(FileTypeConstants.ImagePool.PNG.getType(), png);
         return map;
     };
 
@@ -210,12 +192,11 @@ public final class MetadataUtil {
                 root.appendChild(textNode);
             }
 
-            // 添加创建者信息
+            // 添加符合规范的JSON数据
             IIOMetadataNode creatorNode = new IIOMetadataNode("tEXtEntry");
             creatorNode.setAttribute("keyword", key);
             creatorNode.setAttribute("value", content);
             textNode.appendChild(creatorNode);
-
 
             // 将修改后的元数据合并回去
             metadata.mergeTree(nativeMetadataFormatName, root);
@@ -256,7 +237,7 @@ public final class MetadataUtil {
         Snowflake snowflake = new Snowflake();
         try {
             inputTempFile = new File(snowflake.nextIdStr() + ".mp4");
-            InputStreamToFileUtil.downloadFile(videoUrl, inputTempFile);
+            FileUtil.downloadFile(videoUrl, inputTempFile);
             return writeToVideo(inputTempFile, implicitMetadata, ffmpegPath);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -441,7 +422,69 @@ public final class MetadataUtil {
         }
     }
 
-    private static TiffOutputSet getTiffOutputSet(ImageMetadata metadata) throws ImageWriteException {
+    /**
+     * 使用ImageIO更新PNG元数据
+     */
+    private static byte[] updatePNGMetadataWithImageIO(byte[] imageBytes, String key, String metadataContent) {
+        try {
+            // 从字节数组读取BufferedImage
+            ByteArrayInputStream bais = new ByteArrayInputStream(imageBytes);
+            BufferedImage bufferedImage = ImageIO.read(bais);
+
+            // 获取PNG ImageWriter
+            Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("png");
+            if (!writers.hasNext()) {
+                throw new RuntimeException("未找到PNG格式的ImageWriter");
+            }
+
+            ImageWriter writer = writers.next();
+            ImageWriteParam writeParam = writer.getDefaultWriteParam();
+
+            // 尝试读取现有元数据，如果失败则使用默认元数据
+            IIOMetadata metadata = null;
+            try (ImageInputStream iis = ImageIO.createImageInputStream(new ByteArrayInputStream(imageBytes))) {
+                if (iis != null) {
+                    ImageReader reader = ImageIO.getImageReaders(iis).next();
+                    reader.setInput(iis);
+                    metadata = reader.getImageMetadata(0);
+                    reader.dispose();
+                }
+            } catch (Exception e) {
+                log.warn("读取PNG现有元数据时出错: {}", e.getMessage());
+            }
+
+            // 如果无法读取现有元数据，则使用默认元数据
+            if (metadata == null) {
+                metadata = writer.getDefaultImageMetadata(
+                        ImageTypeSpecifier.createFromBufferedImageType(bufferedImage.getType()),
+                        writeParam
+                );
+            }
+
+            // 更新PNG元数据
+            if (metadata != null) {
+                updatePNGMetadata(metadata, key, metadataContent.replace("\\\"", ""));
+            }
+
+            // 将图片和元数据写入输出流
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try (ImageOutputStream output = new MemoryCacheImageOutputStream(baos)) {
+                writer.setOutput(output);
+                writer.write(null, new javax.imageio.IIOImage(bufferedImage, null, metadata), writeParam);
+            } finally {
+                writer.dispose();
+            }
+
+            log.info("PNG元数据写入完成");
+            return baos.toByteArray();
+        } catch (Exception e) {
+            log.warn("处理PNG元数据时出错: {}", e.getMessage());
+            return imageBytes;
+        }
+    }
+
+
+    private static TiffOutputSet getTiffOutputSet(ImageMetadata metadata) throws ImagingException {
         TiffOutputSet outputSet = null;
         if (metadata instanceof JpegImageMetadata) {
             JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
@@ -474,38 +517,39 @@ public final class MetadataUtil {
         private String content;
     }
 
-    public static void main(String[] args) {
-        File file = new File("C:\\Users\\Administrator\\Downloads\\1757424037728huizhi_F8560F8F-31CA-4DD6-B401" +
-                "-CF98CB29065D.mp4");
-        ImplicitMetadata aigc = ImplicitMetadata.builder()
-                .producerInfo(ImplicitMetadata.ProducerInfo.builder()
-                        .subjectCode("91320115MA236KWQ79")
-                        .build())
-                .key("AIGC")
-                .produceId("2343242")
-                .propagateId("2343242")
-                .build();
-        try {
-//            byte[] bytes = writeToVideo(file, aigc);
+//    public static void main(String[] args) {
+//        File file = new File("C:\\Users\\Administrator\\Downloads\\1757424037728huizhi_F8560F8F-31CA-4DD6-B401" +
+//                "-CF98CB29065D.mp4");
+//        ImplicitMetadata aigc = ImplicitMetadata.builder()
+//                .producerInfo(ImplicitMetadata.ProducerInfo.builder()
+//                        .subjectCode("91320115MA236KWQ79")
+//                        .build())
+//                .key("AIGC")
+//                .produceId("2343242")
+//                .propagateId("2343242")
+//                .build();
+//        try {
+////            byte[] bytes = writeToVideo(file, aigc);
+////
+////            File out = new File("C:\\Users\\Administrator\\Downloads\\1757424037728huizhi_F8560F8F-31CA-4DD6-B401" +
+////                    "-123.mp4");
+////            ByteUtil.toFile(bytes, out.getAbsolutePath());
+//            File outImage = new File("C:\\Users\\Administrator\\Downloads\\urlmetadata.jpg");
+////            File file1 = new File("C:\\Users\\Administrator\\Downloads\\writemetada.jpg");
+//            String imageUrl = "https://filefront.oss-cn-hangzhou.aliyuncs.com/2025/9/15/1757925345406huizhi_20032832-25D5-47A3-A9DC-0AD528CD8447.jpg";
+//            byte[] bytes = writeToImage(imageUrl, aigc);
+//            ByteUtil.toFile(bytes, outImage.getAbsolutePath());
 //
-//            File out = new File("C:\\Users\\Administrator\\Downloads\\1757424037728huizhi_F8560F8F-31CA-4DD6-B401" +
-//                    "-123.mp4");
-//            ByteUtil.toFile(bytes, out.getAbsolutePath());
-            File outImage = new File("C:\\Users\\Administrator\\Downloads\\33333.jpg");
-            File file1 = new File("C:\\Users\\Administrator\\Downloads\\writemetada.jpg");
-            byte[] bytes = writeToImage(file1, aigc);
-            ByteUtil.toFile(bytes, outImage.getAbsolutePath());
-
-
-            String base64 = WatermarkUtil.forImage(outImage, WatermarkParameters.builder()
-                    .text("AI生成")
-                    .build());
-            File outWaterImage = new File("C:\\Users\\Administrator\\Downloads\\555555555.jpg");
-            Base64Util.toFile(base64, outWaterImage.getAbsolutePath());
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-    }
+//
+//            String base64 = WatermarkUtil.addWaterMarkKeepMetadata(outImage, WatermarkParameters.builder()
+//                    .text("AI生成")
+//                    .build());
+//            File outWaterImage = new File("C:\\Users\\Administrator\\Downloads\\url-after.jpg");
+//            Base64Util.toFile(base64, outWaterImage.getAbsolutePath());
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//    }
 }

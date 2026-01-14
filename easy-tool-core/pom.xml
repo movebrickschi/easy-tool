@@ -6,9 +6,9 @@
     <parent>
         <groupId>io.github.movebrickschi</groupId>
         <artifactId>easy-tool</artifactId>
-        <version>3.0.7</version>
+        <version>3.0.8</version>
     </parent>
-    <version>3.0.7</version>
+    <version>3.0.8</version>
     <name>easy-tool-core</name>
     <artifactId>easy-tool-core</artifactId>
     <packaging>jar</packaging>
@@ -207,13 +207,13 @@
             <groupId>org.bytedeco</groupId>
             <artifactId>javacpp</artifactId>
             <version>${javacv.version}</version>
-            <classifier>${javacpp.platform.linux-x86}</classifier>
+<!--            <classifier>${javacpp.platform.linux-x86}</classifier>-->
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>ffmpeg</artifactId>
             <version>${javacv.ffmpeg.version}</version>
-            <classifier>${javacpp.platform.linux-x86}</classifier>
+<!--            <classifier>${javacpp.platform.linux-x86}</classifier>-->
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
@@ -232,13 +232,13 @@
             <groupId>org.bytedeco</groupId>
             <artifactId>javacpp</artifactId>
             <version>${javacv.version}</version>
-            <classifier>${javacpp.platform.windows-x86}</classifier>
+<!--            <classifier>${javacpp.platform.windows-x86}</classifier>-->
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>ffmpeg</artifactId>
             <version>${javacv.ffmpeg.version}</version>
-            <classifier>${javacpp.platform.windows-x86}</classifier>
+<!--            <classifier>${javacpp.platform.windows-x86}</classifier>-->
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>

@@ -6,11 +6,11 @@
     <parent>
         <groupId>io.github.movebrickschi</groupId>
         <artifactId>easy-tool</artifactId>
-        <version>3.0.7</version>
+        <version>3.0.8</version>
     </parent>
     <name>easy-tool-ai</name>
     <artifactId>easy-tool-ai</artifactId>
-    <version>3.0.7</version>
+    <version>3.0.8</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

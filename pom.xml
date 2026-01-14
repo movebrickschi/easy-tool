@@ -13,7 +13,7 @@
         <module>easy-tool-ai</module>
         <module>easy-tool-all</module>
     </modules>
-    <version>3.0.7</version>
+    <version>3.0.8</version>
 
     <name>easy-tool</name>
     <description>Daily tool integration</description>
@@ -42,6 +42,8 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <java.version>17</java.version>
         <hutool.version>5.8.35</hutool.version>
         <guava.version>32.0.1-jre</guava.version>
@@ -54,11 +56,11 @@
         <spring-boot-starter.version>3.3.6</spring-boot-starter.version>
         <lombok.version>1.18.28</lombok.version>
         <spring.version>6.1.15</spring.version>
-        <easy-tool-core.version>3.0.7</easy-tool-core.version>
-        <easy-tool-ai.version>3.0.7</easy-tool-ai.version>
-        <easy-tool-mybatis-plus.version>3.0.7</easy-tool-mybatis-plus.version>
-        <easy-tool-redis-spring-boot-starter.version>3.0.7</easy-tool-redis-spring-boot-starter.version>
-        <easy-tool-request.version>3.0.7</easy-tool-request.version>
+        <easy-tool-core.version>3.0.8</easy-tool-core.version>
+        <easy-tool-ai.version>3.0.8</easy-tool-ai.version>
+        <easy-tool-mybatis-plus.version>3.0.8</easy-tool-mybatis-plus.version>
+        <easy-tool-redis-spring-boot-starter.version>3.0.8</easy-tool-redis-spring-boot-starter.version>
+        <easy-tool-request.version>3.0.8</easy-tool-request.version>
     </properties>
 
     <dependencyManagement>
